@@ -15,6 +15,11 @@ namespace FileEncryption.Service.Services
             throw new NotImplementedException();
         }
 
+        public Task<Share> GetValidShareByCodeAsync(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Share> ShareFileAsync(Share share)
         {
             throw new NotImplementedException();

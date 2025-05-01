@@ -78,5 +78,10 @@ namespace FileEncryption.Data.Repository
             await _context.SaveChangesAsync();
             return existingUser;
         }
+
+        Task IRepositoryUser.AddAsync(User userEntity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

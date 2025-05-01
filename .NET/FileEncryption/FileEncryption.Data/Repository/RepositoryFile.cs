@@ -10,12 +10,27 @@ namespace FileEncryption.Data.Repository
 {
     public class RepositoryFile : IRepositoryFile
     {
+        public Task AddAsync(Core.Entities.File fileEntity)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<bool> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<Core.Entities.File>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public Task GetByIdAsync(int fileKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Core.Entities.File> UpdateAsync(int id, Core.Entities.File fileEntity)
         {
             throw new NotImplementedException();
         }
