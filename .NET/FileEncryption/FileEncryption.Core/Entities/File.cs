@@ -22,6 +22,7 @@ namespace FileEncryption.Core.Entities
             public User UserCreated { get; set; }
             public DateTime UpdatedAt { get; set; } = DateTime.Now;
             public bool isDelete { get; set; }
+            public virtual ICollection<Share> Shares { get; set; }
     }
 }
 

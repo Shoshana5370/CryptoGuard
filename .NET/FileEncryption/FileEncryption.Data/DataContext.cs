@@ -14,10 +14,6 @@ namespace FileEncryption.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Share> Shares { get; set; }
         public DbSet<Core.Entities.File> Files { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
-        public DbSet<UserRoles> UserRoles { get; set; }
-        public DbSet<RolePermission> RolePermissions { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
     }
 }
