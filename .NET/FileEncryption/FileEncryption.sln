@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileEncryption.Api", "FileEncryption.Api\FileEncryption.Api.csproj", "{3F689626-1C53-4BBE-B12E-2AD27800A312}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileEncryption.Core", "FileEncryption.Core\FileEncryption.Core.csproj", "{DFAD1AA1-6F77-47B1-9075-41D725700029}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileEncryption.Data", "FileEncryption.Data\FileEncryption.Data.csproj", "{AFB61112-49E9-43DA-A3A1-4EF2EEC1B4D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileEncryption.Service", "FileEncryption.Service\FileEncryption.Service.csproj", "{F677BE28-5C57-41EA-A8F9-28199B04EE83}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F689626-1C53-4BBE-B12E-2AD27800A312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F689626-1C53-4BBE-B12E-2AD27800A312}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F689626-1C53-4BBE-B12E-2AD27800A312}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F689626-1C53-4BBE-B12E-2AD27800A312}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFAD1AA1-6F77-47B1-9075-41D725700029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFAD1AA1-6F77-47B1-9075-41D725700029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFAD1AA1-6F77-47B1-9075-41D725700029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFAD1AA1-6F77-47B1-9075-41D725700029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFB61112-49E9-43DA-A3A1-4EF2EEC1B4D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFB61112-49E9-43DA-A3A1-4EF2EEC1B4D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFB61112-49E9-43DA-A3A1-4EF2EEC1B4D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFB61112-49E9-43DA-A3A1-4EF2EEC1B4D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F677BE28-5C57-41EA-A8F9-28199B04EE83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F677BE28-5C57-41EA-A8F9-28199B04EE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F677BE28-5C57-41EA-A8F9-28199B04EE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F677BE28-5C57-41EA-A8F9-28199B04EE83}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

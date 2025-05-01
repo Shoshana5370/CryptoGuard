@@ -1,0 +1,6 @@
+@FileEncryption.Api_HostAddress = http://localhost:5230
+
+GET {{FileEncryption.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
