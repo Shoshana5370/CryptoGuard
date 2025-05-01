@@ -9,8 +9,8 @@ namespace FileEncryption.Core.IRepository
 {
     public interface IRepositoryManager
     {
-        IRepository<User> Users { get; }
-        IRepository<Entities.File> Files { get; }
+        IRepositoryUser Users { get; }
+        IRepositoryFile Files { get; }
         IRepositoryShare Shares { get; }
 
         public async Task SaveAsync()

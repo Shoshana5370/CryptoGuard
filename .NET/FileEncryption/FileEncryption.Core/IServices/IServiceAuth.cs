@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileEncryption.Core.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Core.IServices
 {
-    internal interface IServiceAuth
+    public interface IServiceAuth
     {
+        public Task<string> Login(UserDto userDto);
+        public Task<string> Register(UserDto userDto);
     }
 }

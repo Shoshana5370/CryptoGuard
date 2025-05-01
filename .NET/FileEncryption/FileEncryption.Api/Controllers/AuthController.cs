@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
+using FileEncryption.Core.IServices;
 using FileEncryption.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +13,11 @@ namespace FileEncryption.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly ServiceAuth _authService;
+        private readonly IServiceAuth _authService;
         private readonly IMapper _mapper;
 
 
-        public AuthController(ServiceAuth authService, IMapper mapper)
+        public AuthController(IServiceAuth authService, IMapper mapper)
         {
             _mapper = mapper;
             _authService = authService;

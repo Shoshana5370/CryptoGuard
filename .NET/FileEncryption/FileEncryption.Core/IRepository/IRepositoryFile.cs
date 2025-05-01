@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Core.IRepository
 {
-    internal interface IRepositoryFile
+    public interface IRepositoryFile
     {
+        Task AddAsync(Entities.File fileEntity);
+        public Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<Entities.File>> GetAllAsync();
+        public Task<FileEncryption.Core.Entities.File> GetByIdAsync(int fileKey);
+        Task<Entities.File> UpdateAsync(int id, Entities.File fileEntity);
     }
 }

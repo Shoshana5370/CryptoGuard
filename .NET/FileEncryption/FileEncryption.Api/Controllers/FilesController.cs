@@ -19,81 +19,81 @@ namespace FileEncryption.Api.Controllers
         }
 
         // GET: api/<FilesController>
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<FileDto>>> GetAsync()
-        {
-            var files = await _fileService.FindAllFilesAsync();
-            if (files == null || !files.Any())
-            {
-                return NotFound();
-            }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<FileDto>>> GetAsync()
+        //{
+        //    var files = await _fileService.FindAllFilesAsync();
+        //    if (files == null || !files.Any())
+        //    {
+        //        return NotFound();
+        //    }
 
-            return Ok(_mapper.Map<IEnumerable<FileDto>>(files));
-        }
+        //    return Ok(_mapper.Map<IEnumerable<FileDto>>(files));
+        //}
 
-        // GET api/<FilesController>/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<FileDto>> Get(int id)
-        {
-            var file = await _fileService.FindFileByIdAsync(id);
+        //// GET api/<FilesController>/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<FileDto>> Get(int id)
+        //{
+        //    var file = await _fileService.FindFileByIdAsync(id);
 
-            if (file == null)
-            {
-                return NotFound(); // Return 404 if file is not found
-            }
+        //    if (file == null)
+        //    {
+        //        return NotFound(); // Return 404 if file is not found
+        //    }
 
-            return Ok(_mapper.Map<FileDto>(file)); // Return 200 OK with the file
-        }
+        //    return Ok(_mapper.Map<FileDto>(file)); // Return 200 OK with the file
+        //}
 
-        // POST api/<FilesController>
-        [HttpPost]
-        public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
-        {
-            if (file == null)
-            {
-                return BadRequest(); // Return 400 Bad Request if the file object is null
-            }
+        //// POST api/<FilesController>
+        //[HttpPost]
+        //public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
+        //{
+        //    if (file == null)
+        //    {
+        //        return BadRequest(); // Return 400 Bad Request if the file object is null
+        //    }
 
-            var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
+        //    var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
 
-            if (result != null)
-            {
-                return Ok(_mapper.Map<FileDto>(result));
-            }
-            return BadRequest();
-        }
+        //    if (result != null)
+        //    {
+        //        return Ok(_mapper.Map<FileDto>(result));
+        //    }
+        //    return BadRequest();
+        //}
 
-        // PUT api/<FilesController>/5
-        [HttpPut("{id}")]
-        public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
-        {
-            if (file == null || file.Id != id)
-            {
-                return BadRequest(); // Return 400 Bad Request if the file object is null or id does not match
-            }
+        //// PUT api/<FilesController>/5
+        //[HttpPut("{id}")]
+        //public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
+        //{
+        //    if (file == null || file.Id != id)
+        //    {
+        //        return BadRequest(); // Return 400 Bad Request if the file object is null or id does not match
+        //    }
 
-            var result = await _fileService.UpdateExistingFileAsync(id, file);
-            if (result == null)
-            {
-                return NotFound(); // Return 404 if the file to update is not found
-            }
+        //    var result = await _fileService.UpdateExistingFileAsync(id, file);
+        //    if (result == null)
+        //    {
+        //        return NotFound(); // Return 404 if the file to update is not found
+        //    }
 
-            return Ok(_mapper.Map<FileDto>(result)); // Return 200 OK on successful update
-        }
+        //    return Ok(_mapper.Map<FileDto>(result)); // Return 200 OK on successful update
+        //}
 
-        // DELETE api/<FilesController>/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> Delete(int id)
-        {
-            var result = await _fileService.DiscardFileAsync(id);
+        //// DELETE api/<FilesController>/5
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult<bool>> Delete(int id)
+        //{
+        //    var result = await _fileService.DiscardFileAsync(id);
 
-            if (!result)
-            {
-                return NotFound(); // Return 404 if the file to delete is not found
-            }
+        //    if (!result)
+        //    {
+        //        return NotFound(); // Return 404 if the file to delete is not found
+        //    }
 
-            return NoContent(); // Return 204 No Content on successful deletion
-        }
+        //    return NoContent(); // Return 204 No Content on successful deletion
+        //}
         [HttpPost("upload")]
         public async Task<IActionResult> UploadEncryptedFile(IFormFile file)
         {

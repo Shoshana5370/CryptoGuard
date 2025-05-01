@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileEncryption.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Core.IServices
 {
-    internal interface IServiceShare
+    public interface IServiceShare
     {
+       public Task<string> GetByAccessCodeAsync(string accessCode);
+        Task<Share> GetValidShareByCodeAsync(string v);
+        public Task<Share> ShareFileAsync(Share share);
     }
 }

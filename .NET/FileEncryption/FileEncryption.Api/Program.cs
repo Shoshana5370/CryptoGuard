@@ -4,7 +4,6 @@ using FileEncryption.Data.Repository;
 using FileEncryption.Data;
 using FileEncryption.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using FileEncryption.Core.Entities;
 using FileEncryption.Core;
 using FileEncryption.Api.Models;
 using Amazon.S3;
@@ -53,9 +52,11 @@ var awsOptions = new AWSOptions
 };
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonS3>();
-builder.Services.AddScoped<IRepository<FileEncryption.Core.Entities.File>, Repository<FileEncryption.Core.Entities.File>>();
-builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+builder.Services.AddScoped<IRepositoryFile, RepositoryFile>();
+builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
+builder.Services.AddScoped<IRepositoryShare, RepositoryShare>();
 builder.Services.AddScoped<IServiceFile, ServiceFile>();
+builder.Services.AddScoped<IServiceShare, ServiceShare>();
 builder.Services.AddScoped<IServiceUser, ServiceUser>();
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 var connectionString = builder.Configuration["DbConnectionString"];
@@ -83,7 +84,6 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
 }
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseCors("AllowAllOrigins"); // Add CORS if necessary

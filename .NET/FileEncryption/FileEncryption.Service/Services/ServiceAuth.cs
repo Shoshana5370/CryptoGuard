@@ -10,7 +10,7 @@ using System.Text;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceAuth
+    public class ServiceAuth:IServiceAuth
     {
         private readonly IConfiguration _configuration;
         private readonly IRepositoryUser _user;

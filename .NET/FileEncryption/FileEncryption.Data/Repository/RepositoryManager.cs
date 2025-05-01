@@ -12,12 +12,11 @@ namespace FileEncryption.Data.Repository
     {
         private readonly DataContext _context;
         //public IRepositoryUser Users { get; }
-        public IRepository<User> Users { get; }
-        public IRepository<Core.Entities.File> Files { get; }
-
+        public IRepositoryUser Users { get; }
+        public IRepositoryFile Files { get; }
         public IRepositoryShare Shares { get; }
 
-        public RepositoryManager(DataContext context, IRepository<User> userRepository, IRepository<Core.Entities.File> fileRepository , IRepositoryShare repositoryShare)
+        public RepositoryManager(DataContext context, IRepositoryUser userRepository, IRepositoryFile fileRepository , IRepositoryShare repositoryShare)
         {
             _context = context;
             Users = userRepository;

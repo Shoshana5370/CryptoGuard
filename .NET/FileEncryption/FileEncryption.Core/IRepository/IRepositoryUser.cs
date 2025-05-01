@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Core.IRepository
 {
-    public interface IRepositoryUser : IRepository<User>
+    public interface IRepositoryUser 
     {
+        Task AddAsync(User userEntity);
+        Task<bool> DeleteAsync(int id);
         Task<UserDto> FindByEmailAsync(string email);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task<User> GetByIdAsync(int id);
+        Task<User> UpdateAsync(int id, User user);
 
         //Task<User> GetUserByIdAsync(int id);
         //Task<IEnumerable<User>> GetAllUsersAsync();
