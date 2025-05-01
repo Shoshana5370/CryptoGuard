@@ -9,7 +9,7 @@ namespace FileEncryption.Core.IServices
 {
     public interface IServiceAuth
     {
-        public Task<string> Login(UserDto userDto);
-        public Task<string> Register(UserDto userDto);
+        public Task<AuthResponse> Login(UserDto userDto);
+        public Task<AuthResponse> Register(UserDto userDto);
     }
 }

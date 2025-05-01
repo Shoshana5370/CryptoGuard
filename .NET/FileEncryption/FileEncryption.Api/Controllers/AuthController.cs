@@ -24,25 +24,26 @@ namespace FileEncryption.Api.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult Login([FromBody] LoginModel user)
+        public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
-            var token = _authService.Login(_mapper.Map<UserDto>(user));
-            if(token==null)
-            {
-                return BadRequest(); 
-            }
-            return Ok(token);
-        }
-        [HttpPost("register")]
-        public ActionResult Register([FromBody] UserPostModel user)
-        {
-            var token = _authService.Register(_mapper.Map<UserDto>(user));
-            if (token == null)
+            var result = await _authService.Login(_mapper.Map<UserDto>(user));
+            if (result == null)
             {
                 return BadRequest();
             }
-            return Ok(token);
+            return Ok(result);
         }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserPostModel user)
+        {
+            var result = await _authService.Register(_mapper.Map<UserDto>(user));
+            if (result == null)
+            {
+                return BadRequest("User already exists or registration failed.");
+            }
+            return Ok(result);
+        }
+
     }
 
 

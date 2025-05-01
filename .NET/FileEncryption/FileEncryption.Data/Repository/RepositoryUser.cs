@@ -40,9 +40,10 @@ namespace FileEncryption.Data.Repository
             return await _context.SaveChangesAsync() > 0; // Save changes and return success
         }
 
-        public Task<UserDto> FindByEmailAsync(string email)
+        public async Task<User> FindByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            
         }
 
         public Task<IEnumerable<User>> GetAllAsync()
@@ -79,9 +80,5 @@ namespace FileEncryption.Data.Repository
             return existingUser;
         }
 
-        Task IRepositoryUser.AddAsync(User userEntity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -51,7 +51,7 @@ namespace FileEncryption.Service.Services
         public async Task<User> InsertUserAsync(UserDto user)
         {
             var userEntity = _mapper.Map<User>(user); // ממפה את ה-DTO לישות
-            await _repositoryManager.Users.AddAsync(userEntity); // קורא לשיטה להוספת משתמש
+            await _repositoryManager.Users.AddUserAsync(userEntity); // קורא לשיטה להוספת משתמש
             await _repositoryManager.SaveAsync(); // שומר את השינויים בבסיס הנתונים
             return userEntity;
         }
@@ -66,5 +66,7 @@ namespace FileEncryption.Service.Services
             return u;
             // Call repository method to update user
         }
+
+
     }
 }
