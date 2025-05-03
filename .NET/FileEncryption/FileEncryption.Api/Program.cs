@@ -13,6 +13,7 @@ using Amazon.Runtime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(options =>
 {
@@ -32,7 +33,11 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
-
+builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
+    policy.WithOrigins("http://localhost:5173")
+          .AllowAnyHeader()
+          .AllowAnyMethod();
+}));
 // הוספת הרשאות מבוססות-תפקידים
 builder.Services.AddAuthorization(options =>
 {
@@ -86,8 +91,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseHttpsRedirection();
+app.UseCors("MyPolicy");
 app.UseAuthorization();
-app.UseCors("AllowAllOrigins"); // Add CORS if necessary
+
 app.MapControllers();
 
 app.Run();

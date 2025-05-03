@@ -22,12 +22,12 @@ const initialState: AuthState = {
   loading: false,
   error: null,
 };
-
+const url='https://localhost:7207';
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/auth/login', credentials);
+      const response = await axios.post(`${url}/api/Auth/login`, credentials);
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response.data);
@@ -39,7 +39,7 @@ export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData: { email: string; password: string; name: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/auth/register', userData);
+      const response = await axios.post(`${url}/api/Auth/register`, userData);
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response.data);
