@@ -2,12 +2,6 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace FileEncryption.Service.Services
 {
     public class ServiceEmail : IServiceSendMessage
@@ -20,12 +14,12 @@ namespace FileEncryption.Service.Services
             _config = config;
         }
 
-        public async Task SendAsync(string to, string fromUserId, string subject, string accessCode)
+        public async Task SendAsync(string to, string fromUserId, string accessCode)
         {
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_config["EmailSettings:SenderEmail"]));
             email.To.Add(MailboxAddress.Parse(to));
-            email.Subject = subject;
+            email.Subject = "Your AcsessCode";
 
             // You can format the body as needed
             email.Body = new TextPart("plain")

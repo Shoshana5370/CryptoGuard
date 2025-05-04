@@ -18,17 +18,18 @@ const initialState: UploadState = {
 };
 const url = 'https://localhost:7207'
 export const uploadFileContent = createAsyncThunk<
-    FilePostModel,                                         // Return type (from your .NET controller)
-    { file: File; userId: number },                        // Arg type
+    FilePostModel,                         // Return type (from your .NET controller)
+    { file: File },                        // Arg type (no userId)
     { rejectValue: string, state: RootState }
 >(
     'upload/uploadFileContent',
-    async ({ file, userId }, { rejectWithValue }) => {
+    async ({ file }, { rejectWithValue }) => {
         try {
             const formData = new FormData();
             formData.append('file', file);
+
             const response = await axiosInstance.post<FilePostModel>(
-                `${url}/api/Files/upload?id=${userId}`,
+                `${url}/api/Files/upload`,   // 🔥 no userId in query string
                 formData,
                 {
                     headers: {
@@ -36,14 +37,16 @@ export const uploadFileContent = createAsyncThunk<
                     },
                 }
             );
-            console.log(response.data); // Log the response data for debugging
-            return response.data;  // FileDto returned from your API
+
+            console.log(response.data); // Debugging
+            return response.data;
         } catch (err: any) {
             const msg = err.response?.data || err.message || 'File upload failed';
             return rejectWithValue(msg);
         }
     }
 );
+
 
 
 const uploadSlice = createSlice({

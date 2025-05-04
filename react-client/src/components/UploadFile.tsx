@@ -3,7 +3,6 @@ import {  RootState } from '../store/store';
 import { uploadFileContent, resetUploadState } from '../features/files/uploadslice'; 
 import { useAppDispatch, useAppSelector } from '../hooks';
 const UploadFile: React.FC= () => {
-    const userId = 1;
     const [file, setFile] = useState<File | null>(null);
     const dispatch = useAppDispatch();
     const { uploading, success, error, uploadedFile } = useAppSelector((state: RootState) => state.upFiles); 
@@ -19,7 +18,7 @@ const UploadFile: React.FC= () => {
     
         try {
             // Upload file + userId in a single request
-            await dispatch(uploadFileContent({ file, userId })).unwrap();
+            await dispatch(uploadFileContent({ file })).unwrap();
         } catch (err) {
             console.error('Upload error:', err);
         }

@@ -3,11 +3,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
 import filesReducer from '../features/files/filesSlice'; 
 import uploadReducer from '../features/files/uploadslice'; 
+import shareReducer from '../features/shares/shareSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     files: filesReducer,
     upFiles: uploadReducer, 
+    share: shareReducer,
   },
 });
 
