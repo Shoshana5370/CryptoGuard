@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Core.IServices
 {
-    public interface IServiceEmail
+    public interface IServiceSendMessage
     {
-        Task SendAsync(string? recipientEmail, string v1, string v2);
+        Task SendAsync(string? to, string from, string message,string acsessCode);
     }
 }

@@ -15,5 +15,6 @@ namespace FileEncryption.Core.IServices
         Task<User> InsertUserAsync(UserDto user);
         Task<User> UpdateExistingUserAsync(int id, UserDto user);
         Task<bool> DiscardUserAsync(int id);
+        Task<IEnumerable<FileDto>> GetFilesByUserIdAsync(int id);
     }
 }

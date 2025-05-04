@@ -16,6 +16,7 @@ namespace FileEncryption.Core.IRepository
         public Task<IEnumerable<User>> GetAllAsync();
         public Task<User> GetByIdAsync(int id);
         public Task<User> UpdateAsync(int id, User user);
+        public Task<IEnumerable<FileEncryption.Core.Entities.File>> GetFilesByUserIdAsync(int id);
 
         //Task<User> GetUserByIdAsync(int id);
         //Task<IEnumerable<User>> GetAllUsersAsync();

@@ -46,22 +46,22 @@ namespace FileEncryption.Api.Controllers
         //}
 
         //// POST api/<FilesController>
-        //[HttpPost]
-        //public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
-        //{
-        //    if (file == null)
-        //    {
-        //        return BadRequest(); // Return 400 Bad Request if the file object is null
-        //    }
+        [HttpPost]
+        public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
+        {
+            if (file == null)
+            {
+                return BadRequest(); // Return 400 Bad Request if the file object is null
+            }
 
-        //    var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
+            var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
 
-        //    if (result != null)
-        //    {
-        //        return Ok(_mapper.Map<FileDto>(result));
-        //    }
-        //    return BadRequest();
-        //}
+            if (result != null)
+            {
+                return Ok(_mapper.Map<FileDto>(result));
+            }
+            return BadRequest();
+        }
 
         //// PUT api/<FilesController>/5
         //[HttpPut("{id}")]

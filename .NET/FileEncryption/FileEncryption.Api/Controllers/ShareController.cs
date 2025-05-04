@@ -13,7 +13,7 @@ namespace FileEncryption.Api.Controllers
     [ApiController]
     public class ShareController : ControllerBase
     {
-        private readonly IServiceEmail _emailService;
+        private readonly IServiceSendMessage _emailService;
         private readonly IServiceShare _shareService;
         private readonly IMapper _mapper;
         private readonly IServiceFile _fileService;
@@ -59,9 +59,7 @@ namespace FileEncryption.Api.Controllers
             var share = await _shareService.ShareFileAsync(_mapper.Map<Share>(req));
 
             await _emailService.SendAsync(
-                share.RecipientEmail,
-                "You've received a file",
-                $"Your access code is: {share.AccessCode}"
+                share.RecipientEmail,userId,"welcome" ,share.AccessCode
             );
 
             return Ok(new { share.Id, share.AccessCode, share.ExpiresAt });

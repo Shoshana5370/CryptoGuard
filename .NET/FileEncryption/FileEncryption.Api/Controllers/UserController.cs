@@ -3,6 +3,7 @@ using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
 using FileEncryption.Core.Entities;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -21,7 +23,16 @@ namespace FileEncryption.Api.Controllers
             _userService = userService;
             _mapper = mapper;
         }
-
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync(int id)
+        {
+            var files = await _userService.GetFilesByUserIdAsync(id);
+            if(files==null)
+            {
+                return NotFound();
+            }
+            return Ok(files);
+        }
         //    // GET: api/<UserController>
         //    [HttpGet]
         //    public async Task<ActionResult<IEnumerable<UserDto>>> GetAsync()

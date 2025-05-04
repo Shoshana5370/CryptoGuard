@@ -13,7 +13,8 @@ using Amazon.Runtime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(options =>
 {
@@ -44,8 +45,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserOrAdmin", policy => policy.RequireRole("User", "Admin"));
 });
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers(); builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+}); builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var awsOptions = new AWSOptions
 {
@@ -92,6 +96,8 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseCors("MyPolicy");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

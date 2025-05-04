@@ -9,6 +9,8 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import AppLayout from "./components/AppLayout";
+import FilesList from "./components/FilesList";
+import UploadFile from "./components/UploadFile";
 
 // </BrowserRouter> 
 const Router = createBrowserRouter([
@@ -27,6 +29,14 @@ const Router = createBrowserRouter([
             {
                 path: "/auth/register",
                 element: <RegisterForm />,
+            },
+            {
+                path: "file/list",
+                element: <FilesList/>,
+            },
+            {
+                path: "/file/upload",
+                element: <UploadFile/>,
             },
         ],
     }

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceEmail : IServiceEmail
+    public class ServiceEmail : IServiceSendMessage
     {
-        public Task SendAsync(string? recipientEmail, string v1, string v2)
+
+        public Task SendAsync(string? to, string from, string message, string acsessCode)
         {
             throw new NotImplementedException();
         }

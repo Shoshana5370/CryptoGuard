@@ -1,12 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
-interface User {
-  id: number;
-  email: string;
-  name: string;
-  isAdmin: boolean;
-}
+import { User } from '../../types/UserDto';
 
 interface AuthState {
   user: User | null;
@@ -22,14 +16,15 @@ const initialState: AuthState = {
   error: null,
 };
 const url = 'https://localhost:7207'; // Adjust URL accordingly
-
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${url}/api/Auth/login`, credentials);
+      console.log(response.data);
       return response.data;
-    } catch (err: any) {
+    } 
+    catch (err: any) {
       return rejectWithValue(err.response.data);
     }
   }
@@ -40,6 +35,9 @@ export const registerUser = createAsyncThunk(
   async (userData: { email: string; password: string; name: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${url}/api/Auth/register`, userData);
+      console.log(response.data);
+      sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("userId", response.data.user.id.toString());
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response.data);

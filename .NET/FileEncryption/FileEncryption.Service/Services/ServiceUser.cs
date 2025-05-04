@@ -48,6 +48,14 @@ namespace FileEncryption.Service.Services
             return await _repositoryManager.Users.GetByIdAsync(id); // Call repository method to find user by ID
         }
 
+        public async Task<IEnumerable<FileDto>> GetFilesByUserIdAsync(int id)
+        {
+            var files = await _repositoryManager.Users.GetFilesByUserIdAsync(id);
+
+            // Map the files to FileDto
+            return _mapper.Map<IEnumerable<FileDto>>(files);
+        }
+
         public async Task<User> InsertUserAsync(UserDto user)
         {
             var userEntity = _mapper.Map<User>(user); // ממפה את ה-DTO לישות

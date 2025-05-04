@@ -13,10 +13,10 @@ namespace FileEncryption.Data.Repository
             _context = data;
         }
 
-        public Task<User> AddAsync(User entity)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<User> AddAsync(User entity)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<User> AddUserAsync(User user)
         {
@@ -59,6 +59,18 @@ namespace FileEncryption.Data.Repository
         public Task<User> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Core.Entities.File>> GetFilesByUserIdAsync(int id)
+        {
+            var user = await _context.Users
+                      .Include(u => u.Files) // Ensure that Files are included in the query
+                       .FirstOrDefaultAsync(u => u.Id == id);
+            if (user != null)
+            {
+                return user.Files; // This will work since Files is already loaded
+            }
+            return null; // Return an empty list if user is not found
         }
 
         public async Task<User> GetUserByIdAsync(int id)
