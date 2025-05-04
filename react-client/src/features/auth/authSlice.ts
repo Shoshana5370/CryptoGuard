@@ -1,4 +1,3 @@
-// src/features/auth/authSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -22,7 +21,8 @@ const initialState: AuthState = {
   loading: false,
   error: null,
 };
-const url='https://localhost:7207';
+const url = 'https://localhost:7207'; // Adjust URL accordingly
+
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {

@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import { useAppDispatch } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { loginUser } from '../features/auth/authSlice';
 import { Link } from 'react-router-dom';
 
 const LoginForm = () => {
-  const dispatch = useAppDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+const dispatch = useAppDispatch();
+const { loading, error } = useAppSelector((state) => state.auth);
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -37,6 +38,7 @@ const LoginForm = () => {
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <h2 className="text-2xl font-semibold mb-4">Sign In</h2>
+      {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         <div>
           <input
@@ -58,9 +60,7 @@ const LoginForm = () => {
           />
           {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
         </div>
-        <button type="submit" className="bg-blue-500 text-white py-2 rounded">
-          Login
-        </button>
+        <button type="submit" className="bg-blue-500 text-white py-2 rounded" > {loading ? 'Logging...' : 'Sign In'}</button>  
       </form>
       <p className="mt-4 text-sm">
         Don't have an account?{' '}
