@@ -1,14 +1,14 @@
 // src/features/files/uploadSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { RootState } from '../../store/store'; // Adjust path
 import { FilePostModel } from '../../types/FilePostModel'; // Adjust path
+import axiosInstance from '../../axiosInstance';
 
 interface UploadState {
     uploading: boolean;
     success: boolean;
     error: string | null;
-    uploadedFile?: FilePostModel; // Optional: store last uploaded file metadata
+    uploadedFile?: FilePostModel;
 }
 
 const initialState: UploadState = {
@@ -16,8 +16,7 @@ const initialState: UploadState = {
     success: false,
     error: null,
 };
-
-// 1️⃣ Thunk to upload file content
+const url = 'https://localhost:7207'
 export const uploadFileContent = createAsyncThunk<
     string,               // Return s3Key
     File,                 // Argument: file
@@ -28,8 +27,7 @@ export const uploadFileContent = createAsyncThunk<
         try {
             const formData = new FormData();
             formData.append('file', file);
-
-            const response = await axios.post<{ s3Key: string }>('/upload', formData, {
+            const response = await axiosInstance.post<{ s3Key: string }>(`${url}/api/Files/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -41,17 +39,15 @@ export const uploadFileContent = createAsyncThunk<
         }
     }
 );
-
-// 2️⃣ Thunk to post file metadata
 export const postFileMetadata = createAsyncThunk<
     FilePostModel,       // Return type
     FilePostModel,       // Argument type
-    { rejectValue: string, state: RootState }
->(
+    { rejectValue: string, state: RootState }>(
     'upload/postFileMetadata',
     async (metadata, { rejectWithValue }) => {
         try {
-            const response = await axios.post<FilePostModel>('/api/files', metadata);
+            
+            const response = await axiosInstance.post<FilePostModel>('/api/Files/', metadata);
             return response.data;
         } catch (err: any) {
             const msg = err.response?.data || err.message || 'Metadata post failed';

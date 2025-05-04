@@ -1,35 +1,31 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import {  RootState } from '../store/store'; // adjust the path as needed
-import { uploadFileContent, postFileMetadata, resetUploadState } from '../features/files/uploadslice'; // adjust the path as needed
+import {  RootState } from '../store/store'; 
+import { uploadFileContent, postFileMetadata, resetUploadState } from '../features/files/uploadslice'; 
 import { useAppDispatch, useAppSelector } from '../hooks';
 const UploadFile: React.FC= () => {
     const userId = 1;
     const [file, setFile] = useState<File | null>(null);
     const dispatch = useAppDispatch();
-    const { uploading, success, error, uploadedFile } = useAppSelector((state: RootState) => state.upFiles); // Adjust the state slice name as needed
-
+    const { uploading, success, error, uploadedFile } = useAppSelector((state: RootState) => state.upFiles); 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setFile(e.target.files[0]);
-            dispatch(resetUploadState()); // Clear previous state
+            dispatch(resetUploadState()); 
         }
     };
-
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!file) return;
 
         try {
             // Step 1: Upload file content
-            const s3Key = await dispatch(uploadFileContent(file)).unwrap();
-
+             await dispatch(uploadFileContent(file)).unwrap();
             // Step 2: Post metadata
-            const metadata = {
-                name: file.name,
-                encryptedUrl: s3Key,
-                createdBy: userId,
-            };
-            await dispatch(postFileMetadata(metadata)).unwrap();
+            // const metadata = {
+            //     name: file.name,
+            //     createdBy: userId,
+            // };
+            // await dispatch(postFileMetadata(metadata)).unwrap();
         } catch (err) {
             console.error('Upload error:', err);
         }
@@ -37,7 +33,7 @@ const UploadFile: React.FC= () => {
 
     return (
         <form onSubmit={handleSubmit} className="p-4 border rounded shadow max-w-md mx-auto">
-            <h2 className="text-xl font-bold mb-4">Upload Encrypted File (Redux)</h2>
+            <h2 className="text-xl font-bold mb-4">Upload Encrypted File</h2>
             <input
                 type="file"
                 onChange={handleFileChange}

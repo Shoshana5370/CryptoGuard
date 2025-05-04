@@ -1,5 +1,6 @@
 ﻿using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,19 @@ namespace FileEncryption.Data.Repository
 {
     public class RepositoryFile : IRepositoryFile
     {
-        public Task AddAsync(Core.Entities.File fileEntity)
+        private readonly DataContext _dataContext;
+
+        public RepositoryFile(DataContext dataContext)
         {
-            throw new NotImplementedException();
+            _dataContext = dataContext;
+        }
+
+        public async Task<Core.Entities.File> AddAsync(Core.Entities.File fileEntity)
+        {
+            if (fileEntity == null) return null;
+
+            await _dataContext.Files.AddAsync(fileEntity); 
+            return fileEntity; 
         }
 
         public Task<bool> DeleteAsync(int id)

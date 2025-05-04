@@ -1,8 +1,8 @@
 // src/features/files/filesSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { RootState } from '../../store/store'; // adjust path as needed
 import { FileDto } from '../../types/FileDto';
+import axiosInstance from '../../axiosInstance';
 
 interface FilesState {
     items: FileDto[];
@@ -25,7 +25,7 @@ export const fetchFilesByUserId = createAsyncThunk<
     async (userId, { getState, rejectWithValue }) => {
         try {
             const token = getState().auth.token;
-            const response = await axios.get<FileDto[]>(`/api/files/user/${userId}`, {
+            const response = await axiosInstance.get<FileDto[]>(`/api/files/user/${userId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

@@ -80,10 +80,8 @@ namespace FileEncryption.Service.Services
         {
             var bucketName = _config["AWS:BucketName"];
             var key = $"uploads/{Guid.NewGuid()}_{file.FileName}";
-
             using var aes = CreateAes();
             aes.GenerateIV();
-
             using var uploadStream = new MemoryStream();
             await uploadStream.WriteAsync(aes.IV, 0, aes.IV.Length); // שומרים את ה-IV בתחילת הקובץ
 

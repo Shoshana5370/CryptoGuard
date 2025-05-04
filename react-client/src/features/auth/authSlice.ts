@@ -8,10 +8,9 @@ interface AuthState {
   loading: boolean;
   error: string | null;
 }
-
 const initialState: AuthState = {
-  user: null,
-  token: null,
+  user: JSON.parse(sessionStorage.getItem('user') || 'null'),
+  token: sessionStorage.getItem('token'),
   loading: false,
   error: null,
 };
@@ -22,6 +21,9 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post(`${url}/api/Auth/login`, credentials);
       console.log(response.data);
+      sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("user", JSON.stringify(response.data.user));
+      sessionStorage.setItem("userId", response.data.user.id.toString());
       return response.data;
     } 
     catch (err: any) {
@@ -52,6 +54,9 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('userId'); 
     },
   },
   extraReducers: (builder) => {
@@ -84,6 +89,9 @@ const authSlice = createSlice({
       });
   },
 });
+
+
+
 
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;
