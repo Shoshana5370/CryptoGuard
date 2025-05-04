@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace FileEncryption.Api.Controllers
             _userService = userService;
             _mapper = mapper;
         }
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync(int id)
         {
             var files = await _userService.GetFilesByUserIdAsync(id);

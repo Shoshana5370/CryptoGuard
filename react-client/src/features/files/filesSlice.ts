@@ -14,6 +14,7 @@ const initialState: FilesState = {
     loading: false,
     error: null,
 };
+const url = 'https://localhost:7207'
 
 // Thunk to fetch files by user ID
 export const fetchFilesByUserId = createAsyncThunk<
@@ -22,13 +23,9 @@ export const fetchFilesByUserId = createAsyncThunk<
     { rejectValue: string, state: RootState } // Extra options
 >(
     'files/fetchFilesByUserId',
-    async (userId, { getState, rejectWithValue }) => {
+    async (userId, {  rejectWithValue }) => {
         try {
-            const token = getState().auth.token;
-            const response = await axiosInstance.get<FileDto[]>(`/api/files/user/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            const response = await axiosInstance.get<FileDto[]>(`${url}/api/User/${userId}`, {
             });
             return response.data;
         } catch (err: any) {
