@@ -76,7 +76,7 @@ namespace FileEncryption.Service.Services
             return updatedFile;
         }
 
-        public async Task<string> EncryptAndUploadFileAsync(FileFormDto file)
+        public async Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file, FileDto fileDto)
         {
             var bucketName = _config["AWS:BucketName"];
             var key = $"uploads/{Guid.NewGuid()}_{file.FileName}";
@@ -101,7 +101,12 @@ namespace FileEncryption.Service.Services
             };
 
             await _s3Client.PutObjectAsync(putRequest);
-            return key;
+            fileDto.EncryptedUrl = key;
+            var fileEntity=_mapper.Map<Core.Entities.File>(fileDto); // Map DTO to entity
+            await _repositoryManager.Files.AddAsync(fileEntity); // Call method to add file
+            await _repositoryManager.SaveAsync(); // Save changes to the database
+            //return fileEntity;
+            return _mapper.Map<FileDto>(fileEntity);
         }
 
         public async Task<Stream> DecryptAndDownloadFileAsync(int fileKey)

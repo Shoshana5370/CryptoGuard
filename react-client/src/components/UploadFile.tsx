@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import {  RootState } from '../store/store'; 
-import { uploadFileContent, postFileMetadata, resetUploadState } from '../features/files/uploadslice'; 
+import { uploadFileContent, resetUploadState } from '../features/files/uploadslice'; 
 import { useAppDispatch, useAppSelector } from '../hooks';
 const UploadFile: React.FC= () => {
     const userId = 1;
@@ -16,16 +16,10 @@ const UploadFile: React.FC= () => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!file) return;
-
+    
         try {
-            // Step 1: Upload file content
-             await dispatch(uploadFileContent(file)).unwrap();
-            // Step 2: Post metadata
-            // const metadata = {
-            //     name: file.name,
-            //     createdBy: userId,
-            // };
-            // await dispatch(postFileMetadata(metadata)).unwrap();
+            // Upload file + userId in a single request
+            await dispatch(uploadFileContent({ file, userId })).unwrap();
         } catch (err) {
             console.error('Upload error:', err);
         }

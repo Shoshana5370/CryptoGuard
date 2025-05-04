@@ -64,6 +64,7 @@ builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddScoped<IRepositoryFile, RepositoryFile>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositoryShare, RepositoryShare>();
+builder.Services.AddScoped<IServiceSendMessage,ServiceEmail>();
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServiceFile, ServiceFile>();
 builder.Services.AddScoped<IServiceShare, ServiceShare>();

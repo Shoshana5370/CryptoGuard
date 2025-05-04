@@ -18,8 +18,7 @@ namespace FileEncryption.Core.DTOs
 
             public int CreatedBy { get; set; } // מזהה המשתמש שיצר את הרשומה
 
-
-        public bool isDelete { get; set; }
+            public bool isDelete { get; set; }
 
     }
 }

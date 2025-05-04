@@ -96,7 +96,7 @@ namespace FileEncryption.Api.Controllers
         //}
         
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadEncryptedFile(IFormFile file)
+        public async Task<ActionResult<FileDto>> UploadEncryptedFile(IFormFile file ,int id)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
@@ -106,9 +106,14 @@ namespace FileEncryption.Api.Controllers
                 Content = file.OpenReadStream(),
                 ContentType = file.ContentType
             };
-            var s3Key = await _fileService.EncryptAndUploadFileAsync(dto);
-            return Ok(new { s3Key });
+            var fileDto = new FileDto
+            {
+                Name = file.FileName,
+                CreatedBy =id
+            };
 
+           var fileResponse= await _fileService.EncryptAndUploadFileAsync(dto,fileDto);
+            return Ok(fileResponse);
         }
         //[HttpGet("download/{fileKey}")]
         //public async Task<IActionResult> DownloadEncryptedFile(string fileKey)

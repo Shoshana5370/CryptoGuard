@@ -18,43 +18,33 @@ const initialState: UploadState = {
 };
 const url = 'https://localhost:7207'
 export const uploadFileContent = createAsyncThunk<
-    string,               // Return s3Key
-    File,                 // Argument: file
+    FilePostModel,                                         // Return type (from your .NET controller)
+    { file: File; userId: number },                        // Arg type
     { rejectValue: string, state: RootState }
 >(
     'upload/uploadFileContent',
-    async (file, { rejectWithValue }) => {
+    async ({ file, userId }, { rejectWithValue }) => {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            const response = await axiosInstance.post<{ s3Key: string }>(`${url}/api/Files/upload`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            return response.data.s3Key;
+            const response = await axiosInstance.post<FilePostModel>(
+                `${url}/api/Files/upload?id=${userId}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+            console.log(response.data); // Log the response data for debugging
+            return response.data;  // FileDto returned from your API
         } catch (err: any) {
             const msg = err.response?.data || err.message || 'File upload failed';
             return rejectWithValue(msg);
         }
     }
 );
-export const postFileMetadata = createAsyncThunk<
-    FilePostModel,       // Return type
-    FilePostModel,       // Argument type
-    { rejectValue: string, state: RootState }>(
-    'upload/postFileMetadata',
-    async (metadata, { rejectWithValue }) => {
-        try {
-            
-            const response = await axiosInstance.post<FilePostModel>('/api/Files/', metadata);
-            return response.data;
-        } catch (err: any) {
-            const msg = err.response?.data || err.message || 'Metadata post failed';
-            return rejectWithValue(msg);
-        }
-    }
-);
+
 
 const uploadSlice = createSlice({
     name: 'upload',
@@ -68,37 +58,22 @@ const uploadSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // Upload file content
         builder
             .addCase(uploadFileContent.pending, (state) => {
                 state.uploading = true;
                 state.success = false;
                 state.error = null;
             })
-            .addCase(uploadFileContent.fulfilled, (state) => {
+            .addCase(uploadFileContent.fulfilled, (state, action: PayloadAction<FilePostModel>) => {
                 state.uploading = false;
+                state.success = true;
+                state.uploadedFile = action.payload;
             })
             .addCase(uploadFileContent.rejected, (state, action) => {
                 state.uploading = false;
                 state.error = action.payload || 'File upload failed';
             });
 
-        // Post metadata
-        builder
-            .addCase(postFileMetadata.pending, (state) => {
-                state.uploading = true;
-                state.success = false;
-                state.error = null;
-            })
-            .addCase(postFileMetadata.fulfilled, (state, action: PayloadAction<FilePostModel>) => {
-                state.uploading = false;
-                state.success = true;
-                state.uploadedFile = action.payload;
-            })
-            .addCase(postFileMetadata.rejected, (state, action) => {
-                state.uploading = false;
-                state.error = action.payload || 'Metadata post failed';
-            });
     },
 });
 
