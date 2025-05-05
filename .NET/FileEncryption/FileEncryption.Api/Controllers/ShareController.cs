@@ -18,6 +18,14 @@ namespace FileEncryption.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IServiceFile _fileService;
 
+        public ShareController(IServiceSendMessage emailService, IServiceShare shareService, IMapper mapper, IServiceFile fileService)
+        {
+            _emailService = emailService;
+            _shareService = shareService;
+            _mapper = mapper;
+            _fileService = fileService;
+        }
+
         //// GET: api/<ShareController>
         //[HttpGet]
         //public IEnumerable<string> Get()

@@ -68,7 +68,7 @@ namespace FileEncryption.Service.Services
         public async Task<Core.Entities.File> UpdateExistingFileAsync(int id, FileDto file)
         {
             var fileEntity = _mapper.Map<Core.Entities.File>(file); // Map DTO to entity
-            var updatedFile = await _repositoryManager.Files.UpdateAsync(id, fileEntity); // Call repository method to update file
+            var updatedFile = await _repositoryManager.Files.UpdateFileAsync(id, fileEntity); // Call repository method to update file
             if (updatedFile != null)
             {
                 await _repositoryManager.SaveAsync(); // Save changes to the database
@@ -111,7 +111,7 @@ namespace FileEncryption.Service.Services
 
         public async Task<Stream> DecryptAndDownloadFileAsync(int fileKey)
         {
-            var file = await _repositoryManager.Files.GetByIdAsync(fileKey);
+            var file = await _repositoryManager.Files.GetByIdFileAsync(fileKey);
             if (file == null) throw new Exception("File not found");
             var s3Object = await _s3Client.GetObjectAsync(_config["AWS:BucketName"], file.EncryptedUrl);
             using var responseStream = s3Object.ResponseStream;

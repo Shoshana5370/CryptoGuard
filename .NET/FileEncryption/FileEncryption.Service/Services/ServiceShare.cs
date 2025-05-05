@@ -30,11 +30,11 @@ namespace FileEncryption.Service.Services
 
         public async Task<Share> ShareFileAsync(Share share)
         {
-            if (share == null)
-                throw new ArgumentNullException(nameof(share));
+            //if (share == null)
+            //    throw new ArgumentNullException(nameof(share));
 
             // 1️⃣ Make sure the file exists
-            var file = await _repositoryManager.Files.FindAsync(share.FileKey);
+            var file = await _repositoryManager.Files.GetByIdFileAsync(share.FileKey);
             if (file == null)
             {
                 throw new Exception($"File with key {share.FileKey} not found.");
@@ -50,9 +50,8 @@ namespace FileEncryption.Service.Services
             }
 
             // 4️⃣ Save to DB
-            _repositoryManager.Shares.Add(share);
-            await _repositoryManager.SaveChangesAsync();
-
+            _repositoryManager.Shares.AddShareAsync(share);
+            await _repositoryManager.SaveAsync();
             return share;
         }
 

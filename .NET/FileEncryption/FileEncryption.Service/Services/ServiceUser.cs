@@ -29,7 +29,7 @@ namespace FileEncryption.Service.Services
 
         public async Task<bool> DiscardUserAsync(int id)
         {
-            bool sucsess= await _repositoryManager.Users.DeleteAsync(id); // Call repository method to delete user
+            bool sucsess= await _repositoryManager.Users.DeleteUserAsync(id); // Call repository method to delete user
             if(sucsess)
             {
                 await _repositoryManager.SaveAsync();
@@ -40,12 +40,12 @@ namespace FileEncryption.Service.Services
 
         public async Task<IEnumerable<User>> FindAllUsersAsync()
         {
-            return await _repositoryManager.Users.GetAllAsync(); // Call repository method to get all users
+            return await _repositoryManager.Users.GetAllUserAsync(); // Call repository method to get all users
         }
 
         public async Task<User> FindUserByIdAsync(int id)
         {
-            return await _repositoryManager.Users.GetByIdAsync(id); // Call repository method to find user by ID
+            return await _repositoryManager.Users.GetByIdUserAsync(id); // Call repository method to find user by ID
         }
 
         public async Task<IEnumerable<FileDto>> GetFilesByUserIdAsync(int id)
@@ -66,7 +66,7 @@ namespace FileEncryption.Service.Services
 
         public async Task<User> UpdateExistingUserAsync(int id, UserDto user)
         {
-            User u= await _repositoryManager.Users.UpdateAsync(id, _mapper.Map<User>(user));
+            User u= await _repositoryManager.Users.UpdateUserAsync(id, _mapper.Map<User>(user));
             if (u != null)
             {
                 await _repositoryManager.SaveAsync();
