@@ -28,7 +28,7 @@ namespace FileEncryption.Service.Services
 
          public async Task<bool> DiscardFileAsync(int id)
         {
-            bool success = await _repositoryManager.Files.DeleteAsync(id); // Call repository method to delete file
+            bool success = await _repositoryManager.Files.DeleteFileAsync(id); // Call repository method to delete file
             if (success)
             {
                 await _repositoryManager.SaveAsync(); // Save changes to the database
@@ -49,18 +49,18 @@ namespace FileEncryption.Service.Services
  
         public async Task<IEnumerable<Core.Entities.File>> FindAllFilesAsync()
         {
-            return await _repositoryManager.Files.GetAllAsync(); // Call repository method to get all files
+            return await _repositoryManager.Files.GetAllFileAsync(); // Call repository method to get all files
         }
 
         public async Task<Core.Entities.File> FindFileByIdAsync(int id)
         {
-            return await _repositoryManager.Files.GetByIdAsync(id); // Call repository method to find file by ID
+            return await _repositoryManager.Files.GetByIdFileAsync(id); // Call repository method to find file by ID
         }
 
         public async Task<Core.Entities.File> InsertFileAsync(FileDto file)
         {
             var fileEntity = _mapper.Map<Core.Entities.File>(file); // Map DTO to entity
-            await _repositoryManager.Files.AddAsync(fileEntity); // Call method to add file
+            await _repositoryManager.Files.AddFileAsync(fileEntity); // Call method to add file
             await _repositoryManager.SaveAsync(); // Save changes to the database
             return fileEntity;
         }
@@ -103,7 +103,7 @@ namespace FileEncryption.Service.Services
             await _s3Client.PutObjectAsync(putRequest);
             fileDto.EncryptedUrl = key;
             var fileEntity=_mapper.Map<Core.Entities.File>(fileDto); // Map DTO to entity
-            await _repositoryManager.Files.AddAsync(fileEntity); // Call method to add file
+            await _repositoryManager.Files.AddFileAsync(fileEntity); // Call method to add file
             await _repositoryManager.SaveAsync(); // Save changes to the database
             //return fileEntity;
             return _mapper.Map<FileDto>(fileEntity);

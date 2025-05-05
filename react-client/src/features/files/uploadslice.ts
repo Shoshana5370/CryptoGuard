@@ -7,7 +7,7 @@ import axiosInstance from '../../axiosInstance';
 interface UploadState {
     uploading: boolean;
     success: boolean;
-    error: string | null;
+    error: string | object | null;
     uploadedFile?: FilePostModel;
 }
 
@@ -16,7 +16,6 @@ const initialState: UploadState = {
     success: false,
     error: null,
 };
-const url = 'https://localhost:7207'
 export const uploadFileContent = createAsyncThunk<
     FilePostModel,                         // Return type (from your .NET controller)
     { file: File },                        // Arg type (no userId)
@@ -29,7 +28,7 @@ export const uploadFileContent = createAsyncThunk<
             formData.append('file', file);
 
             const response = await axiosInstance.post<FilePostModel>(
-                `${url}/api/Files/upload`,   // 🔥 no userId in query string
+                `/api/Files/upload`,   // 🔥 no userId in query string
                 formData,
                 {
                     headers: {
@@ -74,7 +73,7 @@ const uploadSlice = createSlice({
             })
             .addCase(uploadFileContent.rejected, (state, action) => {
                 state.uploading = false;
-                state.error = action.payload || 'File upload failed';
+                state.error = action.payload ?? 'Failed to fetch files';
             });
 
     },

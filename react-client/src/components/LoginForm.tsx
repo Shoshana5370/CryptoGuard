@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { loginUser } from '../features/auth/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
-const dispatch = useAppDispatch();
-const { loading, error } = useAppSelector((state) => state.auth);
-const [email, setEmail] = useState('');
-const [password, setPassword] = useState('');
-const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useAppSelector((state) => state.auth);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
     if (!email) {
@@ -24,20 +25,32 @@ const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    dispatch(loginUser({ email, password }));
+    try {
+      await dispatch(loginUser({ email, password }));
+      navigate('/share'); // Navigate to the share page after successful login
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Optionally set a login error state here
+    }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <h2 className="text-2xl font-semibold mb-4">Sign In</h2>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-500">{error && (
+        <div>
+          {typeof error === 'string'
+            ? error
+            : JSON.stringify(error, null, 2)}
+        </div>
+      )}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         <div>
           <input
@@ -59,7 +72,7 @@ const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
           />
           {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
         </div>
-        <button type="submit" className="bg-blue-500 text-white py-2 rounded" > {loading ? 'Logging...' : 'Sign In'}</button>  
+        <button type="submit" className="bg-blue-500 text-white py-2 rounded" > {loading ? 'Logging...' : 'Sign In'}</button>
       </form>
       <p className="mt-4 text-sm">
         Don't have an account?{' '}

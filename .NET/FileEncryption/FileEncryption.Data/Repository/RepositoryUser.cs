@@ -12,23 +12,12 @@ namespace FileEncryption.Data.Repository
         {
             _context = data;
         }
-
-        //public Task<User> AddAsync(User entity)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public async Task<User> AddUserAsync(User user)
         {
             if (user == null) return null;
 
             await _context.Users.AddAsync(user); // Add user to the context
             return user; // Save changes and return success
-        }
-
-        public Task<bool> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -46,17 +35,12 @@ namespace FileEncryption.Data.Repository
             
         }
 
-        public Task<IEnumerable<User>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<User>> GetAllUserAsync()
         {
             return await _context.Users.ToListAsync(); // Return all users as a list
         }
 
-        public Task<User> GetByIdAsync(int id)
+        public Task<User> GetByIdUserAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -78,10 +62,6 @@ namespace FileEncryption.Data.Repository
             return await _context.Users.FindAsync(id); // Find user by ID
         }
 
-        public Task<User> UpdateAsync(int id, User entity)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<User> UpdateUserAsync(int id,User user)
         {

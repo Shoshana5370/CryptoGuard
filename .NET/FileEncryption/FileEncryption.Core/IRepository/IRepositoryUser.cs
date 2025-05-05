@@ -11,18 +11,12 @@ namespace FileEncryption.Core.IRepository
     public interface IRepositoryUser 
     {
         public Task<User> AddUserAsync(User user);
-        public Task<bool> DeleteAsync(int id);
+        public Task<bool> DeleteUserAsync(int id);
         public Task<User> FindByEmailAsync(string email);
-        public Task<IEnumerable<User>> GetAllAsync();
-        public Task<User> GetByIdAsync(int id);
-        public Task<User> UpdateAsync(int id, User user);
+        public Task<IEnumerable<User>> GetAllUserAsync();
+        public Task<User> GetByIdUserAsync(int id);
+        public Task<User> UpdateUserAsync(int id, User user);
         public Task<IEnumerable<FileEncryption.Core.Entities.File>> GetFilesByUserIdAsync(int id);
-
-        //Task<User> GetUserByIdAsync(int id);
-        //Task<IEnumerable<User>> GetAllUsersAsync();
-        //Task<User> AddUserAsync(User user);
-        //Task<User> UpdateUserAsync(int id,User user);
-        //Task<bool> DeleteUserAsync(int id);
 
     }
 }

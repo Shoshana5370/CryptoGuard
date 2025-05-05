@@ -1,10 +1,8 @@
 ﻿using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FileEncryption.Data.Repository
@@ -18,37 +16,51 @@ namespace FileEncryption.Data.Repository
             _dataContext = dataContext;
         }
 
-        public async Task<Core.Entities.File> AddAsync(Core.Entities.File fileEntity)
+        public async Task<Core.Entities.File> AddFileAsync(Core.Entities.File fileEntity)
         {
             if (fileEntity == null) return null;
 
-            await _dataContext.Files.AddAsync(fileEntity); 
-            return fileEntity; 
+            await _dataContext.Files.AddAsync(fileEntity);
+            return fileEntity;
         }
 
-        public Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteFileAsync(int id)
         {
-            throw new NotImplementedException();
+            var file = await _dataContext.Files.FindAsync(id);
+            if (file == null)
+            {
+                return false;
+            }
+
+            _dataContext.Files.Remove(file);
+            return true;
         }
 
-        public Task<IEnumerable<Core.Entities.File>> GetAllAsync()
+        public async Task<IEnumerable<Core.Entities.File>> GetAllFileAsync()
         {
-            throw new NotImplementedException();
+            return await _dataContext.Files.ToListAsync();
         }
 
-        public Task GetByIdAsync(int fileKey)
+        public async Task<Core.Entities.File> GetByIdFileAsync(int fileKey)
         {
-            throw new NotImplementedException();
+            return await _dataContext.Files
+                .FirstOrDefaultAsync(f => f.Id == fileKey);
         }
 
-        public Task<Core.Entities.File> UpdateAsync(int id, Core.Entities.File fileEntity)
+        public async Task<Core.Entities.File> UpdateFileAsync(int id, Core.Entities.File fileEntity)
         {
-            throw new NotImplementedException();
-        }
+            var existingFile = await _dataContext.Files.FindAsync(id);
+            if (existingFile == null)
+            {
+                return null;
+            }
 
-        Task<Core.Entities.File> IRepositoryFile.GetByIdAsync(int fileKey)
-        {
-            throw new NotImplementedException();
+            // Map fields as needed
+            existingFile.Name = fileEntity.Name;
+            // Add more fields if necessary
+
+            _dataContext.Files.Update(existingFile);
+            return existingFile;
         }
     }
 }

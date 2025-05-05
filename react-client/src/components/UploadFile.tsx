@@ -1,21 +1,21 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import {  RootState } from '../store/store'; 
-import { uploadFileContent, resetUploadState } from '../features/files/uploadslice'; 
+import { RootState } from '../store/store';
+import { uploadFileContent, resetUploadState } from '../features/files/uploadslice';
 import { useAppDispatch, useAppSelector } from '../hooks';
-const UploadFile: React.FC= () => {
+const UploadFile: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const dispatch = useAppDispatch();
-    const { uploading, success, error, uploadedFile } = useAppSelector((state: RootState) => state.upFiles); 
+    const { uploading, success, error, uploadedFile } = useAppSelector((state: RootState) => state.upFiles);
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setFile(e.target.files[0]);
-            dispatch(resetUploadState()); 
+            dispatch(resetUploadState());
         }
     };
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!file) return;
-    
+
         try {
             // Upload file + userId in a single request
             await dispatch(uploadFileContent({ file })).unwrap();
@@ -40,7 +40,13 @@ const UploadFile: React.FC= () => {
             >
                 {uploading ? 'Uploading...' : 'Upload'}
             </button>
-            {error && <p className="mt-4 text-red-500">{error}</p>}
+            {error && <p className="mt-4 text-red-500">{error && (
+                <div>
+                    {typeof error === 'string'
+                        ? error
+                        : JSON.stringify(error, null, 2)}
+                </div>
+            )}</p>}
             {success && uploadedFile && (
                 <p className="mt-4 text-green-600">Uploaded: {uploadedFile.name}</p>
             )}

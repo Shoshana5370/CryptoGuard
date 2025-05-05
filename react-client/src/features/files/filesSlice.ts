@@ -7,7 +7,7 @@ import axiosInstance from '../../axiosInstance';
 interface FilesState {
     items: FileDto[];
     loading: boolean;
-    error: string | null;
+    error: string | object | null;
 }
 const initialState: FilesState = {
     items: [],
@@ -56,7 +56,7 @@ const filesSlice = createSlice({
             })
             .addCase(fetchFilesByUserId.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload || 'Failed to fetch files';
+                state.error = action.payload ?? 'Failed to fetch files';
             });
     },
 });

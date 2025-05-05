@@ -49,7 +49,7 @@ namespace FileEncryption.Api.Controllers
         //public void Delete(int id)
         //{
         //}
-        [HttpPost("share")]
+        [HttpPost]
         public async Task<ActionResult<Share>> ShareFile([FromBody] SharePostModel req)  //to create a new share
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
