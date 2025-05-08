@@ -23,9 +23,20 @@ namespace FileEncryption.Service.Services
             throw new NotImplementedException();
         }
 
-        public Task<Share> GetValidShareByCodeAsync(string v)
+        public async Task<Share> GetValidShareByCodeAsync(string accessCode)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(accessCode))
+                return null;
+
+            var share = await _repositoryManager.Shares.GetByAccessCodeAsync(accessCode);
+
+            if (share == null)
+                return null;
+
+            if (share.Used || share.ExpiresAt <= DateTime.UtcNow)
+                return null;
+
+            return share;
         }
 
         public async Task<Share> ShareFileAsync(Share share)

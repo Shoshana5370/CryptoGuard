@@ -43,7 +43,7 @@ const RegisterForm = () => {
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <h2 className="text-2xl font-semibold mb-4">Sign Up</h2>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-500">{error.toString()}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         <div>
           <input

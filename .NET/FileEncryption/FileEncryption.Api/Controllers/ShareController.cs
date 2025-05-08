@@ -2,6 +2,7 @@
 using FileEncryption.Api.Models;
 using FileEncryption.Core.Entities;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -10,6 +11,7 @@ using System.Security.Claims;
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class ShareController : ControllerBase
     {

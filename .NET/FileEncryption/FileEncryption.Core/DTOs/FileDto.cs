@@ -13,9 +13,10 @@ namespace FileEncryption.Core.DTOs
             public string Name { get; set; } // שם הקובץ
 
             public string EncryptedUrl { get; set; } // כתובת הקובץ המוצפן ב-S3
+            public string ContentType { get; set; }
 
             public DateTime CreatedAt { get; set; } // תאריך העלאה
-
+ 
             public int CreatedBy { get; set; } // מזהה המשתמש שיצר את הרשומה
 
             public bool isDelete { get; set; }

@@ -1,3 +1,6 @@
+//////////this is my component
+
+
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store' // adjust paths
@@ -14,7 +17,7 @@ const FilesList: React.FC= () => {
     }, [dispatch, userId]);
 
     if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div>Error: {error.toString()}</div>;
 
     return (
         <div>

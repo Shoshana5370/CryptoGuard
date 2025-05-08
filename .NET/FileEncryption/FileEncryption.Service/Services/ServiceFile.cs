@@ -49,29 +49,29 @@ namespace FileEncryption.Service.Services
  
         public async Task<IEnumerable<Core.Entities.File>> FindAllFilesAsync()
         {
-            return await _repositoryManager.Files.GetAllFileAsync(); // Call repository method to get all files
+            return await _repositoryManager.Files.GetAllFileAsync();
         }
 
         public async Task<Core.Entities.File> FindFileByIdAsync(int id)
         {
-            return await _repositoryManager.Files.GetByIdFileAsync(id); // Call repository method to find file by ID
+            return await _repositoryManager.Files.GetByIdFileAsync(id); 
         }
 
         public async Task<Core.Entities.File> InsertFileAsync(FileDto file)
         {
-            var fileEntity = _mapper.Map<Core.Entities.File>(file); // Map DTO to entity
-            await _repositoryManager.Files.AddFileAsync(fileEntity); // Call method to add file
-            await _repositoryManager.SaveAsync(); // Save changes to the database
+            var fileEntity = _mapper.Map<Core.Entities.File>(file); 
+            await _repositoryManager.Files.AddFileAsync(fileEntity); 
+            await _repositoryManager.SaveAsync(); 
             return fileEntity;
         }
 
         public async Task<Core.Entities.File> UpdateExistingFileAsync(int id, FileDto file)
         {
-            var fileEntity = _mapper.Map<Core.Entities.File>(file); // Map DTO to entity
-            var updatedFile = await _repositoryManager.Files.UpdateFileAsync(id, fileEntity); // Call repository method to update file
+            var fileEntity = _mapper.Map<Core.Entities.File>(file); 
+            var updatedFile = await _repositoryManager.Files.UpdateFileAsync(id, fileEntity); 
             if (updatedFile != null)
             {
-                await _repositoryManager.SaveAsync(); // Save changes to the database
+                await _repositoryManager.SaveAsync(); 
             }
             return updatedFile;
         }
@@ -84,14 +84,11 @@ namespace FileEncryption.Service.Services
             aes.GenerateIV();
             using var uploadStream = new MemoryStream();
             await uploadStream.WriteAsync(aes.IV, 0, aes.IV.Length); // שומרים את ה-IV בתחילת הקובץ
-
             using (var cryptoStream = new CryptoStream(uploadStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true))
             {
                 await file.Content.CopyToAsync(cryptoStream);
             }
-
             uploadStream.Position = 0;
-
             var putRequest = new PutObjectRequest
             {
                 BucketName = bucketName,
@@ -102,10 +99,9 @@ namespace FileEncryption.Service.Services
 
             await _s3Client.PutObjectAsync(putRequest);
             fileDto.EncryptedUrl = key;
-            var fileEntity=_mapper.Map<Core.Entities.File>(fileDto); // Map DTO to entity
-            await _repositoryManager.Files.AddFileAsync(fileEntity); // Call method to add file
-            await _repositoryManager.SaveAsync(); // Save changes to the database
-            //return fileEntity;
+            var fileEntity=_mapper.Map<Core.Entities.File>(fileDto);
+            await _repositoryManager.Files.AddFileAsync(fileEntity);
+            await _repositoryManager.SaveAsync(); 
             return _mapper.Map<FileDto>(fileEntity);
         }
 

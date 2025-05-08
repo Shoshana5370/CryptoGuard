@@ -73,7 +73,7 @@ namespace FileEncryption.Service.Services
             {
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim("isAdmin", user.IsAdmin.ToString())
+            new Claim(ClaimTypes.Role, user.IsAdmin?"Admin":"User")
             };
 
             var token = new JwtSecurityToken(

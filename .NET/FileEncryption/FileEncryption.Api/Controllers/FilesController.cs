@@ -2,11 +2,13 @@
 using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class FilesController : ControllerBase
     {
@@ -97,9 +99,12 @@ namespace FileEncryption.Api.Controllers
         //}
         
         [HttpPost("upload")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> UploadEncryptedFile(IFormFile file)
         {
-            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int userId = int.Parse(userIdClaim);
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
             var dto = new FileFormDto
@@ -111,10 +116,10 @@ namespace FileEncryption.Api.Controllers
             var fileDto = new FileDto
             {
                 Name = file.FileName,
-                CreatedBy = userId
+                CreatedBy = userId,
+                ContentType = file.ContentType
             };
-
-           var fileResponse= await _fileService.EncryptAndUploadFileAsync(dto,fileDto);
+            var fileResponse= await _fileService.EncryptAndUploadFileAsync(dto,fileDto);
             return Ok(fileResponse);
         }
         //[HttpGet("download/{fileKey}")]

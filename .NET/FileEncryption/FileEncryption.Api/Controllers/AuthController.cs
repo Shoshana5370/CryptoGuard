@@ -29,7 +29,7 @@ namespace FileEncryption.Api.Controllers
             var result = await _authService.Login(_mapper.Map<UserDto>(user));
             if (result == null)
             {
-                return BadRequest();
+                return BadRequest("User not already exists or login failed.");
             }
             return Ok(result);
         }

@@ -11,7 +11,9 @@ import RegisterForm from "./components/RegisterForm";
 import AppLayout from "./components/AppLayout";
 import FilesList from "./components/FilesList";
 import UploadFile from "./components/UploadFile";
-import ShareFileForm from "./components/shareFileFrom";
+import AccessSharedFile from "./components/AccessSharedFile";
+import ShareFileForm from "./components/ShareFileFrom";
+// import HomePage from "./components/HomePage";
 
 // </BrowserRouter> 
 const Router = createBrowserRouter([
@@ -42,6 +44,10 @@ const Router = createBrowserRouter([
             {
                 path: "/share",
                 element: <ShareFileForm/>,
+            },
+            {
+                path: "/share/access",
+                element: <AccessSharedFile/>,
             },
         ],
     }

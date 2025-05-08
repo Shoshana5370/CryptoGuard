@@ -1,18 +1,13 @@
 ﻿using AutoMapper;
-using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
-using FileEncryption.Core.Entities;
 using FileEncryption.Core.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -24,42 +19,44 @@ namespace FileEncryption.Api.Controllers
             _mapper = mapper;
         }
         [HttpGet("{id}")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync(int id)
         {
             var files = await _userService.GetFilesByUserIdAsync(id);
-            if(files==null)
+            if(files == null)
             {
                 return NotFound();
             }
             return Ok(files);
         }
-        //    // GET: api/<UserController>
-        //    [HttpGet]
-        //    public async Task<ActionResult<IEnumerable<UserDto>>> GetAsync()
-        //    {
-        //        var users = await _userService.FindAllUsersAsync();
-        //        if (users == null || !users.Any())
-        //        {
-        //            return NotFound();
-        //        }
+        // GET: api/<UserController>
+        [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAsync()
+        {
+            var users = await _userService.FindAllUsersAsync();
+            if (users == null || !users.Any())
+            {
+                return NotFound();
+            }
 
-        //        return Ok(_mapper.Map< IEnumerable <UserDto>>(users));
+            return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
+        }
+
+
+        // GET api/<UserController>/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<UserDto>> Get(int id)
+        //{
+        //    var user = await _userService.FindUserByIdAsync(id);
+
+        //    if (user == null)
+        //    {
+        //        return NotFound(); // Return 404 if user is not found
         //    }
 
-
-        //    // GET api/<UserController>/5
-        //    [HttpGet("{id}")]
-        //    public async Task<ActionResult<UserDto>> Get(int id)
-        //    {
-        //        var user = await _userService.FindUserByIdAsync(id);
-
-        //        if (user == null)
-        //        {
-        //            return NotFound(); // Return 404 if user is not found
-        //        }
-
-        //        return Ok(_mapper.Map<UserDto>(user)); // Return 200 OK with the user
-        //    }
+        //    return Ok(_mapper.Map<UserDto>(user)); // Return 200 OK with the user
+        //}
 
         //    // POST api/<UserController>
         //    [HttpPost]

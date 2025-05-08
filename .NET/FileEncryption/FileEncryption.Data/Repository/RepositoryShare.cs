@@ -39,6 +39,13 @@ namespace FileEncryption.Data.Repository
                 return await _dataContext.Shares.ToListAsync();
             }
 
+            public async Task<Share> GetByAccessCodeAsync(string accessCode)
+            {
+              if (string.IsNullOrEmpty(accessCode))
+                return null;
+              return await _dataContext.Shares.FirstOrDefaultAsync(s => s.AccessCode == accessCode);
+            }
+
             public async Task<Share> GetByIdShareAsync(int shareId)
             {
                 return await _dataContext.Shares
