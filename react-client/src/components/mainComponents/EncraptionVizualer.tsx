@@ -1,27 +1,38 @@
-import  { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 export default function EncryptionVisualizer() {
-  const canvasRef = useRef(null);
-  
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   useEffect(() => {
-    const canvas:any = canvasRef.current;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
-    let animationFrameId:any;
-    
+    if (!ctx) return;
+
+    let animationFrameId: number;
+
     // Set canvas size
     const setCanvasSize = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
-    
+
     setCanvasSize();
     window.addEventListener("resize", setCanvasSize);
-    
-    // Set up particles
-    const particles:any = [];
+
+    // Particle setup
+    const particles: {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+    }[] = [];
+
     const particleCount = 60;
-    
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -32,39 +43,35 @@ export default function EncryptionVisualizer() {
         color: `rgba(${Math.floor(Math.random() * 85 + 170)}, ${Math.floor(Math.random() * 85 + 170)}, ${Math.floor(Math.random() * 85 + 170)}, ${Math.random() * 0.5 + 0.3})`
       });
     }
-    
-    // Animation function
+
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Draw particles
+
       particles.forEach(particle => {
         ctx.fillStyle = particle.color;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
-        
-        // Move particles
+
         particle.x += particle.speedX;
         particle.y += particle.speedY;
-        
-        // Wrap around screen
+
+        // Wrap edges
         if (particle.x < 0) particle.x = canvas.width;
         if (particle.x > canvas.width) particle.x = 0;
         if (particle.y < 0) particle.y = canvas.height;
         if (particle.y > canvas.height) particle.y = 0;
       });
-      
-      // Draw connections
+
       ctx.strokeStyle = "rgba(160, 160, 160, 0.1)";
       ctx.lineWidth = 0.5;
-      
+
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          
+
           if (distance < 100) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
@@ -73,24 +80,25 @@ export default function EncryptionVisualizer() {
           }
         }
       }
-      
+
       animationFrameId = requestAnimationFrame(animate);
     };
-    
+
     animate();
-    
+
     return () => {
       window.removeEventListener("resize", setCanvasSize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  
+
   return (
     <div className="relative h-[500px] w-full rounded-2xl shadow-2xl overflow-hidden bg-gradient-to-br from-emerald-100/30 to-amber-50 border border-gray-100">
-      <canvas 
-        ref={canvasRef} 
+      <canvas
+        ref={canvasRef}
         className="absolute inset-0 w-full h-full"
       />
+
       
       {/* Visual Elements */}
       <div className="absolute inset-0 flex items-center justify-center">

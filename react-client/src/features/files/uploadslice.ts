@@ -4,7 +4,7 @@ import { RootState } from '../../store/store'; // Adjust path
 import { FilePostModel } from '../../types/FilePostModel'; // Adjust path
 import axiosInstance from '../../axiosInstance';
 
-interface UploadState {
+export interface UploadState {
     uploading: boolean;
     success: boolean;
     error: string | object | null;

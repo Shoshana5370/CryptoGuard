@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
 
-interface AccessState {
+export interface AccessState {
   fileBlob?: Blob;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | object | null;

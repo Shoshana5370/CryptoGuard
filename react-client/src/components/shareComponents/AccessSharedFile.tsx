@@ -10,8 +10,8 @@
 
 // src/components/AccessSharedFile.tsx
 import React, { useState, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks'; // Adjust according to your setup
-import { accessSharedFile, clearAccess } from '../features/shares/accessSlice'; // Adjust according to your setup
+import { useAppDispatch, useAppSelector } from '../../hooks'; // Adjust according to your setup
+import { accessSharedFile, clearAccess } from '../../features/shares/accessSlice'; // Adjust according to your setup
 // import { Button, Input } from '@/components/ui'; // Update imports to match your design system
 
 const AccessSharedFile: React.FC = () => {

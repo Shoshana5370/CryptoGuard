@@ -1,7 +1,7 @@
 // src/components/ShareFileForm.tsx
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks';
-import { shareFile, clearShare } from '../features/shares/shareSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { shareFile, clearShare } from '../../features/shares/shareSlice';
 
 const ShareFileForm: React.FC = () => {
     const dispatch = useAppDispatch();

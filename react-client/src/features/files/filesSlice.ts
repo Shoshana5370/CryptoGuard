@@ -4,7 +4,7 @@ import { RootState } from '../../store/store'; // adjust path as needed
 import { FileDto } from '../../types/FileDto';
 import axiosInstance from '../../axiosInstance';
 
-interface FilesState {
+export interface FilesState {
     items: FileDto[];
     loading: boolean;
     error: string | object | null;

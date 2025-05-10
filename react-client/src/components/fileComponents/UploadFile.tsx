@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { RootState } from '../store/store';
-import { uploadFileContent, resetUploadState } from '../features/files/uploadslice';
-import { useAppDispatch, useAppSelector } from '../hooks';
+import { RootState } from '../../store/store';
+import { uploadFileContent, resetUploadState } from '../../features/files/uploadslice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 const UploadFile: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const dispatch = useAppDispatch();

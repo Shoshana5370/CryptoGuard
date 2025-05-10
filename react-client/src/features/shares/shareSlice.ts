@@ -7,7 +7,7 @@ import { ShareDto } from '../../types/ShareDto';
 
 
 
-interface ShareState {
+export interface ShareState {
   share?: ShareDto;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | object | null;

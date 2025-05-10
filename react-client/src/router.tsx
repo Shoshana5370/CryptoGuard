@@ -6,13 +6,14 @@
 // </Routes>
 
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import LoginForm from "./components/LoginForm";
-import RegisterForm from "./components/RegisterForm";
-import AppLayout from "./components/AppLayout";
-import FilesList from "./components/FilesList";
-import UploadFile from "./components/UploadFile";
-import AccessSharedFile from "./components/AccessSharedFile";
-import ShareFileForm from "./components/ShareFileFrom";
+import LoginForm from "./components/userComponents/LoginForm";
+import RegisterForm from "./components/userComponents/RegisterForm";
+import AppLayout from "./components/mainComponents/AppLayout";
+import FilesList from "./components/fileComponents/FilesList";
+import UploadFile from "./components/fileComponents/UploadFile";
+import AccessSharedFile from "./components/shareComponents/AccessSharedFile";
+import ShareFileForm from "./components/shareComponents/ShareFileFrom";
+import HomePage from "./components/mainComponents/HomePage";
 // import HomePage from "./components/HomePage";
 
 // </BrowserRouter> 
@@ -23,7 +24,7 @@ const Router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Navigate to="/auth/login" />,
+                element: <Navigate to="home" />,
             },
             {
                 path: "/auth/login",
@@ -48,6 +49,10 @@ const Router = createBrowserRouter([
             {
                 path: "/share/access",
                 element: <AccessSharedFile/>,
+            },
+            {
+                path: "/home",
+                element: <HomePage/>,
             },
         ],
     }
