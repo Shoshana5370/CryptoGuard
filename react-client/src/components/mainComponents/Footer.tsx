@@ -4,47 +4,45 @@ import Logo from "./Logo"
 
 const Footer = () => {
     return (<>
-    
-    
+  
     <div className="container mx-auto px-4 py-12">
-
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Logo/>
               </div>
               <p className="text-gray-600">
-                Secure file encryption for everyone. Protect your digital assets with military-grade encryption.
+                Secure file encryption for everyone. Protect your digital assets with grade encryption.
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
               <ul className="space-y-3">
-                <li><Link to="/features" className="text-gray-600 hover:text-gray-900">Features</Link></li>
-                <li><Link to="/security" className="text-gray-600 hover:text-gray-900">Security</Link></li>
-                <li><Link to="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link></li>
-                <li><Link to="/faq" className="text-gray-600 hover:text-gray-900">FAQ</Link></li>
+                <li><Link to="#features" className="text-gray-600 hover:text-gray-900">Features</Link></li>
+                <li><Link to="#security" className="text-gray-600 hover:text-gray-900">Security</Link></li>
+                <li><Link to="#pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link></li>
+                <li><Link to="#faq" className="text-gray-600 hover:text-gray-900">FAQ</Link></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
               <ul className="space-y-3">
-                <li><Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link></li>
-                <li><Link to="/blog" className="text-gray-600 hover:text-gray-900">Blog</Link></li>
-                <li><Link to="/careers" className="text-gray-600 hover:text-gray-900">Careers</Link></li>
-                <li><Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link></li>
+                <li><Link to="#about" className="text-gray-600 hover:text-gray-900">About</Link></li>
+                <li><Link to="#blog" className="text-gray-600 hover:text-gray-900">Blog</Link></li>
+                <li><Link to="#careers" className="text-gray-600 hover:text-gray-900">Careers</Link></li>
+                <li><Link to="#contact" className="text-gray-600 hover:text-gray-900">Contact</Link></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
               <ul className="space-y-3">
-                <li><Link to="/privacy" className="text-gray-600 hover:text-gray-900">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="text-gray-600 hover:text-gray-900">Terms of Service</Link></li>
-                <li><Link to="/cookies" className="text-gray-600 hover:text-gray-900">Cookie Policy</Link></li>
-                <li><Link to="/gdpr" className="text-gray-600 hover:text-gray-900">GDPR</Link></li>
+                <li><Link to="#privacy" className="text-gray-600 hover:text-gray-900">Privacy Policy</Link></li>
+                <li><Link to="#terms" className="text-gray-600 hover:text-gray-900">Terms of Service</Link></li>
+                <li><Link to="#cookies" className="text-gray-600 hover:text-gray-900">Cookie Policy</Link></li>
+                <li><Link to="#gdpr" className="text-gray-600 hover:text-gray-900">GDPR</Link></li>
               </ul>
             </div>
           </div>
@@ -71,5 +69,4 @@ const Footer = () => {
         </div>
     </>)
 }
-
 export default Footer

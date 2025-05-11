@@ -11,7 +11,6 @@ namespace FileEncryption.Core.DTOs
             public int Id { get; set; } // מזהה קובץ
 
             public string Name { get; set; } // שם הקובץ
-
             public string EncryptedUrl { get; set; } // כתובת הקובץ המוצפן ב-S3
             public string ContentType { get; set; }
 

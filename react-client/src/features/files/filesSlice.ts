@@ -25,6 +25,7 @@ export const fetchFilesByUserId = createAsyncThunk<
     'files/fetchFilesByUserId',
     async (userId, {  rejectWithValue }) => {
         try {
+            
             const response = await axiosInstance.get<FileDto[]>(`${url}/api/User/${userId}`, {
             });
             return response.data;

@@ -14,6 +14,8 @@ import UploadFile from "./components/fileComponents/UploadFile";
 import AccessSharedFile from "./components/shareComponents/AccessSharedFile";
 import ShareFileForm from "./components/shareComponents/ShareFileFrom";
 import HomePage from "./components/mainComponents/HomePage";
+import Files from "./components/fileComponents/files";
+import NotFound from "./components/mainComponents/NotFound";
 // import HomePage from "./components/HomePage";
 
 // </BrowserRouter> 
@@ -34,26 +36,31 @@ const Router = createBrowserRouter([
                 path: "/auth/register",
                 element: <RegisterForm />,
             },
+            // {
+            //     path: "file/list",
+            //     element: <FilesList/>,
+            // },
             {
-                path: "file/list",
-                element: <FilesList/>,
-            },
-            {
-                path: "/file/upload",
+                path: "/files/upload",
                 element: <UploadFile/>,
             },
-            {
-                path: "/share",
-                element: <ShareFileForm/>,
-            },
-            {
-                path: "/share/access",
-                element: <AccessSharedFile/>,
-            },
+            // {
+            //     path: "/share",
+            //     element: <ShareFileForm/>,
+            // },
+            // {
+            //     path: "/share/access",
+            //     element: <AccessSharedFile/>,
+            // },
             {
                 path: "/home",
                 element: <HomePage/>,
             },
+            {
+                path: "/files",
+                element: <Files/>,
+            },
+            { path: "*", element: <NotFound /> },
         ],
     }
 ]);

@@ -22,17 +22,17 @@ namespace FileEncryption.Api.Controllers
         }
 
         // GET: api/<FilesController>
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<FileDto>>> GetAsync()
-        //{
-        //    var files = await _fileService.FindAllFilesAsync();
-        //    if (files == null || !files.Any())
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FileDto>>> GetAsync()
+        {
+            var files = await _fileService.FindAllFilesAsync();
+            if (files == null || !files.Any())
+            {
+                return NotFound();
+            }
 
-        //    return Ok(_mapper.Map<IEnumerable<FileDto>>(files));
-        //}
+            return Ok(_mapper.Map<IEnumerable<FileDto>>(files));
+        }
 
         //// GET api/<FilesController>/5
         //[HttpGet("{id}")]
@@ -102,7 +102,6 @@ namespace FileEncryption.Api.Controllers
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> UploadEncryptedFile(IFormFile file)
         {
-
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdClaim);
             if (file == null || file.Length == 0)
@@ -120,6 +119,10 @@ namespace FileEncryption.Api.Controllers
                 ContentType = file.ContentType
             };
             var fileResponse= await _fileService.EncryptAndUploadFileAsync(dto,fileDto);
+            if(fileResponse == null)
+            {
+                return BadRequest("Upload a file failed.");
+            }
             return Ok(fileResponse);
         }
         //[HttpGet("download/{fileKey}")]

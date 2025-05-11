@@ -1,13 +1,14 @@
 // import  { useState } from "react";
 import { motion } from "framer-motion";
 // import { Upload, Shield, FileText, Lock, CheckCircle, AlertCircle } from "lucide-react";
-import { Button } from "@/styles/ui/button";
+// import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
 // import { Progress } from "@/components/ui/progress";
 import EncryptionVisualizer from "./EncraptionVizualer";
 // import SecurityFeatures from "./SecuirtyFeateras";
 // import EncryptionSteps from "./EncraptionSteps";
 import Logo from "./Logo";
+import { Button } from "@/styles/ui/button";
 export default function Home() {
   // const [file, setFile] = useState(null);
   // const [password, setPassword] = useState("");
