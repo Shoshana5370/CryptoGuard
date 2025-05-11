@@ -6,6 +6,7 @@ import { FileDto } from "@/types/FileDto";
 import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
+import ShareFileDialog from "./ShareFileDialog";
 
 
 const Files=()=> {
@@ -85,11 +86,11 @@ const Files=()=> {
   )
 }
 
-       {/* <ShareFileDialog
-        // isOpen={isShareDialogOpen}
-        // onClose={() => setIsShareDialogOpen(false)}
-        // file={selectedFile} 
-      /> */}
+       <ShareFileDialog
+         isOpen={isShareDialogOpen}
+         onClose={() => setIsShareDialogOpen(false)}
+         file={selectedFile} 
+      />
     </div>
   );
 }
