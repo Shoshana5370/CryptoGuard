@@ -2,7 +2,6 @@ import { fetchFilesByUserId } from "@/features/files/filesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
-import { FileDto } from "@/types/FileDto";
 import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
@@ -13,7 +12,7 @@ const Files=()=> {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { items: files, loading, error } = useAppSelector(state => state.files);
-  
+
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<number>(0);
 
@@ -71,10 +70,12 @@ const Files=()=> {
       <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
       <span className="ml-2 text-lg text-gray-600">Loading files...</span>
     </div>
-  ) : (
-    files.length === 0 ? (
-      <p>No files found.</p>
-    ) : (
+  ) 
+//   : (
+//     files.length === 0 ? (
+//       <p>No files found.</p>
+//     )
+     : (
       <FileTable
         files={files}
         onDelete={handleDelete}
@@ -83,7 +84,7 @@ const Files=()=> {
         onShare={handleShare}
       />
     )
-  )
+//   )
 }
 
        <ShareFileDialog

@@ -1,11 +1,3 @@
-
-// /**
-//  * ShareFileDialog Component
-//  * @param {Object} props
-//  * @param {boolean} props.isOpen - Is dialog visible
-//  * @param {Function} props.onClose - Close dialog callback
-//  * @param {Object|null} props.file - The file being shared
-
 import { Button } from "@/styles/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/styles/ui/dialog";
 import { Input } from "@/styles/ui/input";
@@ -14,8 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/styles/ui/tabs";
 import { motion } from "framer-motion";
 import { Check, Clock, Copy, Mail, Share2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-
-//  */
 const ShareFileDialog = ({ isOpen, onClose, file }:{ isOpen: boolean, onClose: () => void, file: number}) => {
   const [shareOption, setShareOption] = useState("email");
   const [email, setEmail] = useState("");
@@ -24,20 +14,8 @@ const ShareFileDialog = ({ isOpen, onClose, file }:{ isOpen: boolean, onClose: (
   const [shareSuccess, setShareSuccess] = useState(false);
   
   const handleShareViaEmail = () => {
-    if (!email) return;
-    
+    if (!email) return;   
     setIsSharing(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSharing(false);
-      setShareSuccess(true);
-      
-      setTimeout(() => {
-        setShareSuccess(false);
-        onClose();
-      }, 2000);
-    }, 1500);
   };
 
   const resetDialog = () => {
