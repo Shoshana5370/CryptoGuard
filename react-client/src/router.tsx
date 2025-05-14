@@ -46,7 +46,7 @@ const Router = createBrowserRouter([
                 element: <UploadFile/>,
             },
             {
-                path: "/share",
+                path: "/shares",
                 element: <SharedWithMe/>,
             },
             {

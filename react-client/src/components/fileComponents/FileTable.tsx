@@ -5,13 +5,6 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { AnimatePresence, motion } from "framer-motion";
 import { Archive, Code, Download, FileText, MoreVertical, Music, Pencil, Share2, Trash2, Video, File, Image } from "lucide-react";
 import { format } from "date-fns";
-
-
-// /**
-//  * Returns an appropriate icon component based on file type
-//  * @param {string} fileType - The type of file
-//  * @returns {React.ReactNode} - Icon component
-//  */
 const getFileIcon = (fileType: any) => {
   const iconProps = { className: "w-5 h-5" };
   switch (fileType.toLowerCase()) {

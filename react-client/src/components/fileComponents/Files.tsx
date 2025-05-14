@@ -5,7 +5,7 @@ import { Button } from "@/styles/ui/button";
 import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
-import ShareFileDialog from "./ShareFileDialog";
+import ShareFileDialog from "../shareComponents/ShareFileDialog";
 
 
 const Files=()=> {
