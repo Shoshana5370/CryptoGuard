@@ -4,9 +4,6 @@ import axiosInstance from '../../axiosInstance';
 import { SharePostModel } from '../../types/SharePostModel';
 import { ShareDto } from '../../types/ShareDto';
 
-
-
-
 export interface ShareState {
   share?: ShareDto;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';

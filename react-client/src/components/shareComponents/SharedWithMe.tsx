@@ -3,11 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/styles/ui/tabs";
 import { Link2, Share2 } from "lucide-react";
 import AccessSharedFile from "./AccessSharedFile";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/styles/ui/card";
-
-
 export default function SharedWithMe() {
   const { user } = useAppSelector(state => state.auth);
-  
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">

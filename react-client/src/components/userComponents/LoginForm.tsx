@@ -92,7 +92,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { Input } from "@/styles/ui/input";
 import { Button } from "@/styles/ui/button";
-import { Mail, Lock, AlertCircle } from "lucide-react";
+import { Mail, Lock, AlertCircle, Loader, EyeOff, Eye } from "lucide-react";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import Logo from '../mainComponents/Logo';
 
@@ -102,6 +102,7 @@ const LoginForm = () => {
   const { loading, error } = useAppSelector((state) => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -127,16 +128,19 @@ const LoginForm = () => {
     }
     try {
       await dispatch(loginUser({ email, password }));
-       // Navigate to the share page after successful login
+      // Navigate to the home page after successful login
+      navigate('/home'); // Adjust the path as per your route configuration
     } catch (error) {
       console.error("Login failed:", error);
       // Optionally set a login error state here
     }
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-stone-50 flex items-center justify-center p-4">
-      <motion.div
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+  <div className="hidden md:block bg-[url('/illustration.svg')] bg-cover bg-center" />
+  <div className="flex items-center justify-center p-4">
+    {/* Login card */}
+     <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
@@ -169,6 +173,7 @@ const LoginForm = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
+                  autoComplete="email"
                 />
               </div>
               {errors.email && (
@@ -177,7 +182,7 @@ const LoginForm = () => {
             </div>
 
             <div className="space-y-2">
-              <div className="relative">
+              {/* <div className="relative">
                 <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 <Input
                   type="password"
@@ -185,36 +190,62 @@ const LoginForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
+                  autoComplete='current-password"'
+                /> */}
+              <div className="relative">
+                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 pr-10"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-500">{errors.password}</p>
-              )}
+              <div className="text-right text-sm text-emerald-700 hover:underline">
+                <Link to="/auth/forgot-password">Forgot password?</Link>
+              </div>
             </div>
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password}</p>
+            )}
+        {/* </div> */}
 
-            <Button
-              type="submit"
-              className="w-full bg-emerald-700 hover:bg-emerald-800"
-              disabled={loading}
-            >
-              {loading ? 'Signing in...' : 'Sign In'}
-            </Button>
-          </form>
+        <Button
+          type="submit"
+          className="w-full bg-emerald-700 hover:bg-emerald-800"
+          disabled={loading}
+        >
+          {loading ? <Loader className="animate-spin h-4 w-4" /> : 'Sign In'}
+        </Button>
+      </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
-              Don't have an account?{' '}
-              <Link
-                to="/auth/register"
-                className="text-emerald-700 hover:text-emerald-800 font-medium"
-              >
-                Create Account
-              </Link>
-            </p>
-          </div>
-        </div>
-      </motion.div>
+      <div className="mt-6 text-center">
+        <p className="text-gray-600">
+          Don't have an account?{' '}
+          <Link
+            to="/auth/register"
+            className="text-emerald-700 hover:text-emerald-800 font-medium"
+          >
+            Create Account
+          </Link>
+        </p>
+      </div>
     </div>
+      </motion.div >
+  </div>
+</div>
+    //  <div className="min-h-screen bg-gradient-to-br from-gray-50 to-stone-50 flex items-center justify-center p-4">
+     
+    // </div >
+    // </div>
   );
 };
 

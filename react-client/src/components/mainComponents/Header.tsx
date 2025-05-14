@@ -159,6 +159,15 @@ const Header = () => {
                                     </Button>
                                     <Button
                                         onClick={() => {
+                                            navigate('/settings');
+                                            setIsMenuOpen(false);
+                                        }}
+                                        variant="ghost"
+                                    >
+                                        Setting
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
                                             handleLogout();
                                             setIsMenuOpen(false);
                                         }}

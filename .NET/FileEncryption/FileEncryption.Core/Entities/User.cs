@@ -25,6 +25,8 @@ namespace FileEncryption.Core.Entities
         [Column(TypeName = "DATETIME")]
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public virtual ICollection<FileEncryption.Core.Entities.File> Files { get; set; }
+        public virtual ICollection<Share> SharesToOthers { get; set; }
+        public virtual ICollection<Share> SharesWithMe { get; set; }
 
     }
 }

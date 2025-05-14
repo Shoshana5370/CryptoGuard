@@ -15,5 +15,19 @@ namespace FileEncryption.Data
         public DbSet<Share> Shares { get; set; }
         public DbSet<Core.Entities.File> Files { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Share>()
+                .HasOne(fs => fs.SharedByUser)
+                .WithMany() // Assuming a User can share many files
+                .HasForeignKey(fs => fs.SharedByUserId)
+                .OnDelete(DeleteBehavior.Cascade); // Configure delete behavior as needed
+
+            modelBuilder.Entity<Share>()
+                .HasOne(fs => fs.RecipientUser)
+                .WithMany() // Assuming a User can receive many shared files
+                .HasForeignKey(fs => fs.RecipientUserId)
+                .OnDelete(DeleteBehavior.SetNull); // Configure delete behavior as needed
+        }
     }
 }
