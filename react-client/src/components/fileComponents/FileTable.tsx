@@ -10,7 +10,7 @@ const getFileIcon = (fileType: any) => {
   switch (fileType.toLowerCase()) {
     case 'image':
       return <Image {...iconProps} className="text-purple-500" />;
-    case 'pdf':
+    case 'application/pdf':
       return <FileText {...iconProps} className="text-red-500" />;
     case 'audio':
       return <Music {...iconProps} className="text-blue-500" />;
@@ -18,8 +18,8 @@ const getFileIcon = (fileType: any) => {
       return <Video {...iconProps} className="text-emerald-500" />;
     case 'archive':
       return <Archive {...iconProps} className="text-amber-500" />;
-    case 'code':
-      return <Code {...iconProps} className="text-gray-500" />;
+    // case 'code':
+    //   return <Code {...iconProps} className="text-gray-500" />;
     default:
       return <File {...iconProps} className="text-gray-500" />;
   }
@@ -34,7 +34,7 @@ const getFileIcon = (fileType: any) => {
 //  * @param {function} props.onDownload - Download file callback
 //  * @param {function} props.onShare - Share file callback
 //  */
-const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: FileDto[], onDelete: (file: number) => void, onRename: (file: number, newName: string) => void, onDownload: (file: number) => void, onShare: (file: number) => void }) => {
+const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: FileDto[], onDelete: (file: number) => void, onRename: (file: number, newName: string) => void, onDownload: (file: number) => void, onShare: (file: FileDto) => void }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100">
       <Table>
@@ -43,7 +43,7 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
             <TableHead>Name</TableHead>
             {/* <TableHead>Size</TableHead> */}
             <TableHead>Type</TableHead>
-            <TableHead>Modified</TableHead>
+            <TableHead>Date</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -83,7 +83,7 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
                     <Button variant="ghost" size="icon" onClick={() => onRename(file.id, file.name)} title="Rename">
                       <Pencil className="w-4 h-4 text-muted-foreground" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onShare(file.id)} title="Share">
+                    <Button variant="ghost" size="icon" onClick={() => onShare(file)} title="Share">
                       <Share2 className="w-4 h-4 text-muted-foreground" />
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => onDelete(file.id)} title="Delete">

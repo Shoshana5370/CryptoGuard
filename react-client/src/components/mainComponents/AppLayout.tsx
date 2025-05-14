@@ -15,6 +15,7 @@ export default function AppLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
+      
 
       {/* Footer */}
       <footer className="bg-gray-50 border-t border-gray-100">

@@ -36,9 +36,7 @@ namespace FileEncryption.Service.Services
             {
                 return null;
             }
-
             var token = GenerateJwtToken(_mapper.Map<UserDto>(userExiting));
-
             return new AuthResponse
             {
                 Token = token,

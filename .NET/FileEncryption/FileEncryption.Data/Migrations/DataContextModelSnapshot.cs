@@ -91,12 +91,6 @@ namespace FileEncryption.Data.Migrations
                     b.Property<bool>("Used")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FileKey");
@@ -104,10 +98,6 @@ namespace FileEncryption.Data.Migrations
                     b.HasIndex("RecipientUserId");
 
                     b.HasIndex("SharedByUserId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Shares");
                 });
@@ -166,23 +156,15 @@ namespace FileEncryption.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("FileEncryption.Core.Entities.User", "RecipientUser")
-                        .WithMany()
+                        .WithMany("SharesWithMe")
                         .HasForeignKey("RecipientUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("FileEncryption.Core.Entities.User", "SharedByUser")
-                        .WithMany()
+                        .WithMany("SharesToOthers")
                         .HasForeignKey("SharedByUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("FileEncryption.Core.Entities.User", null)
-                        .WithMany("SharesToOthers")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("FileEncryption.Core.Entities.User", null)
-                        .WithMany("SharesWithMe")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("File");
 

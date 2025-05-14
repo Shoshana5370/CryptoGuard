@@ -8,6 +8,6 @@ namespace FileEncryption.Core.IServices
 {
     public interface IServiceSendMessage
     {
-        Task SendAsync(string to,string from,string acsessCode);
+        Task SendAsync(string to, string toUser, string fromUser, string accessCode, string fileName);
     }
 }

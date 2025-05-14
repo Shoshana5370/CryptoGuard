@@ -6,16 +6,17 @@ import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
 import ShareFileDialog from "../shareComponents/ShareFileDialog";
-
-
+import { FileDto } from "@/types/FileDto";
+import { useNavigate } from "react-router-dom";
+import UploadFileDialog from "./UploadFile";
 const Files=()=> {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { items: files, loading, error } = useAppSelector(state => state.files);
-
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<number>(0);
-
+  const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<FileDto>({} as FileDto);
+  const navigate = useNavigate();
   useEffect(() => {
     if (user?.id) {
         console.log('Fetching files for user ID:', user.id);       
@@ -28,7 +29,7 @@ const Files=()=> {
     console.log('Delete file:', file);
   };
 
-  const handleShare = (file:number) => {
+  const handleShare = (file:FileDto) => {
     setSelectedFile(file);
     setIsShareDialogOpen(true);
   };
@@ -51,10 +52,17 @@ const Files=()=> {
           <p className="text-gray-500 mt-1">Manage your encrypted files</p>
         </div>
         
-        <Button className="bg-emerald-600 hover:bg-emerald-700">
+        {/* <Button onClick={() => navigate('/files/upload')} className="bg-emerald-600 hover:bg-emerald-700" >
+        
           <Upload className="w-4 h-4 mr-2" />
            Upload File
-        </Button>
+        </Button> */}
+         <Button onClick={() => setUploadFileIsOpen(true)} className="bg-emerald-600 hover:bg-emerald-700">
+      <Upload className="w-4 h-4 mr-2" />
+      Upload File
+    </Button>
+
+    <UploadFileDialog isOpen={isUploadFileOpen} onClose={() => setUploadFileIsOpen(false)} />
       </div>
 
       {error && (

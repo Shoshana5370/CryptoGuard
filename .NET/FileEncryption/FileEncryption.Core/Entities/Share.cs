@@ -13,7 +13,7 @@ namespace FileEncryption.Core.Entities
 
         [ForeignKey(nameof(File))]
         public int FileKey { get; set; }
-        public File File { get; set; }
+        public FileEncryption.Core.Entities.File  File{ get; set; }
         public string? AccessCode { get; set; }       
         public DateTime ExpiresAt { get; set; }      
         public string? RecipientEmail { get; set; }

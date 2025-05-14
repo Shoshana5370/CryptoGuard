@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FileEncryption.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250504174012_changesindb")]
-    partial class changesindb
+    [Migration("20250514203601_newDb")]
+    partial class newDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,10 @@ namespace FileEncryption.Data.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -70,7 +74,6 @@ namespace FileEncryption.Data.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AccessCode")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("ExpiresAt")
@@ -82,12 +85,22 @@ namespace FileEncryption.Data.Migrations
                     b.Property<string>("RecipientEmail")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("RecipientUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SharedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Used")
                         .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FileKey");
+
+                    b.HasIndex("RecipientUserId");
+
+                    b.HasIndex("SharedByUserId");
 
                     b.ToTable("Shares");
                 });
@@ -145,7 +158,22 @@ namespace FileEncryption.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FileEncryption.Core.Entities.User", "RecipientUser")
+                        .WithMany("SharesWithMe")
+                        .HasForeignKey("RecipientUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("FileEncryption.Core.Entities.User", "SharedByUser")
+                        .WithMany("SharesToOthers")
+                        .HasForeignKey("SharedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("File");
+
+                    b.Navigation("RecipientUser");
+
+                    b.Navigation("SharedByUser");
                 });
 
             modelBuilder.Entity("FileEncryption.Core.Entities.File", b =>
@@ -156,6 +184,10 @@ namespace FileEncryption.Data.Migrations
             modelBuilder.Entity("FileEncryption.Core.Entities.User", b =>
                 {
                     b.Navigation("Files");
+
+                    b.Navigation("SharesToOthers");
+
+                    b.Navigation("SharesWithMe");
                 });
 #pragma warning restore 612, 618
         }

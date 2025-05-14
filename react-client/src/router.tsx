@@ -17,6 +17,7 @@ import HomePage from "./components/mainComponents/HomePage";
 import NotFound from "./components/mainComponents/NotFound";
 import Files from "./components/fileComponents/Files";
 import SharedWithMe from "./components/shareComponents/SharedWithMe";
+import UnderConstruction from "./components/mainComponents/UnderConstruction";
 // import HomePage from "./components/HomePage";
 
 // </BrowserRouter> 
@@ -42,8 +43,8 @@ const Router = createBrowserRouter([
             //     element: <FilesList/>,
             // },
             {
-                path: "/files/upload",
-                element: <UploadFile/>,
+                // path: "/files/upload",
+                // element: <UploadFile/>,
             },
             {
                 path: "/shares",
@@ -61,7 +62,7 @@ const Router = createBrowserRouter([
                 path: "/files",
                 element: <Files/>,
             },
-            { path: "*", element: <NotFound /> },
+            { path: "*", element: <UnderConstruction /> },
         ],
     }
 ]);

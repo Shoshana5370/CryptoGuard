@@ -11,6 +11,6 @@ namespace FileEncryption.Core.IServices
     {
         public Task<string> GetByAccessCodeAsync(string accessCode);
         public Task<Share> GetValidShareByCodeAsync(string v);
-        public Task<Share> ShareFileAsync(Share share);
+        public Task<Share> ShareFileAsync(Share share, string id);
     }
 }

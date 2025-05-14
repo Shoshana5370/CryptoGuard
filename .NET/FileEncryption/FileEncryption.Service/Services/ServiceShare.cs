@@ -39,7 +39,7 @@ namespace FileEncryption.Service.Services
             return share;
         }
 
-        public async Task<Share> ShareFileAsync(Share share)
+        public async Task<Share> ShareFileAsync(Share share, string idUser)
         {
             //if (share == null)
             //    throw new ArgumentNullException(nameof(share));
@@ -53,13 +53,17 @@ namespace FileEncryption.Service.Services
 
             // 2️⃣ Set the navigation property (optional but good practice)
             share.File = file;
-
-            // 3️⃣ Generate AccessCode if null or empty
-            if (string.IsNullOrWhiteSpace(share.AccessCode))
+            share.AccessCode = GenerateAccessCode();
+            var recipientUser = await _repositoryManager.Users.FindByEmailAsync(share.RecipientEmail);
+            if(recipientUser != null)
             {
-                share.AccessCode = GenerateAccessCode();
-            }
+                share.RecipientUser = recipientUser;
+                share.RecipientUserId = recipientUser.Id;
 
+            }
+            int userId = int.Parse(idUser);
+            share.SharedByUserId =userId;
+            share.SharedByUser = await _repositoryManager.Users.GetByIdUserAsync(userId);
             // 4️⃣ Save to DB
             _repositoryManager.Shares.AddShareAsync(share);
             await _repositoryManager.SaveAsync();

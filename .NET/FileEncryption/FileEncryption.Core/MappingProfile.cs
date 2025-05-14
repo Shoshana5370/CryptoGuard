@@ -9,6 +9,7 @@ namespace FileEncryption.Core
         {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<Entities.File, FileDto>().ReverseMap();
+            CreateMap<Share, ShareDto>().ReverseMap();
         }
     }
 }

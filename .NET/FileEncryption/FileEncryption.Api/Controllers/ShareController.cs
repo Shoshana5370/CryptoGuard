@@ -60,16 +60,14 @@ namespace FileEncryption.Api.Controllers
         //{
         //}
         [HttpPost]
-        public async Task<ActionResult<Share>> ShareFile([FromBody] SharePostModel req)  //to create a new share
+        public async Task<ActionResult<Share>> ShareFile([FromBody] SharePostModel req)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            //share.SenderUserId = int.Parse(userId); // If you store the sender
-
-            var share = await _shareService.ShareFileAsync(_mapper.Map<Share>(req));
+            var share = await _shareService.ShareFileAsync(_mapper.Map<Share>(req),userId);
 
             await _emailService.SendAsync(
-                share.RecipientEmail,userId,share.AccessCode
+                share.RecipientEmail,share.RecipientUser?.Name,share.SharedByUser.Name,share.AccessCode,share.File.Name
             );
 
             return Ok(share);

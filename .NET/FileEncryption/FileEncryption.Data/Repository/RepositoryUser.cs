@@ -40,9 +40,9 @@ namespace FileEncryption.Data.Repository
             return await _context.Users.ToListAsync(); // Return all users as a list
         }
 
-        public Task<User> GetByIdUserAsync(int id)
+        public async Task<User> GetByIdUserAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Users.FindAsync(id);
         }
 
         public async Task<IEnumerable<Core.Entities.File>> GetFilesByUserIdAsync(int id)

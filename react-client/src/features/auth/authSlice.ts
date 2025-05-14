@@ -41,7 +41,12 @@ export const registerUser = createAsyncThunk(
       sessionStorage.setItem("userId", response.data.user.id.toString());
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err.response.data);
+      const message =
+        err.response?.data?.message ||
+        err.response?.data ||
+        err.message ||
+        "Login failed";
+      return rejectWithValue(message);
     }
   }
 );

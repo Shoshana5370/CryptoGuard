@@ -18,16 +18,16 @@ namespace FileEncryption.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Share>()
-                .HasOne(fs => fs.SharedByUser)
-                .WithMany() // Assuming a User can share many files
-                .HasForeignKey(fs => fs.SharedByUserId)
-                .OnDelete(DeleteBehavior.Cascade); // Configure delete behavior as needed
+                .HasOne(s => s.SharedByUser)
+                .WithMany(u => u.SharesToOthers)
+                .HasForeignKey(s => s.SharedByUserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Share>()
-                .HasOne(fs => fs.RecipientUser)
-                .WithMany() // Assuming a User can receive many shared files
-                .HasForeignKey(fs => fs.RecipientUserId)
-                .OnDelete(DeleteBehavior.SetNull); // Configure delete behavior as needed
+                .HasOne(s => s.RecipientUser)
+                .WithMany(u => u.SharesWithMe)
+                .HasForeignKey(s => s.RecipientUserId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

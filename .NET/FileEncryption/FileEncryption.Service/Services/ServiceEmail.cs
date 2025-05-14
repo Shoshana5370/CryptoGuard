@@ -20,7 +20,7 @@ namespace FileEncryption.Service.Services
 //            bool correct = await IsEmailValid(to);
 //            if(correct)
 //{
-                var email = new MimeMessage();
+            var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_config["EmailSettings:SenderEmail"]));
             email.To.Add(MailboxAddress.Parse(to));
             email.Subject = "Your AcsessCode";

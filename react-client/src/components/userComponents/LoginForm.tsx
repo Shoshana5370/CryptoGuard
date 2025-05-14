@@ -126,14 +126,11 @@ const LoginForm = () => {
       setErrors(validationErrors);
       return;
     }
-    try {
-      await dispatch(loginUser({ email, password }));
-      // Navigate to the home page after successful login
-      navigate('/home'); // Adjust the path as per your route configuration
-    } catch (error) {
-      console.error("Login failed:", error);
-      // Optionally set a login error state here
-    }
+    const resultAction = await dispatch(loginUser({ email, password }));
+
+  if (loginUser.fulfilled.match(resultAction)) {
+    navigate('/home'); // Only after successful login
+  }
   };
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
