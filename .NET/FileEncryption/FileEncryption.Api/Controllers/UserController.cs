@@ -3,6 +3,7 @@ using FileEncryption.Core.DTOs;
 using FileEncryption.Core.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 namespace FileEncryption.Api.Controllers
 {
@@ -18,17 +19,67 @@ namespace FileEncryption.Api.Controllers
             _userService = userService;
             _mapper = mapper;
         }
-        [HttpGet("{id}")]
+        [HttpGet("GetFiles")]
         [Authorize(Policy = "UserOrAdmin")]
-        public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync(int id)
+        public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync()
         {
-            var files = await _userService.GetFilesByUserIdAsync(id);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized("Invalid or missing user ID in token.");
+            }
+
+            var files = await _userService.GetFilesByUserIdAsync(userId);
             if(files == null)
             {
                 return NotFound();
             }
             return Ok(files);
         }
+        [HttpGet("GetSharesWithMe")]
+        [Authorize(Policy = "UserOrAdmin")]
+        public async Task<ActionResult<IEnumerable<ShareDto>>> GetSharesWithMeAsync()
+        {
+            // Extract user ID from token (from the claims)
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized("Invalid or missing user ID in token.");
+            }
+
+            var shares = await _userService.GetSharesWithMeAsync(userId);
+
+            if (shares == null || !shares.Any())
+            {
+                return NotFound("No shares found.");
+            }
+
+            return Ok(shares);
+        }
+        [HttpGet("GetSharesToOthers")]
+        [Authorize(Policy = "UserOrAdmin")]
+        public async Task<ActionResult<IEnumerable<ShareDto>>> GetSharesToOthersAsync()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized("Invalid or missing user ID in token.");
+            }
+
+            var shares = await _userService.GetSharesToOthersAsync(userId);
+
+            if (shares == null || !shares.Any())
+            {
+                return NotFound("No shares to others found.");
+            }
+
+            return Ok(shares);
+        }
+
+
         // GET: api/<UserController>
         [HttpGet]
         [Authorize(Policy = "AdminOnly")]

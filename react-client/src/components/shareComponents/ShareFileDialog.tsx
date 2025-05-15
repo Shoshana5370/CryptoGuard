@@ -224,7 +224,7 @@
 // export default ShareFileDialog;
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { shareFile, clearShare } from "../../features/shares/shareSlice";
+import { shareFile, clearShare } from "../../features/shares/shareFileSlice";
 import { SharePostModel } from "@/types/SharePostModel";
 import { FileDto } from "@/types/FileDto";
 
@@ -247,7 +247,7 @@ type ShareFileDialogProps = {
 
 const ShareFileDialog = ({ isOpen, onClose, file }: ShareFileDialogProps) => {
   const dispatch = useAppDispatch();
-  const { status, share } = useAppSelector((state: RootState) => state.share);
+  const { status, share } = useAppSelector((state: RootState) => state.shareFile);
 
   const [email, setEmail] = useState("");
   const [expiration, setExpiration] = useState<Date | undefined>(new Date());

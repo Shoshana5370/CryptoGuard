@@ -1,11 +1,11 @@
 // src/components/ShareFileForm.tsx
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { shareFile, clearShare } from '../../features/shares/shareSlice';
+import { shareFile, clearShare } from '../../features/shares/shareFileSlice';
 
 const ShareFileForm: React.FC = () => {
     const dispatch = useAppDispatch();
-    const { share, status, error } = useAppSelector((state) => state.share);
+    const { share, status, error } = useAppSelector((state) => state.shareFile);
 
     const [fileKey, setFileId] = useState('');
     const [recipientEmail, setRecipientEmail] = useState('');
@@ -13,7 +13,6 @@ const ShareFileForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!fileKey || !recipientEmail) return;
-
         await dispatch(
             shareFile({
                 fileKey: Number(fileKey),

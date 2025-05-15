@@ -55,6 +55,18 @@ namespace FileEncryption.Service.Services
             // Map the files to FileDto
             return _mapper.Map<IEnumerable<FileDto>>(files);
         }
+        public async Task<IEnumerable<ShareDto>> GetSharesWithMeAsync(int userId)
+        {
+            var shares = await _repositoryManager.Users.GetSharesWithMeAsync(userId);
+
+            // Map the shares to ShareDto
+            return _mapper.Map<IEnumerable<ShareDto>>(shares);
+        }
+        public async Task<IEnumerable<ShareDto>> GetSharesToOthersAsync(int userId)
+        {
+            var shares = await _repositoryManager.Users.GetSharesToOthersAsync(userId);
+            return _mapper.Map<IEnumerable<ShareDto>>(shares);
+        }
 
         public async Task<User> InsertUserAsync(UserDto user)
         {

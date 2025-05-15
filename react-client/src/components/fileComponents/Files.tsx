@@ -18,9 +18,9 @@ const Files=()=> {
   const [selectedFile, setSelectedFile] = useState<FileDto>({} as FileDto);
   const navigate = useNavigate();
   useEffect(() => {
-    if (user?.id) {
-        console.log('Fetching files for user ID:', user.id);       
-        dispatch(fetchFilesByUserId(user.id));
+    if (user) {
+        console.log('Fetching files for user ID:');       
+        dispatch(fetchFilesByUserId());
     }
   }, [dispatch, user]);
 

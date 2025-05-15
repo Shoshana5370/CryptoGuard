@@ -16,8 +16,9 @@ import ShareFileForm from "./components/shareComponents/ShareFileFrom";
 import HomePage from "./components/mainComponents/HomePage";
 import NotFound from "./components/mainComponents/NotFound";
 import Files from "./components/fileComponents/Files";
-import SharedWithMe from "./components/shareComponents/SharedWithMe";
+import SharedWithMe from "./components/shareComponents/Shares";
 import UnderConstruction from "./components/mainComponents/UnderConstruction";
+import Shares from "./components/shareComponents/Shares";
 // import HomePage from "./components/HomePage";
 
 // </BrowserRouter> 
@@ -48,7 +49,7 @@ const Router = createBrowserRouter([
             },
             {
                 path: "/shares",
-                element: <SharedWithMe/>,
+                element: <Shares/>,
             },
             {
                 path: "/share/access",

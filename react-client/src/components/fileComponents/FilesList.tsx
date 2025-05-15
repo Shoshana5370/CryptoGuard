@@ -7,14 +7,14 @@ import { RootState, AppDispatch } from '../../store/store' // adjust paths
 import { fetchFilesByUserId } from '../../features/files/filesSlice'; // adjust path as needed
 import { FileDto } from '../../types/FileDto';
 const FilesList: React.FC= () => {
-    const userId = 1;
-    const dispatch = useDispatch<AppDispatch>();
+
+    // const dispatch = useDispatch<AppDispatch>();
     const { items, loading, error } = useSelector((state: RootState) => state.files);
-    useEffect(() => {
-        if (userId) {
-            dispatch(fetchFilesByUserId(userId));
-        }
-    }, [dispatch, userId]);
+    // useEffect(() => {
+    //     if (userId) {
+    //         dispatch(fetchFilesByUserId());
+    //     }
+    // }, [dispatch, userId]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.toString()}</div>;

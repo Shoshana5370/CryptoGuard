@@ -18,15 +18,15 @@ const url = 'https://localhost:7207'
 
 // Thunk to fetch files by user ID
 export const fetchFilesByUserId = createAsyncThunk<
-    FileDto[],     
-    number,         
-    { rejectValue: string, state: RootState } // Extra options
+    FileDto[],
+    void,
+    { state: RootState } // Return type of the payload creator           // Extra options
 >(
     'files/fetchFilesByUserId',
-    async (userId, {  rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
             
-            const response = await axiosInstance.get<FileDto[]>(`${url}/api/User/${userId}`, {
+            const response = await axiosInstance.get<FileDto[]>(`${url}/api/User/GetFiles`, {
             });
             return response.data;
         } catch (err: any) {

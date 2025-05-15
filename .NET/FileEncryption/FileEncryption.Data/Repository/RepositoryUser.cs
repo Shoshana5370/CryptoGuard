@@ -56,6 +56,29 @@ namespace FileEncryption.Data.Repository
             }
             return null; // Return an empty list if user is not found
         }
+        public async Task<IEnumerable<Core.Entities.Share>> GetSharesWithMeAsync(int userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.SharesWithMe) // assuming this is the navigation property
+                .ThenInclude(s => s.File) // if each Share includes a reference to the File entity
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user != null)
+            {
+                return user.SharesWithMe; // assuming this is a collection of Share entities
+            }
+
+            return null;
+        }
+        public async Task<IEnumerable<Share>> GetSharesToOthersAsync(int userId)
+        {
+            return await _context.Shares
+                .Include(s => s.File)
+                .Include(s => s.RecipientUser)
+                .Where(s => s.SharedByUserId== userId)
+                .ToListAsync();
+        }
+
 
         public async Task<User> GetUserByIdAsync(int id)
         {

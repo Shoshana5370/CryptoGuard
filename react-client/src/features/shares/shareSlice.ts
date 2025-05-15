@@ -1,57 +1,94 @@
-// src/store/shareSlice.ts
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axiosInstance from '../../axiosInstance';
-import { SharePostModel } from '../../types/SharePostModel';
+// src/features/shares/sharesSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../../store/store';
 import { ShareDto } from '../../types/ShareDto';
+import axiosInstance from '../../axiosInstance';
 
 export interface ShareState {
-  share?: ShareDto;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  sharesWithMe: ShareDto[];
+  sharesToOthers: ShareDto[];
+  loading: boolean;
   error: string | object | null;
 }
 
 const initialState: ShareState = {
-  status: 'idle',
+  sharesWithMe: [],
+  sharesToOthers: [],
+  loading: false,
   error: null,
 };
 
-export const shareFile = createAsyncThunk(
-  'share/shareFile',
-  async (shareData: SharePostModel, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post<ShareDto>(`/api/Share`, shareData);
-      return response.data;
-    } catch (err: any) {
-      return rejectWithValue(err.response?.data || 'Error sharing file');
-    }
-  }
-);
+const apiBase = 'https://localhost:7207';
 
-const shareSlice = createSlice({
-  name: 'share',
+// Thunk - GetSharesWithMe
+export const fetchSharesWithMe = createAsyncThunk<
+  ShareDto[],
+  void,
+  { state: RootState; rejectValue: string }
+>('shares/fetchSharesWithMe', async (_, thunkAPI) => {
+  try {
+    const response = await axiosInstance.get<ShareDto[]>(`${apiBase}/api/User/GetSharesWithMe`);
+    return response.data;
+  } catch (err: any) {
+    const msg = err.response?.data || err.message || 'Failed to fetch shares with me';
+    return thunkAPI.rejectWithValue(msg);
+  }
+});
+
+// Thunk - GetSharesToOthers
+export const fetchSharesToOthers = createAsyncThunk<
+  ShareDto[],
+  void,
+  { state: RootState; rejectValue: string }
+>('shares/fetchSharesToOthers', async (_, thunkAPI) => {
+  try {
+    const response = await axiosInstance.get<ShareDto[]>(`${apiBase}/api/User/GetSharesToOthers`);
+    return response.data;
+  } catch (err: any) {
+    const msg = err.response?.data || err.message || 'Failed to fetch shares to others';
+    return thunkAPI.rejectWithValue(msg);
+  }
+});
+
+const sharesSlice = createSlice({
+  name: 'shares',
   initialState,
   reducers: {
-    clearShare(state) {
-      state.share = undefined;
-      state.status = 'idle';
+    clearShares: (state) => {
+      state.sharesWithMe = [];
+      state.sharesToOthers = [];
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(shareFile.pending, (state) => {
-        state.status = 'loading';
+      .addCase(fetchSharesWithMe.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(shareFile.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.share = action.payload;
+      .addCase(fetchSharesWithMe.fulfilled, (state, action: PayloadAction<ShareDto[]>) => {
+        state.loading = false;
+        state.sharesWithMe = action.payload;
       })
-      .addCase(shareFile.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload as string;
+      .addCase(fetchSharesWithMe.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Failed to fetch shares with me';
+      })
+
+      .addCase(fetchSharesToOthers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSharesToOthers.fulfilled, (state, action: PayloadAction<ShareDto[]>) => {
+        state.loading = false;
+        state.sharesToOthers = action.payload;
+      })
+      .addCase(fetchSharesToOthers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Failed to fetch shares to others';
       });
   },
 });
 
-export const { clearShare } = shareSlice.actions;
-export default shareSlice.reducer;
+export const { clearShares } = sharesSlice.actions;
+export default sharesSlice.reducer;

@@ -9,6 +9,8 @@ import EncryptionVisualizer from "./EncraptionVizualer";
 // import EncryptionSteps from "./EncraptionSteps";
 import Logo from "./Logo";
 import { Button } from "@/styles/ui/button";
+import SecurityFeatures from "./SecuirtyFeateras";
+import EncryptionSteps from "./EncraptionSteps";
 export default function Home() {
   // const [file, setFile] = useState(null);
   // const [password, setPassword] = useState("");
@@ -216,7 +218,7 @@ export default function Home() {
           </div>
         </section> */}
 
-        {/* Features Section
+        Features Section
         <section className="mb-24">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Advanced Security Features</h2>
@@ -225,9 +227,9 @@ export default function Home() {
             </p>
           </div>     
           <SecurityFeatures />
-        </section> */}
+        </section>
 
-        {/* How It Works
+        How It Works
         <section className="mb-24">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
@@ -237,7 +239,7 @@ export default function Home() {
           </div>
           
           <EncryptionSteps />
-        </section> */}
+        </section>
       </main>
 
 
