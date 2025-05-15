@@ -16,7 +16,7 @@ namespace FileEncryption.Core.DTOs
         public DateTime ExpiresAt { get; set; }
         public string? RecipientEmail { get; set; }
         public int SharedByUserId { get; set; }
-        public int? RecipientUserId { get; set; } // Nullable foreign key
+        public int? RecipientUserId { get; set; } 
         public bool Used { get; set; } 
     }
 }

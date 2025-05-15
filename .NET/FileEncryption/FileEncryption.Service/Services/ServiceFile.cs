@@ -105,27 +105,56 @@ namespace FileEncryption.Service.Services
             return _mapper.Map<FileDto>(fileEntity);
         }
 
-        public async Task<Stream> DecryptAndDownloadFileAsync(int fileKey)
+        //public async Task<Stream> DecryptAndDownloadFileAsync(int fileKey)
+        //{
+        //    var file = await _repositoryManager.Files.GetByIdFileAsync(fileKey);
+        //    if (file == null) throw new Exception("File not found");
+        //    var s3Object = await _s3Client.GetObjectAsync(_config["AWS:BucketName"], file.EncryptedUrl);
+        //    using var responseStream = s3Object.ResponseStream;
+        //    var memoryStream = new MemoryStream();
+        //    await responseStream.CopyToAsync(memoryStream);
+        //    memoryStream.Position = 0;
+        //    // Extract IV from the beginning of the file
+        //    var iv = new byte[16];
+        //    memoryStream.Read(iv, 0, iv.Length);
+        //    using var aes = CreateAes();
+        //    aes.IV = iv;
+        //    var decryptedStream = new MemoryStream();
+        //    using (var cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
+        //    {
+        //        await cryptoStream.CopyToAsync(decryptedStream);
+        //    }
+        //    decryptedStream.Position = 0;
+        //    return decryptedStream;
+        //}
+        public async Task<(Stream Stream, string FileName, string ContentType)> DecryptAndDownloadFileAsync(int fileKey)
         {
             var file = await _repositoryManager.Files.GetByIdFileAsync(fileKey);
             if (file == null) throw new Exception("File not found");
+
             var s3Object = await _s3Client.GetObjectAsync(_config["AWS:BucketName"], file.EncryptedUrl);
+
             using var responseStream = s3Object.ResponseStream;
             var memoryStream = new MemoryStream();
             await responseStream.CopyToAsync(memoryStream);
             memoryStream.Position = 0;
-            // Extract IV from the beginning of the file
+
+            // Extract IV
             var iv = new byte[16];
             memoryStream.Read(iv, 0, iv.Length);
+
             using var aes = CreateAes();
             aes.IV = iv;
+
             var decryptedStream = new MemoryStream();
             using (var cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
             {
                 await cryptoStream.CopyToAsync(decryptedStream);
             }
+
             decryptedStream.Position = 0;
-            return decryptedStream;
+            return (decryptedStream, file.Name, file.ContentType);
         }
+
     }
 }

@@ -17,7 +17,7 @@ namespace FileEncryption.Core.IServices
             Task<Entities.File> UpdateExistingFileAsync(int id, FileDto file);
             Task<bool> DiscardFileAsync(int id);
             Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file,FileDto fileDto);
-            Task<Stream> DecryptAndDownloadFileAsync(int fileKey);
+        Task<(Stream Stream, string FileName, string ContentType)> DecryptAndDownloadFileAsync(int fileKey);
             //Task<byte[]> GetDecryptedFileStreamAsync(int fileKey);
     }
 }

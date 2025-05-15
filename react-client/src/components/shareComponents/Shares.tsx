@@ -205,7 +205,8 @@ export default function Shares() {
         </div>
 
         <div>
-          {/* <AccessSharedFile />
+        /* <AccessSharedFile />
+          {/*
 
           <Card className="mt-6 bg-gray-50 border border-gray-200">
             <CardHeader>

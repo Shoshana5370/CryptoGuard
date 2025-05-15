@@ -72,15 +72,15 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(share);
         }
-        
+
 
         [HttpPost("access")]
         public async Task<IActionResult> AccessSharedFile([FromBody] string input)
         {
             var share = await _shareService.GetValidShareByCodeAsync(input);
-            var fileStream = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
+            var (stream, fileName, contentType) = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
 
-            return File(fileStream, "application/octet-stream", "shared-file");
+            return File(stream, contentType ?? "application/octet-stream", fileName);
         }
 
 
