@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import {  FileCheck, FileSearch, Share, Cloud, UserLock, UserCheck } from "lucide-react";
 
-export default function SecurityFeatures() {
+const SecurityFeatures=()=> {
   const features = [
 
     {
@@ -66,3 +66,4 @@ export default function SecurityFeatures() {
     </div>
   );
 }
+export default SecurityFeatures;

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Upload, Download, UserPlus, Share2 } from "lucide-react";
 
-export default function EncryptionSteps() {
+const EncryptionSteps=() => {
     const steps = [
       {
         icon: UserPlus,
@@ -70,3 +70,4 @@ export default function EncryptionSteps() {
     </div>
   );
 }
+export default EncryptionSteps;

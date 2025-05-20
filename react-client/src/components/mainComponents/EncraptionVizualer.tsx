@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-export default function EncryptionVisualizer() {
+const EncryptionVisualizer=()=> {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -56,7 +56,6 @@ export default function EncryptionVisualizer() {
         particle.x += particle.speedX;
         particle.y += particle.speedY;
 
-        // Wrap edges
         if (particle.x < 0) particle.x = canvas.width;
         if (particle.x > canvas.width) particle.x = 0;
         if (particle.y < 0) particle.y = canvas.height;
@@ -98,9 +97,6 @@ export default function EncryptionVisualizer() {
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
       />
-
-      
-      {/* Visual Elements */}
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
@@ -135,8 +131,6 @@ export default function EncryptionVisualizer() {
           </motion.div>
         </motion.div>
       </div>
-      
-      {/* Floating Graphics */}
       <motion.div 
         animate={{ 
           y: [0, -15, 0],
@@ -178,3 +172,4 @@ export default function EncryptionVisualizer() {
     </div>
   );
 }
+export default EncryptionVisualizer;

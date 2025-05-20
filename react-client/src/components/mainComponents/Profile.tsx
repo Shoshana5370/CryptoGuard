@@ -1,5 +1,5 @@
-
-import { useAppDispatch, useAppSelector } from "@/hooks";
+//this page not finished yet
+import {  useAppSelector } from "@/hooks";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/styles/ui/card";
@@ -16,8 +16,7 @@ interface FormData {
   confirmPassword: string;
 }
 
-export default function Profile() {
-  const dispatch = useAppDispatch();
+const Profile=() =>{
   const { user } = useAppSelector((state) => state.auth);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
@@ -44,7 +43,6 @@ export default function Profile() {
     setSuccess('');
 
     try {
-      // Example: await dispatch(updateProfile(formData));
       setSuccess('Profile updated successfully!');
       setIsEditing(false);
     } catch (err: any) {
@@ -72,7 +70,6 @@ export default function Profile() {
       )}
 
       <div className="grid gap-8">
-        {/* Profile Information */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -137,8 +134,6 @@ export default function Profile() {
             </form>
           </CardContent>
         </Card>
-
-        {/* Change Password */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -194,8 +189,6 @@ export default function Profile() {
             </form>
           </CardContent>
         </Card>
-
-        {/* Security Settings */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -239,3 +232,4 @@ export default function Profile() {
     </div>
   );
 }
+export default Profile;

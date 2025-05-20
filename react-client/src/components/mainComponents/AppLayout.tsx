@@ -2,8 +2,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-
-export default function AppLayout() {
+const AppLayout=()=> {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
@@ -18,3 +17,4 @@ export default function AppLayout() {
     </div>
   );
 }
+export default AppLayout;

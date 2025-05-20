@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Logo from "./Logo";
 import { Wrench } from "lucide-react";
 
-export default function UnderConstruction() {
+const UnderConstruction=()=> {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -129,3 +129,4 @@ export default function UnderConstruction() {
     </div>
   );
 }
+export default UnderConstruction;

@@ -56,12 +56,9 @@ const Header = () => {
 
         <div className="container mx-auto px-4">
             <div className="flex items-center justify-between h-16">
-                {/* Logo */}
                 <Link to="/" className="flex items-center gap-2">
                     <Logo />
                 </Link>
-
-                {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6">
                     {navigation.map((item) => (
                         <Link
@@ -111,16 +108,12 @@ const Header = () => {
                     )}
                 </div>
 
-                {/* Mobile Menu Button — must be outside the hidden container */}
                 <button
                     className="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
                     {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
-
-
-
                 {isMenuOpen && (
                     <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-md border-t border-gray-100 px-4 py-4 z-50">
                         <nav className="flex flex-col gap-4">

@@ -7,11 +7,10 @@ import EncryptionSteps from "./EncraptionSteps";
 import SecurityFeatures from "./SecuirtyFeateras";
 import { Upload } from "lucide-react"
 
-export default function Home() {
+const Home=() =>{
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-stone-50">
       <main className="container mx-auto px-4 py-12 max-w-7xl">
-        {/* Hero Section */}
         <section className="flex flex-col md:flex-row items-center justify-between gap-12 mb-24">
           <div className="max-w-xl">
             <motion.div 
@@ -79,8 +78,7 @@ export default function Home() {
           <EncryptionSteps />
         </section>
       </main>
-
-
     </div>
   );
 }
+export default Home;
