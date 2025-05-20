@@ -367,7 +367,7 @@ type AccessSharedFileProps = {
   onReset: () => void;
 };
 
-export default function AccessSharedFile({ code, onReset }: AccessSharedFileProps) 
+const AccessSharedFile=({ code, onReset }: AccessSharedFileProps) =>
 {
   const [shareCode, setShareCode] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -404,12 +404,8 @@ dispatch(accessSharedFile({ shareId: parseInt(code), code: shareCode.trim() }));
     if (fileBlob) {
       const url = window.URL.createObjectURL(fileBlob);
       setFileUrl(url);
-
       const inferredType = fileBlob.type;
       setFileType(inferredType);
-
-      // Optional: Guess filename from Blob if response includes `name`
-      // For now just fallback to default
     }
   }, [fileBlob]);
 
@@ -682,3 +678,4 @@ return fileUrl && fileType ? (
   </div>
 );
 }
+export default AccessSharedFile;

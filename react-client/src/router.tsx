@@ -12,8 +12,8 @@ import Files from "./components/fileComponents/Files";
 // import SharedWithMe from "./components/shareComponents/Shares";
 import UnderConstruction from "./components/mainComponents/UnderConstruction";
 import Shares from "./components/shareComponents/Shares";
-import Setting from "./components/mainComponents/Setting";
-import Profile from "./components/mainComponents/Profile";
+import Setting from "./components/userComponents/Setting";
+import Profile from "./components/userComponents/Profile";
 // import HomePage from "./components/HomePage";
 
 // </BrowserRouter> 

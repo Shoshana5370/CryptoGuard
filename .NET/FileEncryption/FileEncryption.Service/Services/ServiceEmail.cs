@@ -2,6 +2,7 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 namespace FileEncryption.Service.Services
 {
@@ -15,7 +16,7 @@ namespace FileEncryption.Service.Services
             _config = config;
         }
 
-        public async Task SendAsync(string to, string toUser,string fromUser, string accessCode,string fileName)
+        public async Task<bool> SendAsync(string to, string toUser,string fromUser, string accessCode,string fileName)
         {
 //            bool correct = await IsEmailValid(to);
 //            if(correct)
@@ -38,8 +39,10 @@ namespace FileEncryption.Service.Services
             await smtp.ConnectAsync(_config["EmailSettings:SmtpHost"], int.Parse(_config["EmailSettings:SmtpPort"]), true);
             await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
             await smtp.SendAsync(email);
-                await smtp.DisconnectAsync(true);
+            await smtp.DisconnectAsync(true);
+            return true;
             }
+        
         //}
         private async Task<bool> IsEmailValid(string email)
         {
@@ -58,5 +61,6 @@ namespace FileEncryption.Service.Services
             // בדיקת השדה smtp_check
             return json.RootElement.TryGetProperty("smtp_check", out var smtpCheck) && smtpCheck.GetBoolean();
         }
+        
     }
 }

@@ -75,6 +75,18 @@ namespace FileEncryption.Service.Services
         {
             return Guid.NewGuid().ToString("N").Substring(0, 8);  // Example: 8-char code
         }
+        public async Task<bool> ExtendExpirationAsync(int id, string newDate)
+        {
+            if (!DateTime.TryParse(newDate, out var parsedDate))
+                return false;
+
+            var share = await _repositoryManager.Shares.GetByIdShareAsync(id);
+            if (share == null) return false;
+
+            share.ExpiresAt = parsedDate;
+            await _repositoryManager.Shares.UpdateShareAsync(id,share);
+            return true;
+        }
 
     }
 }

@@ -28,37 +28,21 @@ namespace FileEncryption.Api.Controllers
             _fileService = fileService;
         }
 
-        //// GET: api/<ShareController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
+        public class ExtendShareExpirationDto
+        {
+            public string NewDate { get; set; } = null!;
+        }
+        [HttpPost("{id}")]
+        public async Task<IActionResult> ExtendExpiration(int id, [FromBody] ExtendShareExpirationDto dto)
+        {
+            var success = await _shareService.ExtendExpirationAsync(id, dto.NewDate);
+            if (!success)
+            {
+                return NotFound($"Share with ID {id} not found or date invalid.");
+            }
 
-        //// GET api/<ShareController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
-        //// POST api/<ShareController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT api/<ShareController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE api/<ShareController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+            return NoContent(); // 204
+        }
 
         [HttpPost]
         [Authorize(Policy = "UserOrAdmin")]
@@ -67,12 +51,19 @@ namespace FileEncryption.Api.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var share = await _shareService.ShareFileAsync(_mapper.Map<Share>(req),userId);
-
-            await _emailService.SendAsync(
-                share.RecipientEmail,share.RecipientUser?.Name,share.SharedByUser.Name,share.AccessCode,share.File.Name
-            );
-
-            return Ok(share);
+            if (share != null)
+            {
+               bool success= await _emailService.SendAsync(
+                share.RecipientEmail, share.RecipientUser?.Name, share.SharedByUser.Name, share.AccessCode, share.File.Name);
+                if (!success)
+                {
+                    return BadRequest("the Email is not exist.");
+                }
+                return Ok(share);
+            
+            }
+            return BadRequest("the share failed.");
+          
         }
         public class AccessRequestDto
         {
