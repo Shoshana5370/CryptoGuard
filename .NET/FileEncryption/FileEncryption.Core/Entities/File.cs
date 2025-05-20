@@ -13,12 +13,12 @@ namespace FileEncryption.Core.Entities
             public string Name { get; set; }
             public string ContentType { get; set; }
             public string EncryptedUrl { get; set; }
-            public DateTime CreatedAt { get; set; } = DateTime.Now;
+            public DateTime CreatedAt { get; set; } 
             public int? CreatedBy { get; set; }
 
             [ForeignKey(nameof(CreatedBy))]
             public User UserCreated { get; set; }
-            public DateTime UpdatedAt { get; set; } = DateTime.Now;
+            public DateTime UpdatedAt { get; set; }
             public bool isDelete { get; set; }
             public virtual ICollection<Share> Shares { get; set; }
     }

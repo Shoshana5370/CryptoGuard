@@ -1,8 +1,4 @@
-// import { useAppSelector } from "@/hooks";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/styles/ui/tabs";
-// import { Link2, Share2 } from "lucide-react";
-// import AccessSharedFile from "./AccessSharedFile";
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/styles/ui/card";
+
 // export default function SharedWithMe() {
 //   const { user } = useAppSelector(state => state.auth);
 
@@ -14,7 +10,7 @@
 //           <p className="text-gray-500 mt-1">Access files that have been shared with you</p>
 //         </div>
 //       </div>
-      
+
 //       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 //         <div className="lg:col-span-2">
 //           <Card className="shadow-md border border-gray-200">
@@ -33,7 +29,7 @@
 //                   <TabsTrigger value="received">Received</TabsTrigger>
 //                   <TabsTrigger value="sent">Sent</TabsTrigger>
 //                 </TabsList>
-                
+
 //                 <TabsContent value="received">
 //                   <div className="text-center py-8 text-gray-500">
 //                     <Link2 className="h-12 w-12 mx-auto text-gray-300 mb-3" />
@@ -43,7 +39,7 @@
 //                     </p>
 //                   </div>
 //                 </TabsContent>
-                
+
 //                 <TabsContent value="sent">
 //                   <div className="text-center py-8 text-gray-500">
 //                     <Link2 className="h-12 w-12 mx-auto text-gray-300 mb-3" />
@@ -57,10 +53,10 @@
 //             </CardContent>
 //           </Card>
 //         </div>
-        
+
 //         <div>
 //           <AccessSharedFile />
-          
+
 //           <Card className="mt-6 bg-gray-50 border border-gray-200">
 //             <CardHeader>
 //               <CardTitle className="text-lg">About Share Codes</CardTitle>
@@ -87,11 +83,18 @@
 //     </div>
 //   );
 // }
-import { useEffect } from "react";
+import { Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/styles/ui/tabs";
 import { Link2, Share2 } from "lucide-react";
 import AccessSharedFile from "./AccessSharedFile";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/styles/ui/dialog";
 import {
   Card,
   CardContent,
@@ -102,20 +105,29 @@ import {
 import {
   fetchSharesWithMe,
   fetchSharesToOthers,
+  extendShareExpiration,
 } from "../../features/shares/shareSlice";
+import { Button } from "@/styles/ui/button";
 
 export default function Shares() {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const { sharesWithMe, sharesToOthers, loading, error } = useAppSelector(
+  const { sharesWithMe, sharesToOthers, loading } = useAppSelector(
     (state) => state.share
   );
-
+  const [selectedShareCode, setSelectedShareCode] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   useEffect(() => {
     if (user) {
-    dispatch(fetchSharesWithMe());
-    dispatch(fetchSharesToOthers());}
-  }, [dispatch,user]);
+      dispatch(fetchSharesWithMe());
+      dispatch(fetchSharesToOthers());
+    }
+  }, [dispatch, user]);
+
+  function handleExtendExpiration(date: string): void {
+    // await axiosInstance.post(`/api/User/ExtendShareExpiration/${id}`);
+    dispatch(extendShareExpiration(date)); // refresh list
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -155,10 +167,13 @@ export default function Shares() {
                       {sharesWithMe.map((share) => (
                         <li
                           key={share.id}
-                          className="border p-3 rounded bg-white shadow-sm"
+                          onClick={() => {
+                            setSelectedShareCode(share.id.toString());
+                            setDialogOpen(true);
+                          }}
+                          className="border p-3 rounded bg-white shadow-sm cursor-pointer hover:bg-gray-50"
                         >
-                          Shared by user #{share.sharedByUserId} – file key:{" "}
-                          <strong>{share.fileKey}</strong>
+                          Shared by user #{share.sharedByUserId} – file key: <strong>{share.fileKey}</strong>
                         </li>
                       ))}
                     </ul>
@@ -181,11 +196,29 @@ export default function Shares() {
                       {sharesToOthers.map((share) => (
                         <li
                           key={share.id}
-                          className="border p-3 rounded bg-white shadow-sm"
+                          className="border p-3 rounded bg-white shadow-sm relative flex justify-between items-start"
                         >
-                          Shared to{" "}
-                          <strong>{share.recipientEmail || "Unregistered User"}</strong> – file key:{" "}
-                          <strong>{share.fileKey}</strong>
+                          <div>
+                            Shared to <strong>{share.recipientEmail || "Unregistered User"}</strong> – file key:{" "}
+                            <strong>{share.fileKey}</strong>
+                            {share.used && (
+                              <span className="mt-1 inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                                Used
+                              </span>
+                            )}
+                          </div>
+
+                          {!share.used && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="ml-4 mt-1 flex items-center gap-1 text-sm"
+                              onClick={() => handleExtendExpiration(share.expiresAt)}
+                            >
+                              <Clock className="w-4 h-4" />
+                              Extend
+                            </Button>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -204,23 +237,22 @@ export default function Shares() {
           </Card>
         </div>
 
-        <div>
-        /* <AccessSharedFile />
-          {/*
-
-          <Card className="mt-6 bg-gray-50 border border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-lg">About Share Codes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 text-sm text-gray-600">
-                <p>
-                  Share codes and encryption notes can go here
-                </p>
-              </div>
-            </CardContent>
-          </Card> */}
-        </div>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-w-xl">
+            <DialogHeader>
+              <DialogTitle>Access Shared File</DialogTitle>
+            </DialogHeader>
+            {selectedShareCode && (
+              <AccessSharedFile
+                code={selectedShareCode}
+                onReset={() => {
+                  setDialogOpen(false);
+                  setSelectedShareCode(null);
+                }}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

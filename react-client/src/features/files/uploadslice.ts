@@ -28,7 +28,7 @@ export const uploadFileContent = createAsyncThunk<
             formData.append('file', file);
 
             const response = await axiosInstance.post<FilePostModel>(
-                `/api/Files/upload`,   // 🔥 no userId in query string
+                `/api/Files/upload`,  
                 formData,
                 {
                     headers: {

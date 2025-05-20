@@ -1,6 +1,6 @@
-// src/features/files/filesSlice.ts
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../store/store'; // adjust path as needed
+import { RootState } from '../../store/store'; 
 import { FileDto } from '../../types/FileDto';
 import axiosInstance from '../../axiosInstance';
 
@@ -15,12 +15,10 @@ const initialState: FilesState = {
     error: null,
 };
 const url = 'https://localhost:7207'
-
-// Thunk to fetch files by user ID
 export const fetchFilesByUserId = createAsyncThunk<
     FileDto[],
     void,
-    { state: RootState } // Return type of the payload creator           // Extra options
+    { state: RootState } 
 >(
     'files/fetchFilesByUserId',
     async (_, { rejectWithValue }) => {
@@ -35,7 +33,38 @@ export const fetchFilesByUserId = createAsyncThunk<
         }
     }
 );
-
+export const deleteFile = createAsyncThunk<
+    number, // Return the deleted file ID
+    number, // Argument: file ID
+    { state: RootState }
+>(
+    'files/deleteFile',
+    async (fileId, { rejectWithValue }) => {
+        try {
+            await axiosInstance.delete(`${url}/api/Files/${fileId}`);
+            return fileId;
+        } catch (err: any) {
+            const errorMsg = err.response?.data || err.message || 'Failed to delete file';
+            return rejectWithValue(errorMsg);
+        }
+    }
+);
+export const updateFile = createAsyncThunk<
+    FileDto,  
+    FileDto,       
+    { state: RootState }
+>(
+    'files/updateFile',
+    async (file, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.put<FileDto>(`${url}/api/Files/${file.id}`, file);
+            return response.data;
+        } catch (err: any) {
+            const errorMsg = err.response?.data || err.message || 'Failed to update file';
+            return rejectWithValue(errorMsg);
+        }
+    }
+);
 const filesSlice = createSlice({
     name: 'files',
     initialState,
@@ -58,6 +87,32 @@ const filesSlice = createSlice({
             .addCase(fetchFilesByUserId.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload ?? 'Failed to fetch files';
+            }).addCase(deleteFile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(deleteFile.fulfilled, (state, action: PayloadAction<number>) => {
+                state.loading = false;
+                state.items = state.items.filter(file => file.id !== action.payload);
+            })
+            .addCase(deleteFile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload ?? 'Failed to delete file';
+            }).addCase(updateFile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateFile.fulfilled, (state, action: PayloadAction<FileDto>) => {
+                state.loading = false;
+                // Replace the updated file in the items array
+                const index = state.items.findIndex(f => f.id === action.payload.id);
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
+            })
+            .addCase(updateFile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload ?? 'Failed to update file';
             });
     },
 });

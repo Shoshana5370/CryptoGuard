@@ -1,34 +1,36 @@
-// import React from "react";
+
 import { motion } from "framer-motion";
-import { Upload, Key, Lock, Download } from "lucide-react";
+import { Upload, Download, UserPlus, Share2 } from "lucide-react";
 
 export default function EncryptionSteps() {
-  const steps = [
-    {
-      icon: Upload,
-      title: "Upload Your File",
-      description: "Select and upload the file you want to encrypt securely to our system.",
-      color: "bg-amber-50 text-amber-700 border-amber-100"
-    },
-    {
-      icon: Key,
-      title: "Set Strong Password",
-      description: "Create a unique, strong password that will be used to encrypt your file.",
-      color: "bg-rose-50 text-rose-700 border-rose-100"
-    },
-    {
-      icon: Lock,
-      title: "Encryption Process",
-      description: "Our advanced algorithm encrypts your file with military-grade security protocols.",
-      color: "bg-emerald-50 text-emerald-700 border-emerald-100"
-    },
-    {
-      icon: Download,
-      title: "Download Secure File",
-      description: "Download your encrypted file that can only be opened with your password.",
-      color: "bg-purple-50 text-purple-700 border-purple-100"
-    }
-  ];
+    const steps = [
+      {
+        icon: UserPlus,
+        title: "Create an Account",
+        description: "Sign up or log in to access the secure file encryption and sharing platform.",
+        color: "bg-blue-50 text-blue-700 border-blue-100"
+      },
+      {
+        icon: Upload,
+        title: "Upload & Encrypt",
+        description: "Select a file to upload. It will be automatically encrypted before storage.",
+        color: "bg-emerald-50 text-emerald-700 border-emerald-100"
+      },
+      {
+        icon: Share2,
+        title: "Securely Share",
+        description: "Send encrypted files with a secure link, expiration date.",
+        color: "bg-yellow-50 text-yellow-700 border-yellow-100"
+      },
+      {
+        icon: Download,
+        title: "Access Shared Files",
+        description: "View and download files shared with you — securely decrypted on access.",
+        color: "bg-purple-50 text-purple-700 border-purple-100"
+      }
+    ];
+  
+  
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

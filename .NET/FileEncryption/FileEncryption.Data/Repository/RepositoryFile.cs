@@ -19,7 +19,6 @@ namespace FileEncryption.Data.Repository
         public async Task<Core.Entities.File> AddFileAsync(Core.Entities.File fileEntity)
         {
             if (fileEntity == null) return null;
-
             await _dataContext.Files.AddAsync(fileEntity);
             return fileEntity;
         }
@@ -31,8 +30,9 @@ namespace FileEncryption.Data.Repository
             {
                 return false;
             }
-
-            _dataContext.Files.Remove(file);
+            file.isDelete = true;
+            _dataContext.Files.Update(file);
+            //_dataContext.Files.Remove(file);
             return true;
         }
 
@@ -57,6 +57,7 @@ namespace FileEncryption.Data.Repository
 
             // Map fields as needed
             existingFile.Name = fileEntity.Name;
+            existingFile.UpdatedAt = DateTime.Now;
             // Add more fields if necessary
 
             _dataContext.Files.Update(existingFile);

@@ -21,9 +21,9 @@ namespace FileEncryption.Core.Entities
         public bool IsAdmin { get; set; }
 
         [Column(TypeName = "DATETIME")] // סוג העמודה
-        public DateTime CreatedAt { get; set; } = DateTime.Now; // תאריך יצירה
+        public DateTime CreatedAt { get; set; }// תאריך יצירה
         [Column(TypeName = "DATETIME")]
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; }
         public virtual ICollection<FileEncryption.Core.Entities.File> Files { get; set; }
         public virtual ICollection<Share> SharesToOthers { get; set; }
         public virtual ICollection<Share> SharesWithMe { get; set; }

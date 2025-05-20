@@ -122,15 +122,12 @@ const initialState: AccessState = {
 
 export const accessSharedFile = createAsyncThunk(
   'access/accessSharedFile',
-  async (code: string, { rejectWithValue }) => {
+  async ({ shareId, code }: { shareId: number; code: string }, { rejectWithValue })=> {
     try {
       const response = await axiosInstance.post<Blob>(
         `/api/Share/access`,
-        JSON.stringify(code),
-        {
-          headers: { 'Content-Type': 'application/json' },
-          responseType: 'blob',
-        }
+        { code, id: shareId },
+        { headers: { 'Content-Type': 'application/json' }, responseType: 'blob' }
       );
 
       // Extract filename from Content-Disposition header

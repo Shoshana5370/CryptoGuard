@@ -83,7 +83,8 @@ builder.Services.AddDbContext<DataContext>(
     }));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddAutoMapper(typeof(MappingProfilePostModel));
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -100,7 +101,7 @@ app.UseCors("MyPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseSession();
 app.MapControllers();
 
 app.Run();

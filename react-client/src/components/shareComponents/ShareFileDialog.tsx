@@ -243,11 +243,11 @@ type ShareFileDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   file: FileDto;
+  onShare: (updatedFile: FileDto) => void;
 };
-
-const ShareFileDialog = ({ isOpen, onClose, file }: ShareFileDialogProps) => {
+const ShareFileDialog = ({ isOpen, onClose, file , onShare }: ShareFileDialogProps) => {
   const dispatch = useAppDispatch();
-  const { status, share } = useAppSelector((state: RootState) => state.shareFile);
+  const { status } = useAppSelector((state: RootState) => state.shareFile);
 
   const [email, setEmail] = useState("");
   const [expiration, setExpiration] = useState<Date | undefined>(new Date());

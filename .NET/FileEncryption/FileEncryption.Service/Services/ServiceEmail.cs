@@ -26,12 +26,14 @@ namespace FileEncryption.Service.Services
             email.Subject = "Your AcsessCode";
 
             // You can format the body as needed
-            email.Body = new TextPart("plain")
+            email.Body = new TextPart("html")
             {
-                Text = $"Hello {(toUser != null ? toUser : "guest")},\n\n User {fromUser} has shared a file with you.\n Your access code to file:{fileName} is: **{accessCode}**\n\nBest regards to you."
-
+                Text = $@"
+              <p>Hello {(toUser != null ? toUser : "guest")},</p>
+              <p>User {fromUser} has shared a file with you.</p>
+              <p>Your access code to file <b>{fileName}</b> is: <b>{accessCode}</b></p>
+              <p>Best regards to you.</p>"
             };
-
             using var smtp = new SmtpClient();
             await smtp.ConnectAsync(_config["EmailSettings:SmtpHost"], int.Parse(_config["EmailSettings:SmtpPort"]), true);
             await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);

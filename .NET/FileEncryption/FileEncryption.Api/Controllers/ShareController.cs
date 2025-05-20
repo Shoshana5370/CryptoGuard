@@ -59,7 +59,9 @@ namespace FileEncryption.Api.Controllers
         //public void Delete(int id)
         //{
         //}
+
         [HttpPost]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<Share>> ShareFile([FromBody] SharePostModel req)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -72,12 +74,17 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(share);
         }
-
+        public class AccessRequestDto
+        {
+            public int Id { get; set; }
+            public string Code { get; set; }
+        }
 
         [HttpPost("access")]
-        public async Task<IActionResult> AccessSharedFile([FromBody] string input)
+        [Authorize(Policy = "UserOrAdmin")]
+        public async Task<IActionResult> AccessSharedFile([FromBody] AccessRequestDto requestDto)
         {
-            var share = await _shareService.GetValidShareByCodeAsync(input);
+            var share = await _shareService.GetValidShareByCodeAsync(requestDto.Code);
             var (stream, fileName, contentType) = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
 
             return File(stream, contentType ?? "application/octet-stream", fileName);

@@ -27,7 +27,8 @@ namespace FileEncryption.Service.Services
         }
 
          public async Task<bool> DiscardFileAsync(int id)
-        {
+        {  
+            
             bool success = await _repositoryManager.Files.DeleteFileAsync(id); // Call repository method to delete file
             if (success)
             {
@@ -59,7 +60,9 @@ namespace FileEncryption.Service.Services
 
         public async Task<Core.Entities.File> InsertFileAsync(FileDto file)
         {
-            var fileEntity = _mapper.Map<Core.Entities.File>(file); 
+            var fileEntity = _mapper.Map<Core.Entities.File>(file);
+            fileEntity.CreatedAt = DateTime.Now;
+            fileEntity.Name = Path.GetFileNameWithoutExtension(fileEntity.Name);
             await _repositoryManager.Files.AddFileAsync(fileEntity); 
             await _repositoryManager.SaveAsync(); 
             return fileEntity;

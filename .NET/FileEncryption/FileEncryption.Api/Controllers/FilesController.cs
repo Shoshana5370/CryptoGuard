@@ -23,6 +23,8 @@ namespace FileEncryption.Api.Controllers
 
         // GET: api/<FilesController>
         [HttpGet]
+        [Authorize(Policy = "UserOrAdmin")]
+         
         public async Task<ActionResult<IEnumerable<FileDto>>> GetAsync()
         {
             var files = await _fileService.FindAllFilesAsync();
@@ -65,39 +67,36 @@ namespace FileEncryption.Api.Controllers
         //    }
         //    return BadRequest();
         //}
+        [HttpPut("{id}")]
+        public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
+        {
+            if (file == null || file.Id != id)
+            {
+                return BadRequest(); // Return 400 Bad Request if the file object is null or id does not match
+            }
 
-        //// PUT api/<FilesController>/5
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
-        //{
-        //    if (file == null || file.Id != id)
-        //    {
-        //        return BadRequest(); // Return 400 Bad Request if the file object is null or id does not match
-        //    }
+            var result = await _fileService.UpdateExistingFileAsync(id, file);
+            if (result == null)
+            {
+                return NotFound(); // Return 404 if the file to update is not found
+            }
 
-        //    var result = await _fileService.UpdateExistingFileAsync(id, file);
-        //    if (result == null)
-        //    {
-        //        return NotFound(); // Return 404 if the file to update is not found
-        //    }
+            return Ok(_mapper.Map<FileDto>(result)); // Return 200 OK on successful update
+        }
 
-        //    return Ok(_mapper.Map<FileDto>(result)); // Return 200 OK on successful update
-        //}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> Delete(int id)
+        {
+            var result = await _fileService.DiscardFileAsync(id);
 
-        //// DELETE api/<FilesController>/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<bool>> Delete(int id)
-        //{
-        //    var result = await _fileService.DiscardFileAsync(id);
+            if (!result)
+            {
+                return NotFound(); // Return 404 if the file to delete is not found
+            }
 
-        //    if (!result)
-        //    {
-        //        return NotFound(); // Return 404 if the file to delete is not found
-        //    }
+            return NoContent(); // Return 204 No Content on successful deletion
+        }
 
-        //    return NoContent(); // Return 204 No Content on successful deletion
-        //}
-        
         [HttpPost("upload")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> UploadEncryptedFile(IFormFile file)

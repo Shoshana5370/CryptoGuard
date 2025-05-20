@@ -8,15 +8,16 @@ namespace FileEncryption.Core.DTOs
 {
         public class FileDto
         {
-            public int Id { get; set; } // מזהה קובץ
+            public int Id { get; set; } 
 
-            public string Name { get; set; } // שם הקובץ
-            public string EncryptedUrl { get; set; } // כתובת הקובץ המוצפן ב-S3
+            public string Name { get; set; }
+            public string EncryptedUrl { get; set; } 
             public string ContentType { get; set; }
 
-            public DateTime CreatedAt { get; set; } // תאריך העלאה
- 
-            public int CreatedBy { get; set; } // מזהה המשתמש שיצר את הרשומה
+            public DateTime CreatedAt { get; set; } 
+            public DateTime UpdatedAt { get; set; }
+
+            public int CreatedBy { get; set; } 
 
             public bool isDelete { get; set; }
 

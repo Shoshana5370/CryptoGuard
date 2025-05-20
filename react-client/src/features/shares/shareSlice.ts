@@ -49,7 +49,17 @@ export const fetchSharesToOthers = createAsyncThunk<
     return thunkAPI.rejectWithValue(msg);
   }
 });
-
+export const extendShareExpiration = createAsyncThunk<void, string, { state: RootState; rejectValue: string }>(
+    'shares/extendShareExpiration',
+    async (shareId, thunkAPI) => {
+      try {
+        await axiosInstance.post(`${apiBase}/api/User/ExtendShareExpiration/${shareId}`);
+      } catch (err: any) {
+        const msg = err.response?.data || err.message || 'Failed to extend expiration';
+        return thunkAPI.rejectWithValue(msg);
+      }
+    }
+  );
 const sharesSlice = createSlice({
   name: 'shares',
   initialState,

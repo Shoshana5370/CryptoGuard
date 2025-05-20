@@ -361,22 +361,25 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/styles/u
 import { Input } from "@/styles/ui/input";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
-import { AlertTriangle, CheckCircle, Download, Link, Eye } from "lucide-react";
+import { AlertTriangle, Download, Link } from "lucide-react";
+type AccessSharedFileProps = {
+  code: string;
+  onReset: () => void;
+};
 
-export default function AccessSharedFile() {
+export default function AccessSharedFile({ code, onReset }: AccessSharedFileProps) 
+{
   const [shareCode, setShareCode] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("shared-file");
+  const [fileName, setFileName] = useState<string>("");
 
   const dispatch = useAppDispatch();
   const { fileBlob, status, error } = useAppSelector((state) => state.access);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (shareCode.trim()) {
-      dispatch(accessSharedFile(shareCode.trim()));
-    }
+dispatch(accessSharedFile({ shareId: parseInt(code), code: shareCode.trim() }));
   };
 
   const handleReset = () => {
@@ -415,94 +418,267 @@ export default function AccessSharedFile() {
     return type.startsWith("image/") || type === "application/pdf";
   };
 
-  return (
-    <div className="max-w-md mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            Access Shared File
-          </CardTitle>
-        </CardHeader>
+//   return (
+//     <div className="max-w-md mx-auto p-4">
+//       <Card>
+//         <CardHeader>
+//           <CardTitle className="flex items-center gap-2 text-xl">
+//             Access Shared File
+//           </CardTitle>
+//         </CardHeader>
 
-        <CardContent>
-          {!fileUrl && (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="relative">
-                <Link className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                <Input
-                  placeholder="Enter share code"
-                  value={shareCode}
-                  onChange={(e) => setShareCode(e.target.value)}
-                  className="pl-10"
-                  disabled={status === "loading"}
-                />
-              </div>
-              {status === "failed" && (
-                <Alert variant="destructive">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    {typeof error === "string" ? error : "Invalid or expired code"}
-                  </AlertDescription>
-                </Alert>
-              )}
-              <Button
-                type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
-                disabled={status === "loading" || !shareCode.trim()}
-              >
-                {status === "loading" ? "Accessing..." : "Access File"}
-              </Button>
-            </form>
-          )}
+//         <CardContent>
+//           {!fileUrl && (
+//             <form onSubmit={handleSubmit} className="space-y-4">
+//               <div className="relative">
+//                 <Link className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+//                 <Input
+//                   placeholder="Enter share code"
+//                   value={shareCode}
+//                   onChange={(e) => setShareCode(e.target.value)}
+//                   className="pl-10"
+//                   disabled={status === "loading"}
+//                 />
+//               </div>
+//               {status === "failed" && (
+//                 <Alert variant="destructive">
+//                   <AlertTriangle className="h-4 w-4" />
+//                   <AlertDescription>
+//                     {typeof error === "string" ? error : "Invalid or expired code"}
+//                   </AlertDescription>
+//                 </Alert>
+//               )}
+//               <Button
+//                 type="submit"
+//                 className="w-full bg-emerald-600 hover:bg-emerald-700"
+//                 disabled={status === "loading" || !shareCode.trim()}
+//               >
+//                 {status === "loading" ? "Accessing..." : "Access File"}
+//               </Button>
+//             </form>
+//           )}
 
-          {fileUrl && fileType && (
-            <>
-              <div className="flex items-center text-emerald-700 gap-2 mt-4">
-                <CheckCircle className="h-5 w-5" />
-                File ready!
-              </div>
+//           {fileUrl && fileType && (
+//             <>
+//               <div className="flex items-center text-emerald-700 gap-2 mt-4">
+//                 <CheckCircle className="h-5 w-5" />
+//                 File ready!
+//               </div>
 
-              {isPreviewable(fileType) ? (
-                <div className="mt-4 space-y-2">
-                  {fileType.startsWith("image/") ? (
-                    <img src={fileUrl} alt="Preview" className="max-w-full rounded border" />
-                  ) : (
-                    <iframe
-                      src={fileUrl}
-                      className="w-full h-64 border rounded"
-                      title="PDF Preview"
-                    ></iframe>
-                  )}
-                  <Button onClick={handleDownload} className="w-full bg-emerald-600">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download
-                  </Button>
-                </div>
-              ) : (
-                <div className="mt-4">
-                  <p className="text-gray-600 mb-2">This file type can’t be previewed.</p>
-                  <Button onClick={handleDownload} className="w-full bg-emerald-600">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download File
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-        </CardContent>
+//               {isPreviewable(fileType) ? (
+//                 <div className="mt-4 space-y-2">
+//                   {fileType.startsWith("image/") ? (
+//                     <img src={fileUrl} alt="Preview" className="max-w-full rounded border" />
+//                   ) : (
+//                     <iframe
+//                       src={fileUrl}
+//                       className="w-full h-64 border rounded"
+//                       title="PDF Preview"
+//                     ></iframe>
+//                   )}
+//                   <Button onClick={handleDownload} className="w-full bg-emerald-600">
+//                     <Download className="mr-2 h-4 w-4" />
+//                     Download
+//                   </Button>
+//                 </div>
+//               ) : (
+//                 <div className="mt-4">
+//                   <p className="text-gray-600 mb-2">This file type can’t be previewed.</p>
+//                   <Button onClick={handleDownload} className="w-full bg-emerald-600">
+//                     <Download className="mr-2 h-4 w-4" />
+//                     Download File
+//                   </Button>
+//                 </div>
+//               )}
+//             </>
+//           )}
+//         </CardContent>
 
-        <CardFooter className="flex justify-between">
-          {fileUrl ? (
-            <Button variant="outline" onClick={handleReset}>
-              Access Another File
-            </Button>
-          ) : (
-            <p className="text-sm text-gray-500 w-full text-center">
-              Files are accessible for a limited time only
-            </p>
-          )}
-        </CardFooter>
-      </Card>
+//         <CardFooter className="flex justify-between">
+//           {fileUrl ? (
+//             <Button variant="outline" onClick={handleReset}>
+//               Access Another File
+//             </Button>
+//           ) : (
+//             <p className="text-sm text-gray-500 w-full text-center">
+//               Files are accessible for a limited time only
+//             </p>
+//           )}
+//         </CardFooter>
+//       </Card>
+//     </div>
+//   );
+// }
+// return fileUrl && fileType ? (
+//   <div className="w-screen h-screen flex flex-col bg-black">
+//     {isPreviewable(fileType) ? (
+//       fileType.startsWith("image/") ? (
+//         <img
+//           src={fileUrl}
+//           alt="Preview"
+//           className="object-contain w-full h-full bg-black"
+//         />
+//       ) : (
+//         <iframe
+//           src={fileUrl}
+//           className="w-full h-full border-none"
+//           title="PDF Preview"
+//         ></iframe>
+//       )
+//     ) : (
+//       <div className="text-white flex flex-col justify-center items-center h-full gap-4">
+//         <p>This file type can’t be previewed.</p>
+//         <Button onClick={handleDownload} className="bg-emerald-600">
+//           <Download className="mr-2 h-4 w-4" />
+//           Download File
+//         </Button>
+//       </div>
+//     )}
+//     <div className="absolute top-4 right-4">
+//       <Button variant="outline" onClick={handleReset} className="bg-white">
+//         Access Another File
+//       </Button>
+//     </div>
+//   </div>
+// ) : (
+//   <div className="max-w-md mx-auto p-4">
+//     <Card>
+//       <CardHeader>
+//         <CardTitle className="flex items-center gap-2 text-xl">
+//           Access Shared File
+//         </CardTitle>
+//       </CardHeader>
+
+//       <CardContent>
+//         <form onSubmit={handleSubmit} className="space-y-4">
+//           <div className="relative">
+//             <Link className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+//             <Input
+//               placeholder="Enter share code"
+//               value={shareCode}
+//               onChange={(e) => setShareCode(e.target.value)}
+//               className="pl-10"
+//               disabled={status === "loading"}
+//             />
+//           </div>
+//           {status === "failed" && (
+//             <Alert variant="destructive">
+//               <AlertTriangle className="h-4 w-4" />
+//               <AlertDescription>
+//                 {typeof error === "string" ? error : "Invalid or expired code"}
+//               </AlertDescription>
+//             </Alert>
+//           )}
+//           <Button
+//             type="submit"
+//             className="w-full bg-emerald-600 hover:bg-emerald-700"
+//             disabled={status === "loading" || !shareCode.trim()}
+//           >
+//             {status === "loading" ? "Accessing..." : "Access File"}
+//           </Button>
+//         </form>
+//       </CardContent>
+
+//       <CardFooter>
+//         <p className="text-sm text-gray-500 w-full text-center">
+//           Files are accessible for a limited time only
+//         </p>
+//       </CardFooter>
+//     </Card>
+//   </div>
+// )}
+
+return fileUrl && fileType ? (
+  <div className="w-screen h-screen flex flex-col bg-black relative">
+    {isPreviewable(fileType) ? (
+      <>
+        {fileType.startsWith("image/") ? (
+          <img
+            src={fileUrl}
+            alt="Preview"
+            className="object-contain w-full h-full bg-black"
+          />
+        ) : (
+          <iframe
+            src={fileUrl}
+            className="w-full h-full border-none"
+            title="File Preview"
+          />
+        )}
+        <div className="text-center mt-4 absolute bottom-4 w-full">
+          <a
+            href={fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-400 underline"
+          >
+            Open in full page
+          </a>
+        </div>
+      </>
+    ) : (
+      <div className="text-white flex flex-col justify-center items-center h-full gap-4">
+        <p>This file type can’t be previewed.</p>
+        <Button onClick={handleDownload} className="bg-emerald-600">
+          <Download className="mr-2 h-4 w-4" />
+          Download File
+        </Button>
+      </div>
+    )}
+
+    <div className="absolute top-4 right-4">
+      <Button variant="outline" onClick={handleReset} className="bg-white">
+        Access Another File
+      </Button>
     </div>
-  );
+  </div>
+) : (
+  <div className="max-w-md mx-auto p-4">
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-xl">
+          Access Shared File
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <Link className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Enter share code"
+              value={shareCode}
+              onChange={(e) => setShareCode(e.target.value)}
+              className="pl-10"
+              disabled={status === "loading"}
+            />
+          </div>
+
+          {status === "failed" && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                {typeof error === "string" ? error : "Invalid or expired code"}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Button
+            type="submit"
+            className="w-full bg-emerald-600 hover:bg-emerald-700"
+            disabled={status === "loading" || !shareCode.trim()}
+          >
+            {status === "loading" ? "Accessing..." : "Access File"}
+          </Button>
+        </form>
+      </CardContent>
+
+      <CardFooter>
+        <p className="text-sm text-gray-500 w-full text-center">
+          Files are accessible for a limited time only
+        </p>
+      </CardFooter>
+    </Card>
+  </div>
+);
 }

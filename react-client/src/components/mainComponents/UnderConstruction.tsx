@@ -1,55 +1,6 @@
-// import { motion } from "framer-motion";
-// import Logo from "./Logo"; // adjust path if needed
-// import { Wrench } from "lucide-react";
-
-// export default function UnderConstruction() {
-//   return (
-//     <div className="relative h-[500px] w-full rounded-2xl shadow-xl overflow-hidden bg-gradient-to-br from-emerald-50 to-amber-50 border border-gray-100">
-//       {/* Background floating shapes */}
-//       <motion.div 
-//         animate={{ y: [0, -10, 0] }}
-//         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-//         className="absolute top-10 left-10 w-14 h-14 rounded-xl bg-amber-100/50 backdrop-blur-md border border-amber-200/60 shadow-md"
-//       />
-//       <motion.div 
-//         animate={{ x: [0, 10, 0], y: [0, 5, 0] }}
-//         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-//         className="absolute bottom-10 right-16 w-20 h-20 rounded-full bg-emerald-100/50 backdrop-blur-md border border-emerald-200/60 shadow-md"
-//       />
-      
-//       {/* Content */}
-//       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-//         <motion.div
-//           initial={{ opacity: 0, y: 30 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.6 }}
-//           className="flex flex-col items-center gap-4"
-//         >
-//           <div className="flex items-center gap-2">
-//             <Logo />
-//           </div>
-
-//           <motion.div
-//             animate={{ rotate: [0, 15, -15, 0] }}
-//             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-//           >
-//             <Wrench className="w-12 h-12 text-amber-600" />
-//           </motion.div>
-
-//           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-//             We're Building Something Great
-//           </h1>
-//           <p className="text-gray-600 max-w-md">
-//             This page is currently under construction. Stay tuned – new features are coming soon!
-//           </p>
-//         </motion.div>
-//       </div>
-//     </div>
-//   );
-// }
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import Logo from "./Logo"; // Update path if needed
+import Logo from "./Logo";
 import { Wrench } from "lucide-react";
 
 export default function UnderConstruction() {

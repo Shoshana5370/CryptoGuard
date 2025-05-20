@@ -1,46 +1,49 @@
-// import React from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, Lock, RefreshCw, EyeOff, Fingerprint, Layers } from "lucide-react";
+import {  FileCheck, FileSearch, Share, Cloud, UserLock, UserCheck } from "lucide-react";
 
 export default function SecurityFeatures() {
   const features = [
+
     {
-      icon: ShieldCheck,
-      title: "Military-Grade Encryption",
-      description: "Using AES-256 encryption, the same standard used by governments to protect classified information.",
+      icon: Cloud,
+      title: "Secure Cloud Storage",
+      description: "Encrypted files are stored safely in the cloud using isolated and access-controlled buckets.",
       color: "text-emerald-700 bg-emerald-50"
     },
     {
-      icon: Lock,
-      title: "Password Protection",
-      description: "Your files are protected with your unique password that never leaves your device.",
+      icon: Share,
+      title: "Controlled Sharing",
+      description: "Generate time-limited, access-restricted links to share files securely with others.",
       color: "text-amber-700 bg-amber-50"
     },
     {
-      icon: RefreshCw,
-      title: "Secure Algorithms",
-      description: "Our system uses the most advanced cryptographic algorithms available today.",
+      icon: UserLock,
+      title: "Registered Users Only",
+      description: "All actions are restricted to authenticated users — no guest access is allowed.",
       color: "text-rose-700 bg-rose-50"
     },
     {
-      icon: EyeOff,
-      title: "Zero Knowledge",
-      description: "We never store your encryption keys or have access to your unencrypted files.",
+      icon: FileSearch,
+      title: "Audit & Monitoring",
+      description: "Track who accessed your files and when, with built-in activity logging and alerts.",
       color: "text-purple-700 bg-purple-50"
     },
     {
-      icon: Fingerprint,
-      title: "Unique Signature",
-      description: "Each encrypted file has a unique digital signature for added security.",
-      color: "text-teal-700 bg-teal-50"
+      icon: UserCheck,
+      title: "Human Verification",
+      description: "Advanced bot protection ensures that only real users can access and interact with the system.",
+      color: "ext-teal-700 bg-teal-50"
     },
+
     {
-      icon: Layers,
-      title: "Multiple Security Layers",
-      description: "Various security measures work together to provide comprehensive protection.",
+      icon: FileCheck,
+      title: "Integrity Verification",
+      description: "Every file upload is verified for integrity to ensure no tampering occurred in transit.",
       color: "text-amber-700 bg-amber-50"
     }
+    
   ];
+  
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

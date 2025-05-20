@@ -1,47 +1,68 @@
 import { Button } from "@/styles/ui/button";
 import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@/styles/ui/table";
 import { FileDto } from "@/types/FileDto";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { AnimatePresence, motion } from "framer-motion";
-import { Archive, Code, Download, FileText, MoreVertical, Music, Pencil, Share2, Trash2, Video, File, Image } from "lucide-react";
-import { format } from "date-fns";
-const getFileIcon = (fileType: any) => {
+import { Archive, Code, Download, FileText, Music, Pencil, Share2, Trash2, Video, File, Image } from "lucide-react";
+import { useState } from "react";
+
+import ShareFileDialog from "../shareComponents/ShareFileDialog";
+import RenameDialog from "./RenameDialog";
+const getFileIcon = (fileType: string) => {
   const iconProps = { className: "w-5 h-5" };
   switch (fileType.toLowerCase()) {
-    case 'image':
-      return <Image {...iconProps} className="text-purple-500" />;
+    case 'image/png':
+    case 'image/jpeg':
+      return <Image {...iconProps} className="text-pink-500" />;
     case 'application/pdf':
       return <FileText {...iconProps} className="text-red-500" />;
-    case 'audio':
+    case 'audio/mpeg':
       return <Music {...iconProps} className="text-blue-500" />;
-    case 'video':
+    case 'video/wmv':
       return <Video {...iconProps} className="text-emerald-500" />;
     case 'archive':
       return <Archive {...iconProps} className="text-amber-500" />;
-    // case 'code':
-    //   return <Code {...iconProps} className="text-gray-500" />;
+    case 'code':
+      return <Code {...iconProps} className="text-green-500" />;
     default:
       return <File {...iconProps} className="text-gray-500" />;
   }
 };
+const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: FileDto[], onDelete: (file: number) => void, onRename: (file: FileDto) => void, onDownload: (file: number) => void, onShare: (file: FileDto) => void }) => {
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<FileDto | null>(null);
+  const [selectedFileShare, setSelectedFileShare] = useState<FileDto | null>(null);
+  const handleOpenShare = (file: FileDto) => {
+    setSelectedFileShare(file);
+    setIsShareOpen(true);
+  };
+  const handleCloseShare = () => {
+    setIsShareOpen(false);
+    setSelectedFileShare(null);
+  };
+  const handleDialogShare = (updatedFile: FileDto) => {
+    onShare(updatedFile); // pass back up to Files
+    handleCloseShare();   // close dialog
+  };
+  const handleOpenRename = (file: FileDto) => {
 
-// /**
-//  * File Table Component
-//  * @param {Object} props
-//  * @param {Array} props.files - List of files
-//  * @param {function} props.onDelete - Delete file callback
-//  * @param {function} props.onRename - Rename file callback
-//  * @param {function} props.onDownload - Download file callback
-//  * @param {function} props.onShare - Share file callback
-//  */
-const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: FileDto[], onDelete: (file: number) => void, onRename: (file: number, newName: string) => void, onDownload: (file: number) => void, onShare: (file: FileDto) => void }) => {
+    setSelectedFile(file);
+    setIsRenameOpen(true);
+  };
+  const handleCloseRename = () => {
+    setSelectedFile(null);
+    setIsRenameOpen(false);
+  };
+  const handleDialogRename = (updatedFile: FileDto) => {
+    onRename(updatedFile); 
+    handleCloseRename();  
+  };
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-100">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/50">
             <TableHead>Name</TableHead>
-            {/* <TableHead>Size</TableHead> */}
             <TableHead>Type</TableHead>
             <TableHead>Date</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
@@ -49,97 +70,67 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
         </TableHeader>
         <TableBody>
           <AnimatePresence>
-            {files.map((file: FileDto) => (
-              <motion.tr
-                key={file.id}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.2 }}
-                className="group hover:bg-muted transition-colors"
-              >
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    {getFileIcon(file.contentType)}
-                    <span className="font-medium text-gray-900">{file.name}</span>
-                  </div>
-                </TableCell>
-                {/* <TableCell className="text-gray-500">
-                  {(file.size / 1024 / 1024).toFixed(2)} MB
-                </TableCell> */}
-                <TableCell>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-gray-100 text-gray-800">
-                    {file.contentType}
-                  </span>
-                </TableCell>
-                <TableCell className="text-gray-500">
-                  {format(new Date(file.createdAt), 'dd/MM/yyyy')}
-                </TableCell>
-                <TableCell>
-                  <TableCell className="flex gap-2 items-center">
-                    <Button variant="ghost" size="icon" onClick={() => onDownload(file.id)} title="Download">
-                      <Download className="w-4 h-4 text-muted-foreground" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onRename(file.id, file.name)} title="Rename">
-                      <Pencil className="w-4 h-4 text-muted-foreground" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onShare(file)} title="Share">
-                      <Share2 className="w-4 h-4 text-muted-foreground" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onDelete(file.id)} title="Delete">
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </Button>
+            {files
+              .filter(file => !file.isDelete)
+              .map(file => (
+                <motion.tr
+                  key={file.id}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.2 }}
+                  className="group hover:bg-muted transition-colors"
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      {getFileIcon(file.contentType)}
+                      <span className="font-medium text-gray-900">{file.name}</span>
+                    </div>
                   </TableCell>
-
-                  {/* <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                  <TableCell>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize bg-gray-100 text-gray-800">
+                      {file.contentType}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {new Date(file.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <TableCell className="flex gap-2 items-center">
+                      <Button variant="ghost" size="icon" onClick={() => onDownload(file.id)} title="Download">
+                        <Download className="w-4 h-4 text-muted-foreground" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-muted"
+                        onClick={() => handleOpenRename(file)
+
+                        }
+                        title="Rename"
                       >
-                        <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                        <Pencil className="w-4 h-4 text-muted-foreground" />
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem
-                        onClick={() => onDownload(file)}
-                        className="text-gray-700"
+
+                      <Button
+                        variant="ghost" size="icon"
+                        onClick={() => handleOpenShare(file)
+
+                        }
+                        title="Share"
                       >
-                        <Download className="w-4 h-4 mr-2" />
-                        Download
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          const newName = prompt('Enter new name', file.name);
-                          if (newName) onRename(file, newName);
-                        }}
-                        className="text-gray-700"
-                      >
-                        <Pencil className="w-4 h-4 mr-2" />
-                        Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onShare(file)}
-                        className="text-gray-700"
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Share
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => onDelete(file)}
-                        className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu> */}
-                </TableCell>
-              </motion.tr>
-            ))}
-            {files.length === 0 && (
+                        <Share2 className="w-4 h-4 text-muted-foreground" />
+                      </Button>
+                      {/* <Button onClick={() => onShare(file)} title="Share">
+                        <Share2 className="w-4 h-4 text-muted-foreground" />
+                      </Button> */}
+                      <Button variant="ghost" size="icon" onClick={() => onDelete(file.id)} title="Delete">
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </TableCell>
+                  </TableCell>
+                </motion.tr>
+              ))}
+            {(!files || files.length === 0 || files.filter(file => !file.isDelete).length === 0) && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8">
                   <div className="flex flex-col items-center justify-center text-gray-500">
@@ -153,8 +144,23 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
           </AnimatePresence>
         </TableBody>
       </Table>
+      {selectedFile && (
+        <RenameDialog
+          isOpen={isRenameOpen}
+          onClose={handleCloseRename}
+          file={selectedFile}
+          onRename={handleDialogRename}
+        />
+      )}
+      {selectedFileShare && (
+        <ShareFileDialog
+          isOpen={isShareOpen}
+          onClose={handleCloseShare}
+          file={selectedFileShare}
+          onShare={handleDialogShare}
+        />
+      )}
     </div>
   );
 };
-
 export default FileTable;

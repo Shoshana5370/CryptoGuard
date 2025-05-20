@@ -43,6 +43,27 @@ namespace FileEncryption.Api.Controllers
             }
             return Ok(result);
         }
+        [HttpPost("login1111")]
+        public IActionResult Login([FromBody] LoginRequest request)
+        {
+            // Validate CAPTCHA
+            var storedCode = HttpContext.Session.GetString("CaptchaCode");
+            if (storedCode == null || !storedCode.Equals(request.Captcha, StringComparison.OrdinalIgnoreCase))
+                return BadRequest(new { error = "Invalid CAPTCHA" });
+
+            // Authenticate user here...
+            if (request.Username == "admin" && request.Password == "1234")
+                return Ok(new { token = "example-token" });
+
+            return Unauthorized(new { error = "Invalid credentials" });
+        }
+
+        public class LoginRequest
+        {
+            public string Username { get; set; } = "";
+            public string Password { get; set; } = "";
+            public string Captcha { get; set; } = "";
+        }
 
     }
 
