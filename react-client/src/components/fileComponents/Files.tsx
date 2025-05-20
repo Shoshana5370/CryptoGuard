@@ -6,12 +6,14 @@ import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
 import { FileDto } from "@/types/FileDto";
-
 import UploadFileDialog from "./UploadFile";
+import { SharePostModel } from "@/types/SharePostModel";
+import { shareFile } from "@/features/shares/shareFileSlice";
 const Files=()=> {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
   const { items: files, loading, error } = useAppSelector(state => state.files);
+  const { } = useAppSelector(state => state.shareFile);
   const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
 
     useEffect(() => {
@@ -30,8 +32,8 @@ const Files=()=> {
   const handleRename = (updatedFile: FileDto) => {
     dispatch(updateFile(updatedFile));
 };
-const handleShare = (updatedFile: FileDto) => {
-     dispatch(updateFile(updatedFile));
+const handleShare = (updatedFile: SharePostModel) => {
+     dispatch(shareFile(updatedFile));
 };
   return (
     <div className="container mx-auto px-4 py-8">
@@ -40,12 +42,6 @@ const handleShare = (updatedFile: FileDto) => {
           <h1 className="text-2xl font-bold text-gray-900">My Files</h1>
           <p className="text-gray-500 mt-1">Manage your encrypted files</p>
         </div>
-        
-        {/* <Button onClick={() => navigate('/files/upload')} className="bg-emerald-600 hover:bg-emerald-700" >
-        
-          <Upload className="w-4 h-4 mr-2" />
-           Upload File
-        </Button> */}
          <Button onClick={() => setUploadFileIsOpen(true)} className="bg-emerald-600 hover:bg-emerald-700">
       <Upload className="w-4 h-4 mr-2" />
       Upload File

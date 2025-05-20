@@ -5,7 +5,6 @@ import { Label } from "@/styles/ui/label";
 import { FileDto } from "@/types/FileDto";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
-
 interface RenameDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -24,7 +23,6 @@ interface RenameDialogProps {
     onRename(updatedFile);
     onClose();
   };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">

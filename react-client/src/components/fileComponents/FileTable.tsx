@@ -7,17 +7,17 @@ import { useState } from "react";
 
 import ShareFileDialog from "../shareComponents/ShareFileDialog";
 import RenameDialog from "./RenameDialog";
+import { SharePostModel } from "@/types/SharePostModel";
 const getFileIcon = (fileType: string) => {
   const iconProps = { className: "w-5 h-5" };
-  switch (fileType.toLowerCase()) {
-    case 'image/png':
-    case 'image/jpeg':
+  switch (fileType.toLowerCase().split('/')[0])  {
+    case 'image':
       return <Image {...iconProps} className="text-pink-500" />;
-    case 'application/pdf':
+    case 'pdf':
       return <FileText {...iconProps} className="text-red-500" />;
-    case 'audio/mpeg':
+    case 'audio':
       return <Music {...iconProps} className="text-blue-500" />;
-    case 'video/wmv':
+    case 'video':
       return <Video {...iconProps} className="text-emerald-500" />;
     case 'archive':
       return <Archive {...iconProps} className="text-amber-500" />;
@@ -27,7 +27,7 @@ const getFileIcon = (fileType: string) => {
       return <File {...iconProps} className="text-gray-500" />;
   }
 };
-const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: FileDto[], onDelete: (file: number) => void, onRename: (file: FileDto) => void, onDownload: (file: number) => void, onShare: (file: FileDto) => void }) => {
+const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: FileDto[], onDelete: (file: number) => void, onRename: (file: FileDto) => void, onDownload: (file: number) => void, onShare: (file: SharePostModel) => void }) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileDto | null>(null);
@@ -40,12 +40,11 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
     setIsShareOpen(false);
     setSelectedFileShare(null);
   };
-  const handleDialogShare = (updatedFile: FileDto) => {
-    onShare(updatedFile); // pass back up to Files
-    handleCloseShare();   // close dialog
+  const handleDialogShare = (updatedFile: SharePostModel) => {
+    onShare(updatedFile); 
+    handleCloseShare();   
   };
   const handleOpenRename = (file: FileDto) => {
-
     setSelectedFile(file);
     setIsRenameOpen(true);
   };
@@ -120,9 +119,6 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
                       >
                         <Share2 className="w-4 h-4 text-muted-foreground" />
                       </Button>
-                      {/* <Button onClick={() => onShare(file)} title="Share">
-                        <Share2 className="w-4 h-4 text-muted-foreground" />
-                      </Button> */}
                       <Button variant="ghost" size="icon" onClick={() => onDelete(file.id)} title="Delete">
                         <Trash2 className="w-4 h-4 text-red-500" />
                       </Button>

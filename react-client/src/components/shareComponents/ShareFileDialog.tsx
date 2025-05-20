@@ -224,7 +224,6 @@
 // export default ShareFileDialog;
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { shareFile, clearShare } from "../../features/shares/shareFileSlice";
 import { SharePostModel } from "@/types/SharePostModel";
 import { FileDto } from "@/types/FileDto";
 
@@ -234,41 +233,37 @@ import { Input } from "@/styles/ui/input";
 import { Label } from "@/styles/ui/label";
 import { CalendarIcon, Check, Clock, Mail, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { format, addDays } from "date-fns";
+import { format } from "date-fns";
 
-import { Calendar } from "@/styles/ui/calendar"; // Assumes you have a Calendar component
+import { Calendar } from "@/styles/ui/calendar"; 
 import { RootState } from "@/store/store";
 
 type ShareFileDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   file: FileDto;
-  onShare: (updatedFile: FileDto) => void;
+  onShare: (updatedFile: SharePostModel) => void;
 };
 const ShareFileDialog = ({ isOpen, onClose, file , onShare }: ShareFileDialogProps) => {
-  const dispatch = useAppDispatch();
   const { status } = useAppSelector((state: RootState) => state.shareFile);
-
   const [email, setEmail] = useState("");
   const [expiration, setExpiration] = useState<Date | undefined>(new Date());
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const handleShare = async () => {
     if (!email || !file?.id) return;
-
     const payload: SharePostModel = {
       fileKey: file.id,
       recipientEmail: email,
       expiresAt: expiration?.toISOString(),
     };
-
-    await dispatch(shareFile(payload));
+    onShare(payload);
   };
 
   const resetState = () => {
     setEmail("");
-    setExpiration(addDays(new Date(), 7));
-    dispatch(clearShare());
+    setExpiration((new Date()));
+    onClose();
   };
 
   const handleClose = () => {
@@ -338,8 +333,6 @@ const ShareFileDialog = ({ isOpen, onClose, file , onShare }: ShareFileDialogPro
           </Button>
           <Button
             className="bg-emerald-600 hover:bg-emerald-700"
-            // onClick={handleShare}
-            // disabled={!email || isSharing || isSuccess}
             disabled={!isValidEmail(email) || isSharing || isSuccess}
             onClick={handleShare}
           >
