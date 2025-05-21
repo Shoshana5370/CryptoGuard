@@ -50,7 +50,10 @@ namespace FileEncryption.Service.Services
             {
                 throw new Exception($"File with key {share.FileKey} not found.");
             }
-
+            if(file.isDelete)
+            {
+                throw new Exception($"File with key {share.FileKey} nis deleted.");
+            }
             // 2️⃣ Set the navigation property (optional but good practice)
             share.File = file;
             share.AccessCode = GenerateAccessCode();
@@ -88,5 +91,16 @@ namespace FileEncryption.Service.Services
             return true;
         }
 
+        public async Task<bool> UpdateShareAsync(Share share)
+        {
+            var s=await _repositoryManager.Shares.UpdateShareAsync(share.Id, share);
+            if(s!=null)
+            { _repositoryManager.SaveAsync();
+                return true;
+            }
+            return false;
+            
+
+        }
     }
 }

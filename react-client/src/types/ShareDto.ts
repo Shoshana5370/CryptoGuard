@@ -2,10 +2,13 @@ export type ShareDto = {
     id: number;
     fileKey: number;
     accessCode?: string | null;
-    expiresAt: string; // Use `string` because DateTime is serialized as ISO string in JSON
+    expiresAt: string; 
     recipientEmail?: string | null;
     sharedByUserId: number;
     recipientUserId?: number | null;
     used: boolean;
+    fileName?: string | null;
+    sharedByUserName?: string | null;
+    recipientUserName?: string | null;
   };
   

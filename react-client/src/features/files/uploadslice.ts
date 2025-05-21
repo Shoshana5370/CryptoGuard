@@ -1,7 +1,6 @@
-// src/features/files/uploadSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../../store/store'; // Adjust path
-import { FilePostModel } from '../../types/FilePostModel'; // Adjust path
+import { RootState } from '../../store/store'; 
+import { FilePostModel } from '../../types/FilePostModel'; 
 import axiosInstance from '../../axiosInstance';
 
 export interface UploadState {
@@ -17,8 +16,8 @@ const initialState: UploadState = {
     error: null,
 };
 export const uploadFileContent = createAsyncThunk<
-    FilePostModel,                         // Return type (from your .NET controller)
-    { file: File },                        // Arg type (no userId)
+    FilePostModel,                       
+    { file: File },                      
     { rejectValue: string, state: RootState }
 >(
     'upload/uploadFileContent',
@@ -36,8 +35,6 @@ export const uploadFileContent = createAsyncThunk<
                     },
                 }
             );
-
-            console.log(response.data); // Debugging
             return response.data;
         } catch (err: any) {
             const msg = err.response?.data || err.message || 'File upload failed';

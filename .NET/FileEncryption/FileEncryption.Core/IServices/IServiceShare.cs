@@ -13,5 +13,6 @@ namespace FileEncryption.Core.IServices
         public Task<Share> GetValidShareByCodeAsync(string v);
         public Task<Share> ShareFileAsync(Share share, string id);
         public Task<bool> ExtendExpirationAsync(int id, string newDate);
+        Task<bool> UpdateShareAsync(Share share);
     }
 }

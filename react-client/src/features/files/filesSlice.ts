@@ -34,8 +34,8 @@ export const fetchFilesByUserId = createAsyncThunk<
     }
 );
 export const deleteFile = createAsyncThunk<
-    number, // Return the deleted file ID
-    number, // Argument: file ID
+    number, 
+    number, 
     { state: RootState }
 >(
     'files/deleteFile',
@@ -104,7 +104,6 @@ const filesSlice = createSlice({
             })
             .addCase(updateFile.fulfilled, (state, action: PayloadAction<FileDto>) => {
                 state.loading = false;
-                // Replace the updated file in the items array
                 const index = state.items.findIndex(f => f.id === action.payload.id);
                 if (index !== -1) {
                     state.items[index] = action.payload;

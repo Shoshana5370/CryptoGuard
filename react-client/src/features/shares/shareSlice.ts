@@ -116,10 +116,5 @@ const sharesSlice = createSlice({
   }
   },
 );
-  
-      
-            
-
-
 export const { clearShares } = sharesSlice.actions;
 export default sharesSlice.reducer;

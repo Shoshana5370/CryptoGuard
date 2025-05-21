@@ -4,6 +4,7 @@ using FileEncryption.Core.DTOs;
 using FileEncryption.Core.IServices;
 using FileEncryption.Service.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,22 +16,32 @@ namespace FileEncryption.Api.Controllers
     {
         private readonly IServiceAuth _authService;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-
-        public AuthController(IServiceAuth authService, IMapper mapper)
+        public AuthController(IServiceAuth authService, IMapper mapper,IConfiguration configuration)
         {
             _mapper = mapper;
             _authService = authService;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
+            ////return Ok(result);
+            //var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);
+            //if (!isCaptchaValid)
+            //{
+            //    return BadRequest("Invalid reCAPTCHA");
+            //}
+
+            // ✅ Step 2: Continue with login
             var result = await _authService.Login(_mapper.Map<UserDto>(user));
             if (result == null)
             {
                 return BadRequest("User not already exists or login failed.");
             }
+
             return Ok(result);
         }
         [HttpPost("register")]
@@ -43,28 +54,29 @@ namespace FileEncryption.Api.Controllers
             }
             return Ok(result);
         }
-        [HttpPost("login1111")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        private async Task<bool> VerifyCaptchaAsync(string token)
         {
-            // Validate CAPTCHA
-            var storedCode = HttpContext.Session.GetString("CaptchaCode");
-            if (storedCode == null || !storedCode.Equals(request.Captcha, StringComparison.OrdinalIgnoreCase))
-                return BadRequest(new { error = "Invalid CAPTCHA" });
+            var secret = _configuration["GoogleReCaptchan:SecretKey"]; 
+            using var client = new HttpClient();
+            var response = await client.PostAsync(
+                $"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={token}",
+                null);
 
-            // Authenticate user here...
-            if (request.Username == "admin" && request.Password == "1234")
-                return Ok(new { token = "example-token" });
+            var json = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<ReCaptchaResponse>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
-            return Unauthorized(new { error = "Invalid credentials" });
+            return result?.Success == true;
         }
-
-        public class LoginRequest
-        {
-            public string Username { get; set; } = "";
-            public string Password { get; set; } = "";
-            public string Captcha { get; set; } = "";
-        }
-
+    }
+    public class ReCaptchaResponse
+    {
+        public bool Success { get; set; }
+        public DateTime ChallengeTs { get; set; }
+        public string Hostname { get; set; }
+        public List<string> ErrorCodes { get; set; }
     }
 
 

@@ -8,8 +8,7 @@ import sharesReducer from '../features/shares/shareSlice';
 import accessReducer from '../features/shares/accessSlice';
 const rootReducer = (state:any, action: any) => {
   if (action.type === 'auth/logout') {
-    // Reset all slices of state
-    state = undefined; // This will clear all state slices
+    state = undefined; 
   }
   return {
     auth: authReducer(state?.auth, action),

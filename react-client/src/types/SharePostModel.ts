@@ -1,5 +1,5 @@
 export interface SharePostModel {
-    fileKey: number;  // change fileId --> fileKey
+    fileKey: number; 
     recipientEmail: string;
     expiresAt?: string;
   }

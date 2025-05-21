@@ -16,8 +16,8 @@ namespace FileEncryption.Data.Repository
         {
             if (user == null) return null;
 
-            await _context.Users.AddAsync(user); // Add user to the context
-            return user; // Save changes and return success
+            await _context.Users.AddAsync(user);
+            return user;
         }
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -25,8 +25,8 @@ namespace FileEncryption.Data.Repository
             var user = await _context.Users.FindAsync(id);
             if (user == null) return false;
 
-            _context.Users.Remove(user); // Remove user from the context
-            return await _context.SaveChangesAsync() > 0; // Save changes and return success
+            _context.Users.Remove(user); 
+            return await _context.SaveChangesAsync() > 0; 
         }
 
         public async Task<User> FindByEmailAsync(string email)
@@ -37,7 +37,7 @@ namespace FileEncryption.Data.Repository
 
         public async Task<IEnumerable<User>> GetAllUserAsync()
         {
-            return await _context.Users.ToListAsync(); // Return all users as a list
+            return await _context.Users.ToListAsync(); 
         }
 
         public async Task<User> GetByIdUserAsync(int id)
@@ -47,45 +47,38 @@ namespace FileEncryption.Data.Repository
 
         public async Task<IEnumerable<Core.Entities.File>> GetFilesByUserIdAsync(int id)
         {
-            var user = await _context.Users
-                      .Include(u => u.Files) // Ensure that Files are included in the query
-                       .FirstOrDefaultAsync(u => u.Id == id);
-            if (user != null)
-            {
-                return user.Files; // This will work since Files is already loaded
-            }
-            return null; // Return an empty list if user is not found
+            var files = await _context.Files
+               .Where(f => f.CreatedBy == id && !f.isDelete)
+                  .ToListAsync();
+
+            return files;
         }
-        public async Task<IEnumerable<Core.Entities.Share>> GetSharesWithMeAsync(int userId)
+        public async Task<IEnumerable<Share>> GetSharesWithMeAsync(int userId)
         {
-            var user = await _context.Users
-                .Include(u => u.SharesWithMe) // assuming this is the navigation property
-                .ThenInclude(s => s.File) // if each Share includes a reference to the File entity
-                .FirstOrDefaultAsync(u => u.Id == userId);
+            var shares = await _context.Shares
+                .Where(s => s.RecipientUserId == userId)
+                .Include(s => s.File)
+                .Include(s => s.SharedByUser)
+                .ToListAsync();
 
-            if (user != null)
-            {
-                return user.SharesWithMe; // assuming this is a collection of Share entities
-            }
-
-            return null;
+            return shares;
         }
+
         public async Task<IEnumerable<Share>> GetSharesToOthersAsync(int userId)
         {
-            return await _context.Shares
-                .Include(s => s.File)
-                .Include(s => s.RecipientUser)
-                .Where(s => s.SharedByUserId== userId)
-                .ToListAsync();
+            var shares = await _context.Shares
+               .Where(s => s.SharedByUserId == userId)
+               .Include(s => s.File)
+               .Include(s => s.RecipientUser)
+               .ToListAsync();
+            return shares;
         }
 
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id); // Find user by ID
+            return await _context.Users.FindAsync(id); 
         }
-
-
         public async Task<User> UpdateUserAsync(int id,User user)
         {
             var existingUser = await _context.Users.FindAsync(id);

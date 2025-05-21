@@ -1,4 +1,3 @@
-// src/store/shareSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosInstance from '../../axiosInstance';
 import { SharePostModel } from '../../types/SharePostModel';

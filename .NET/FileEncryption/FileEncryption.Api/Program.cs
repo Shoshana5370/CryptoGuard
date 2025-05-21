@@ -51,6 +51,7 @@ builder.Services.AddControllers(); builder.Services.AddControllers().AddJsonOpti
     options.JsonSerializerOptions.WriteIndented = true;
 }); builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 var awsOptions = new AWSOptions
 {
     Credentials = new BasicAWSCredentials(

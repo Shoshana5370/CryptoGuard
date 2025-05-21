@@ -25,16 +25,17 @@ import {
 import { Button } from "@/styles/ui/button";
 import ExpirationEditor from "./ExpirationEditor";
 
-const Shares=()=> {
+const Shares = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { sharesWithMe, sharesToOthers, loading } = useAppSelector(
     (state) => state.share
   );
   const [selectedShareCode, setSelectedShareCode] = useState<string | null>(null);
+  const [selectedShareNmae, setSelectedShareName] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingShareId, setEditingShareId] = useState<string>("");
-  
+
   useEffect(() => {
     if (user) {
       dispatch(fetchSharesWithMe());
@@ -81,11 +82,12 @@ const Shares=()=> {
                           key={share.id}
                           onClick={() => {
                             setSelectedShareCode(share.id.toString());
+                            setSelectedShareName(share.fileName? share.fileName : "");
                             setDialogOpen(true);
                           }}
                           className="border p-3 rounded bg-white shadow-sm cursor-pointer hover:bg-gray-50"
                         >
-                          Shared by user #{share.sharedByUserId} – file key: <strong>{share.fileKey}</strong>
+                          Shared by user {share.sharedByUserName} – file key: <strong>{share.fileName}</strong>
                         </li>
                       ))}
                     </ul>
@@ -111,8 +113,8 @@ const Shares=()=> {
                           className="border p-3 rounded bg-white shadow-sm relative flex justify-between items-start"
                         >
                           <div>
-                            Shared to <strong>{share.recipientEmail || "Unregistered User"}</strong> – file key:{" "}
-                            <strong>{share.fileKey}</strong>
+                            Shared to <strong>{share.recipientUserName?share.recipientUserName:share.recipientEmail}</strong> – file:{" "}
+                            <strong>{share.fileName}</strong>
                             {share.used && (
                               <span className="mt-1 inline-block text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
                                 Used
@@ -161,7 +163,15 @@ const Shares=()=> {
           </Card>
         </div>
 
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Dialog open={dialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) {
+              setSelectedShareCode(null); 
+              setSelectedShareName(null);
+            }
+          }}
+        >
           <DialogContent className="max-w-xl">
             <DialogHeader>
               <DialogTitle>Access Shared File</DialogTitle>
@@ -169,10 +179,7 @@ const Shares=()=> {
             {selectedShareCode && (
               <AccessSharedFile
                 code={selectedShareCode}
-                onReset={() => {
-                  setDialogOpen(false);
-                  setSelectedShareCode(null);
-                }}
+                fileName={selectedShareNmae? selectedShareNmae : ""}
               />
             )}
           </DialogContent>

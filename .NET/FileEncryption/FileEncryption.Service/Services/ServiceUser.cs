@@ -25,8 +25,6 @@ namespace FileEncryption.Service.Services
             _repositoryManager = repositoryManager;
             _mapper = mapper;
         }
-
-
         public async Task<bool> DiscardUserAsync(int id)
         {
             bool sucsess= await _repositoryManager.Users.DeleteUserAsync(id); // Call repository method to delete user
@@ -51,15 +49,11 @@ namespace FileEncryption.Service.Services
         public async Task<IEnumerable<FileDto>> GetFilesByUserIdAsync(int id)
         {
             var files = await _repositoryManager.Users.GetFilesByUserIdAsync(id);
-
-            // Map the files to FileDto
             return _mapper.Map<IEnumerable<FileDto>>(files);
         }
         public async Task<IEnumerable<ShareDto>> GetSharesWithMeAsync(int userId)
         {
             var shares = await _repositoryManager.Users.GetSharesWithMeAsync(userId);
-
-            // Map the shares to ShareDto
             return _mapper.Map<IEnumerable<ShareDto>>(shares);
         }
         public async Task<IEnumerable<ShareDto>> GetSharesToOthersAsync(int userId)
@@ -70,9 +64,9 @@ namespace FileEncryption.Service.Services
 
         public async Task<User> InsertUserAsync(UserDto user)
         {
-            var userEntity = _mapper.Map<User>(user); // ממפה את ה-DTO לישות
-            await _repositoryManager.Users.AddUserAsync(userEntity); // קורא לשיטה להוספת משתמש
-            await _repositoryManager.SaveAsync(); // שומר את השינויים בבסיס הנתונים
+            var userEntity = _mapper.Map<User>(user);
+            await _repositoryManager.Users.AddUserAsync(userEntity); 
+            await _repositoryManager.SaveAsync(); 
             return userEntity;
         }
 
@@ -84,7 +78,6 @@ namespace FileEncryption.Service.Services
                 await _repositoryManager.SaveAsync();
             }
             return u;
-            // Call repository method to update user
         }
 
 

@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://localhost:7207', // your API base URL
+    baseURL: 'https://localhost:7207', 
 });
 
-// Add a request interceptor
+
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem('token');

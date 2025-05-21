@@ -58,15 +58,11 @@ namespace FileEncryption.Data.Repository
                 {
                     return null;
                 }
-
-                // Map fields as needed
                 existingShare.FileKey = shareEntity.FileKey;
                 existingShare.AccessCode = shareEntity.AccessCode;
                 existingShare.ExpiresAt = shareEntity.ExpiresAt;
                 existingShare.RecipientEmail = shareEntity.RecipientEmail;
                 existingShare.Used = shareEntity.Used;
-                // Add more fields if needed
-
                 _dataContext.Shares.Update(existingShare);
                 return existingShare;
             }

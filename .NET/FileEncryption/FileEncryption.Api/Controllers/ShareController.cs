@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FileEncryption.Api.Models;
+using FileEncryption.Core.DTOs;
 using FileEncryption.Core.Entities;
 using FileEncryption.Core.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +47,7 @@ namespace FileEncryption.Api.Controllers
 
         [HttpPost]
         [Authorize(Policy = "UserOrAdmin")]
-        public async Task<ActionResult<Share>> ShareFile([FromBody] SharePostModel req)
+        public async Task<ActionResult<ShareDto>> ShareFile([FromBody] SharePostModel req)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -76,8 +77,13 @@ namespace FileEncryption.Api.Controllers
         public async Task<IActionResult> AccessSharedFile([FromBody] AccessRequestDto requestDto)
         {
             var share = await _shareService.GetValidShareByCodeAsync(requestDto.Code);
+            if(share.Used)
+            {
+                return BadRequest("this file is aleardy used!");
+            }
             var (stream, fileName, contentType) = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
-
+            share.Used = true;
+            await _shareService.UpdateShareAsync(share);
             return File(stream, contentType ?? "application/octet-stream", fileName);
         }
 

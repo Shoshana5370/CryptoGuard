@@ -19,12 +19,10 @@ namespace FileEncryption.Core.Entities
         public string? RecipientEmail { get; set; }
         [ForeignKey(nameof(SharedByUser))]
         public int SharedByUserId { get; set; }
-        public User SharedByUser { get; set; } // User who shares the file
-
-        // Foreign key for the user who is the recipient (can be null)
+        public User SharedByUser { get; set; } 
         [ForeignKey(nameof(RecipientUser))]
-        public int? RecipientUserId { get; set; } // Nullable foreign key
-        public User? RecipientUser { get; set; } // User who receives the file
+        public int? RecipientUserId { get; set; } 
+        public User? RecipientUser { get; set; } 
         public bool Used { get; set; } = false;
     }
 }

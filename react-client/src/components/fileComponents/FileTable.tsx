@@ -126,7 +126,7 @@ const FileTable = ({ files, onDelete, onRename, onDownload, onShare }: { files: 
                   </TableCell>
                 </motion.tr>
               ))}
-            {(!files || files.length === 0 || files.filter(file => !file.isDelete).length === 0) && (
+            {!files || files.length === 0  && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8">
                   <div className="flex flex-col items-center justify-center text-gray-500">
