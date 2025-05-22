@@ -38,8 +38,7 @@ export const fetchSharesWithMe = createAsyncThunk<
 >('shares/fetchSharesWithMe', async (_, thunkAPI) => {
   try {
     const response = await axiosInstance.get<ShareDto[]>(`${apiBase}/api/User/GetSharesWithMe`);
-    console.log(response.data);
-    
+  
     return response.data;
   } catch (err: any) {
     const msg = err.response?.data || err.message || 'Failed to fetch shares with me';

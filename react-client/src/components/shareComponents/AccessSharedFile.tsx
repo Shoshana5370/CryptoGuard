@@ -23,6 +23,8 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   useEffect(() => {
     return () => {
       dispatch(clearAccess());
+      dispatch(fetchSharesWithMe());
+      dispatch(fetchSharesToOthers());
     };
   }, []);
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,6 +53,8 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
       setFileUrl(url);
       const inferredType = fileBlob.type;
       setFileType(inferredType);
+      dispatch(fetchSharesWithMe());
+      dispatch(fetchSharesToOthers());
     }
   }, [fileBlob]);
 

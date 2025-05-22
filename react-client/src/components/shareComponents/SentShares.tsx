@@ -1,6 +1,6 @@
 
 import { Alert, AlertDescription } from "@/styles/ui/alert";
-import {  Link2, Loader2 } from "lucide-react";
+import { Link2, Loader2 } from "lucide-react";
 
 import { TabsContent } from "@/styles/ui/tabs";
 import SharedSentItemCard from "./SharedSentItemCard";
@@ -17,15 +17,22 @@ const SentShares = () => {
         </Alert>
       )}
       {loading.toOthers ? (
-          <div className="flex justify-center items-center py-12">
+        <div className="flex justify-center items-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
           <span className="ml-2 text-lg text-gray-600">Loading Shares...</span>
         </div>
       ) : sharesToOthers.length > 0 ? (
         <ul className="space-y-3">
-           {sharesToOthers.map((share) => (
-          <SharedSentItemCard  key={share.id} share={share}/>
-  ))}
+          {[...sharesToOthers]
+            .sort((a, b) => {
+              const aInactive = a.used || a.fileIsDeleted;
+              const bInactive = b.used || b.fileIsDeleted;
+              if (aInactive === bInactive) return 0;
+              return aInactive ? 1 : -1;
+            })
+            .map((share) => (
+              <SharedSentItemCard key={share.id} share={share} />
+            ))}
         </ul>
       ) : (
         <div className="text-center py-8 text-gray-500">

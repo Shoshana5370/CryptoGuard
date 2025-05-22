@@ -29,7 +29,7 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
   );
 
   const [file, setFile] = useState<File | null>(null);
-
+  const [customFileName, setCustomFileName] = useState<string>("");
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -42,9 +42,12 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
     if (!file) return;
 
     try {
-      await dispatch(uploadFileContent({ file })).unwrap();
+      await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
+
     } catch (err) {
-      console.error("Upload error:", err);
+      setFile(null);
+      setCustomFileName("");
+      dispatch(resetUploadState());
     }
   };
 
@@ -62,7 +65,7 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
   }, [isOpen]);
   useEffect(() => {
     if (success) {
-      handleClose(); 
+      handleClose();
       dispatch(fetchFilesByUserId());
     }
   }, [success, dispatch]);
@@ -82,12 +85,23 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
 
         <form onSubmit={handleUpload} className="space-y-6 pt-4">
           <div className="space-y-2">
+            <Input
+              type="text"
+              placeholder="Enter file name"
+              value={customFileName}
+              onChange={(e) => setCustomFileName(e.target.value)}
+              disabled={uploading || success}
+            />
             <Input type="file" onChange={handleFileChange} />
             {file && (
               <p className="text-sm text-gray-600">
                 Selected: <span className="font-medium">{file.name}</span>
+                {customFileName && (
+                  <> → <span className="text-emerald-600 font-medium">{customFileName}</span></>
+                )}
               </p>
             )}
+
           </div>
 
           {error && (

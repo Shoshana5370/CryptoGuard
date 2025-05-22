@@ -19,7 +19,6 @@
 //   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
 //     try {
 //       const response = await axios.post(`${url}/api/Auth/login`, credentials);
-//       console.log(response.data);
 //       sessionStorage.setItem("token", response.data.token);
 //       sessionStorage.setItem("user", JSON.stringify(response.data.user));
 //       sessionStorage.setItem("userId", response.data.user.id.toString());
@@ -36,7 +35,6 @@
 //   async (userData: { email: string; password: string; name: string }, { rejectWithValue }) => {
 //     try {
 //       const response = await axios.post(`${url}/api/Auth/register`, userData);
-//       console.log(response.data);
 //       sessionStorage.setItem("token", response.data.token);
 //       sessionStorage.setItem("userId", response.data.user.id.toString());
 //       return response.data;

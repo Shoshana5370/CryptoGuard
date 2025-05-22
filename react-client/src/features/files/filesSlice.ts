@@ -57,7 +57,6 @@ export const updateFile = createAsyncThunk<
     'files/updateFile',
     async (file, { rejectWithValue }) => {
         try {
-            console.log('i came to here!!!!!!!!!!!!!!!!');
             const response = await axiosInstance.put<FileDto>(`${url}/api/Files/${file.id}`, file);
             return response.data;
         } catch (err: any) {

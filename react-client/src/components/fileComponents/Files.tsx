@@ -33,9 +33,7 @@ const Files=()=> {
     console.log('Download file:', file);
   };
 
-  const handleRename = (updatedFile: FileDto) => {
-    console.log('i came to here!!!!!!!!!!!!!!!!!1');
-    
+  const handleRename = (updatedFile: FileDto) => {    
     dispatch(updateFile(updatedFile));
     dispatch(fetchSharesWithMe());
     dispatch(fetchSharesToOthers());

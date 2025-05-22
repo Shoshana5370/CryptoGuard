@@ -3,12 +3,12 @@ import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Loader2, Link2 } from "lucide-react";
 import { useAppSelector } from "@/hooks";
 import { TabsContent } from "@/styles/ui/tabs";
-import ReceivedShareItem from "./ReceivedShareItem"; 
-
+import ReceivedShareItem from "./ReceivedShareItem";
 interface Props {
   onSelect: (shareId: string, fileName: string) => void;
 }
 const ReceivedShares = ({ onSelect }: Props) => {
+
   const { sharesWithMe, loading, error } = useAppSelector((state) => state.share);
   return (
     <TabsContent value="received">
@@ -26,9 +26,16 @@ const ReceivedShares = ({ onSelect }: Props) => {
         </div>
       ) : sharesWithMe.length > 0 ? (
         <ul className="space-y-3">
-          {sharesWithMe.map((share) => (
-            <ReceivedShareItem key={share.id} share={share} onSelect={onSelect} />
-          ))}
+          {[...sharesWithMe]
+            .sort((a, b) => {
+              const aInactive = a.used || a.fileIsDeleted;
+              const bInactive = b.used || b.fileIsDeleted;
+              if (aInactive === bInactive) return 0;
+              return aInactive ? 1 : -1;
+            })
+            .map((share) => (
+              <ReceivedShareItem key={share.id} share={share} onSelect={onSelect} />
+            ))}
         </ul>
       ) : (
         <div className="text-center py-10 text-gray-500">

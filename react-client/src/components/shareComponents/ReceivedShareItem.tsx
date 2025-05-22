@@ -25,7 +25,7 @@ const ReceivedShareItem: React.FC<Props> = ({ share, onSelect }) => {
                     <div className="flex flex-wrap gap-2 mt-2">
                         {share.used && (
                             <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium w-fit">
-                               📂 Accessed
+                              📥 Downloaded
                             </span>
                         )}
                         {share.fileIsDeleted && (
