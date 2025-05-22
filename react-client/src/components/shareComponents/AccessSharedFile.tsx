@@ -7,6 +7,7 @@ import { Input } from "@/styles/ui/input";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
 import { AlertTriangle, Download, Link } from "lucide-react";
+import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareSlice";
 type AccessSharedFileProps = {
   code: string;
   fileName: string;
@@ -16,7 +17,7 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   const [shareCode, setShareCode] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string | null>(null);
-  
+
   const dispatch = useAppDispatch();
   const { fileBlob, status, error } = useAppSelector((state) => state.access);
   useEffect(() => {
@@ -27,6 +28,8 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(accessSharedFile({ shareId: parseInt(code), code: shareCode.trim() }));
+    dispatch(fetchSharesWithMe());
+    dispatch(fetchSharesToOthers());
   };
 
 

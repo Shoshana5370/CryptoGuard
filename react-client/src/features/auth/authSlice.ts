@@ -120,8 +120,6 @@ const initialState: AuthState = {
 };
 
 const url = 'https://localhost:7207';
-
-// ✅ UPDATED to include captchaToken
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (

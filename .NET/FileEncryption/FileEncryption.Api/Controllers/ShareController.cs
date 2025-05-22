@@ -66,7 +66,7 @@ namespace FileEncryption.Api.Controllers
         public async Task<IActionResult> AccessSharedFile([FromBody] AccessRequestDto requestDto)
         {
             var share = await _shareService.GetValidShareByCodeAsync(requestDto.Code);
-         if(  share ==null)
+           if(share ==null)
                 return BadRequest("This share is Used or date Expired");
 
 

@@ -58,7 +58,7 @@ namespace FileEncryption.Api.Controllers
             return BadRequest();
         }
         [HttpPut("{id}")]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
         {
             if (file == null || file.Id != id)

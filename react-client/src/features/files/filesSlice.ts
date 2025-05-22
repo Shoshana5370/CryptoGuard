@@ -28,7 +28,7 @@ export const fetchFilesByUserId = createAsyncThunk<
             });
             return response.data;
         } catch (err: any) {
-            const errorMsg = err.response?.data || err.message || 'Failed to fetch files';
+            const errorMsg = err.response?.data || err.message.toString() || 'Failed to fetch files';
             return rejectWithValue(errorMsg);
         }
     }
@@ -57,6 +57,7 @@ export const updateFile = createAsyncThunk<
     'files/updateFile',
     async (file, { rejectWithValue }) => {
         try {
+            console.log('i came to here!!!!!!!!!!!!!!!!');
             const response = await axiosInstance.put<FileDto>(`${url}/api/Files/${file.id}`, file);
             return response.data;
         } catch (err: any) {

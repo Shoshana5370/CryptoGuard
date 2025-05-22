@@ -9,6 +9,7 @@ import { FileDto } from "@/types/FileDto";
 import UploadFileDialog from "./UploadFile";
 import { SharePostModel } from "@/types/SharePostModel";
 import { shareFile } from "@/features/shares/shareFileSlice";
+import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareSlice";
 const Files=()=> {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(state => state.auth);
@@ -24,13 +25,20 @@ const Files=()=> {
 
   const handleDelete = (fileId: number) => {
     dispatch(deleteFile(fileId));
+    dispatch(fetchSharesWithMe());
+    dispatch(fetchSharesToOthers());
+    
 };
   const handleDownload = (file:number) => {
     console.log('Download file:', file);
   };
 
   const handleRename = (updatedFile: FileDto) => {
+    console.log('i came to here!!!!!!!!!!!!!!!!!1');
+    
     dispatch(updateFile(updatedFile));
+    dispatch(fetchSharesWithMe());
+    dispatch(fetchSharesToOthers());
 };
 const handleShare = (updatedFile: SharePostModel) => {
      dispatch(shareFile(updatedFile));

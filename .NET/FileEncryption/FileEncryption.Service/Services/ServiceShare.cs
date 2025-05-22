@@ -28,7 +28,7 @@ namespace FileEncryption.Service.Services
             if (share == null)
                 return null;
 
-            if (share.Used || share.ExpiresAt <= DateTime.UtcNow)
+            if (share.Used || share.ExpiresAt <= DateTime.Now)
                 return null;
 
             return share;
@@ -68,10 +68,14 @@ namespace FileEncryption.Service.Services
             if (share == null) return false;
 
             share.ExpiresAt = parsedDate;
-            await _repositoryManager.Shares.UpdateShareAsync(id,share);
-            return true;
+          var s=  await _repositoryManager.Shares.UpdateShareAsync(id,share);
+            if(s!=null)
+            {
+                _repositoryManager.SaveAsync();
+                return true;
+            }
+            return false;
         }
-
         public async Task<bool> UpdateShareAsync(Share share)
         {
             var s=await _repositoryManager.Shares.UpdateShareAsync(share.Id, share);

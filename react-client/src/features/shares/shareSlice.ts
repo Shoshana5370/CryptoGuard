@@ -70,7 +70,7 @@ export const extendShareExpiration = createAsyncThunk<
     try {
       await axiosInstance.post(`${apiBase}/api/Share/${id}`, { newDate });
     } catch (err: any) {
-      const msg = err.response?.data || err.message || 'Failed to extend expiration';
+      const msg = err.response?.data || err.message.toString() || 'Failed to extend expiration';
       return thunkAPI.rejectWithValue(msg);
     }
   }

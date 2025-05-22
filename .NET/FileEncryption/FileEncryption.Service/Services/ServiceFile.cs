@@ -70,35 +70,6 @@ namespace FileEncryption.Service.Services
             }
             return updatedFile;
         }
-
-        //public async Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file, FileDto fileDto)
-        //{
-        //    var bucketName = _config["AWS:BucketName"];
-        //    var key = $"uploads/{Guid.NewGuid()}_{file.FileName}";
-        //    using var aes = CreateAes();
-        //    aes.GenerateIV();
-        //    using var uploadStream = new MemoryStream();
-        //    await uploadStream.WriteAsync(aes.IV, 0, aes.IV.Length); 
-        //    using (var cryptoStream = new CryptoStream(uploadStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true))
-        //    {
-        //        await file.Content.CopyToAsync(cryptoStream);
-        //    }
-        //    uploadStream.Position = 0;
-        //    var putRequest = new PutObjectRequest
-        //    {
-        //        BucketName = bucketName,
-        //        Key = key,
-        //        InputStream = uploadStream,
-        //        ContentType = file.ContentType
-        //    };
-
-        //    await _s3Client.PutObjectAsync(putRequest);
-        //    fileDto.EncryptedUrl = key;
-        //    var fileEntity=_mapper.Map<Core.Entities.File>(fileDto);
-        //    await _repositoryManager.Files.AddFileAsync(fileEntity);
-        //    await _repositoryManager.SaveAsync(); 
-        //    return _mapper.Map<FileDto>(fileEntity);
-        //}
         public async Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file, FileDto fileDto)
         {
             var bucketName = _config["AWS:BucketName"];
@@ -132,6 +103,8 @@ namespace FileEncryption.Service.Services
 
             fileDto.EncryptedUrl = key;
             fileDto.Sha256 = hashHex;
+            fileDto.CreatedAt = DateTime.Now;
+            fileDto.UpdatedAt = DateTime.Now;
 
             var fileEntity = _mapper.Map<Core.Entities.File>(fileDto);
             await _repositoryManager.Files.AddFileAsync(fileEntity);
