@@ -35,7 +35,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
-    policy.WithOrigins("http://localhost:5173")
+    policy.WithOrigins("https://cryptoguardapplication.onrender.com")
           .AllowAnyHeader()
           .AllowAnyMethod();
 }));
@@ -102,6 +102,8 @@ app.UseCors("MyPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
-app.MapControllers();
 
+app.MapControllers();
+app.MapGet("/", () => "CryptoGuard API is running"); var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{port}");
 app.Run();
