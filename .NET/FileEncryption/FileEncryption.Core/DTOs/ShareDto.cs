@@ -18,6 +18,7 @@ namespace FileEncryption.Core.DTOs
         public int SharedByUserId { get; set; }
         public int? RecipientUserId { get; set; } 
         public bool Used { get; set; }
+        public bool? FileIsDeleted { get; set; }
         public string? FileName { get; set; }
         public string? SharedByUserName { get; set; }
         public string? RecipientUserName { get; set; }

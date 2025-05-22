@@ -12,8 +12,6 @@ const EncryptionVisualizer=()=> {
     if (!ctx) return;
 
     let animationFrameId: number;
-
-    // Set canvas size
     const setCanvasSize = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
@@ -21,8 +19,6 @@ const EncryptionVisualizer=()=> {
 
     setCanvasSize();
     window.addEventListener("resize", setCanvasSize);
-
-    // Particle setup
     const particles: {
       x: number;
       y: number;

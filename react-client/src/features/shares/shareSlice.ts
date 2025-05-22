@@ -1,24 +1,36 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../store/store';
 import { ShareDto } from '../../types/ShareDto';
 import axiosInstance from '../../axiosInstance';
-
 export interface ShareState {
   sharesWithMe: ShareDto[];
   sharesToOthers: ShareDto[];
-  loading: boolean;
-  error: string | object | null;
+  loading: {
+    withMe: boolean;
+    toOthers: boolean;
+    extend: boolean;
+  };
+  error: {
+    withMe: string | null;
+    toOthers: string | null;
+    extend: string | null;
+  };
 }
-
 const initialState: ShareState = {
   sharesWithMe: [],
   sharesToOthers: [],
-  loading: false,
-  error: null,
+  loading: {
+    withMe: false,
+    toOthers: false,
+    extend: false,
+  },
+  error: {
+    withMe: null,
+    toOthers: null,
+    extend: null,
+  },
 };
-
 const apiBase = 'https://localhost:7207';
-
 export const fetchSharesWithMe = createAsyncThunk<
   ShareDto[],
   void,
@@ -46,19 +58,21 @@ export const fetchSharesToOthers = createAsyncThunk<
     return thunkAPI.rejectWithValue(msg);
   }
 });
-export const extendShareExpiration = createAsyncThunk(
+export const extendShareExpiration = createAsyncThunk<
+  void,
+  { id: number; newDate: string },
+  { state: RootState; rejectValue: string }
+>(
   "shares/extendExpiration",
-
   async ({ id, newDate }: { id: number; newDate: string }, thunkAPI) => {
-
-      try {
-        await axiosInstance.post(`${apiBase}/api/Share/${id}`, { newDate });
-      } catch (err: any) {
-        const msg = err.response?.data || err.message || 'Failed to extend expiration';
-        return thunkAPI.rejectWithValue(msg);
-      }
+    try {
+      await axiosInstance.post(`${apiBase}/api/Share/${id}`, { newDate });
+    } catch (err: any) {
+      const msg = err.response?.data || err.message || 'Failed to extend expiration';
+      return thunkAPI.rejectWithValue(msg);
     }
-  );
+  }
+);
 const sharesSlice = createSlice({
   name: 'shares',
   initialState,
@@ -66,55 +80,54 @@ const sharesSlice = createSlice({
     clearShares: (state) => {
       state.sharesWithMe = [];
       state.sharesToOthers = [];
-      state.error = null;
+      state.error = { withMe: null, toOthers: null, extend: null };
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSharesWithMe.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchSharesWithMe.fulfilled, (state, action: PayloadAction<ShareDto[]>) => {
-        state.loading = false;
-        state.sharesWithMe = action.payload;
-      })
-      .addCase(fetchSharesWithMe.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? 'Failed to fetch shares with me';
-      })
-  
-      .addCase(fetchSharesToOthers.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchSharesToOthers.fulfilled, (state, action: PayloadAction<ShareDto[]>) => {
-        state.loading = false;
-        state.sharesToOthers = action.payload;
-      })
-      .addCase(fetchSharesToOthers.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? 'Failed to fetch shares to others';
-      })
-  
-      .addCase(extendShareExpiration.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(extendShareExpiration.fulfilled, (state, action) => {
-        state.loading = false;
-        const { id, newDate } = action.meta.arg;
-        const share = state.sharesToOthers.find((s) => s.id === id);
-        if (share) {
-          share.expiresAt = newDate;
-        }
-      })
-      .addCase(extendShareExpiration.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? 'Failed to extend expiration date';
-      });
-  }
+    builder
+    .addCase(fetchSharesWithMe.pending, (state) => {
+      state.loading.withMe = true;
+      state.error.withMe = null;
+    })
+    .addCase(fetchSharesWithMe.fulfilled, (state, action) => {
+      state.loading.withMe = false;
+      state.sharesWithMe = action.payload;
+    })
+    .addCase(fetchSharesWithMe.rejected, (state, action) => {
+      state.loading.withMe = false;
+      state.error.withMe = action.payload ?? 'Failed to fetch shares with me';
+    })
+    .addCase(fetchSharesToOthers.pending, (state) => {
+      state.loading.toOthers = true;
+      state.error.toOthers = null;
+    })
+    .addCase(fetchSharesToOthers.fulfilled, (state, action) => {
+      state.loading.toOthers = false;
+      state.sharesToOthers = action.payload;
+    })
+    .addCase(fetchSharesToOthers.rejected, (state, action) => {
+      state.loading.toOthers = false;
+      state.error.toOthers = action.payload ?? 'Failed to fetch shares to others';
+    })
+    .addCase(extendShareExpiration.pending, (state) => {
+      state.loading.extend = true;
+      state.error.extend = null;
+    })
+    .addCase(extendShareExpiration.fulfilled, (state, action) => {
+      state.loading.extend = false;
+      const { id, newDate } = action.meta.arg;
+      const share = state.sharesToOthers.find((s) => s.id === id);
+      if (share) {
+        share.expiresAt = newDate;
+      }
+    })
+    .addCase(extendShareExpiration.rejected, (state, action) => {
+      state.loading.extend = false;
+      state.error.extend = action.payload ?? 'Failed to extend expiration date';
+    });
   },
-);
+    });
+
 export const { clearShares } = sharesSlice.actions;
 export default sharesSlice.reducer;

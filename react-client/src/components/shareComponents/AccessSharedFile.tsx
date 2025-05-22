@@ -16,13 +16,12 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   const [shareCode, setShareCode] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [fileType, setFileType] = useState<string | null>(null);
-  // npm install react-google-recaptcha --legacy-peer-deps
   
   const dispatch = useAppDispatch();
   const { fileBlob, status, error } = useAppSelector((state) => state.access);
   useEffect(() => {
     return () => {
-      dispatch(clearAccess()); // when component unmounts (dialog closed)
+      dispatch(clearAccess());
     };
   }, []);
   const handleSubmit = (e: React.FormEvent) => {

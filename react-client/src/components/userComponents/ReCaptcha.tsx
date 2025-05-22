@@ -6,7 +6,7 @@ interface ReCaptchaProps {
 }
 
 const ReCaptcha: React.FC<ReCaptchaProps> = ({ onVerify }) => {
-  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   const handleChange = (token: string | null) => {
     onVerify(token);
   };
@@ -14,7 +14,7 @@ const ReCaptcha: React.FC<ReCaptchaProps> = ({ onVerify }) => {
   return (
     <div>
       <ReCAPTCHA
-        sitekey="dont up to git the really secret key"
+        sitekey="6Le9JUMrAAAAAAT1rPMEur0u8bZf_h_05KXF2zjM"
         ref={recaptchaRef}
         onChange={handleChange}
       />

@@ -73,7 +73,6 @@ const handleShare = (updatedFile: SharePostModel) => {
         onShare={handleShare}
       />
     )
-//   )
 }
 
 

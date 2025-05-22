@@ -1,4 +1,4 @@
-// src/react-google-recaptcha.d.ts
+
 declare module 'react-google-recaptcha' {
     import * as React from 'react';
   

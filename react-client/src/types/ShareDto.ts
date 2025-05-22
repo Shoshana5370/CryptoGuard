@@ -1,6 +1,7 @@
 export type ShareDto = {
     id: number;
     fileKey: number;
+    fileDeleted: boolean;
     accessCode?: string | null;
     expiresAt: string; 
     recipientEmail?: string | null;

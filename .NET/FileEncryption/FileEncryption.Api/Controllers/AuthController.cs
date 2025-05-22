@@ -28,12 +28,11 @@ namespace FileEncryption.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
-            ////return Ok(result);
-            //var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);
-            //if (!isCaptchaValid)
-            //{
-            //    return BadRequest("Invalid reCAPTCHA");
-            //}
+            var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);
+            if (!isCaptchaValid)
+            {
+                return BadRequest("Invalid reCAPTCHA");
+            }
 
             // ✅ Step 2: Continue with login
             var result = await _authService.Login(_mapper.Map<UserDto>(user));
@@ -56,7 +55,7 @@ namespace FileEncryption.Api.Controllers
         }
         private async Task<bool> VerifyCaptchaAsync(string token)
         {
-            var secret = _configuration["GoogleReCaptchan:SecretKey"]; 
+            var secret = _configuration["GoogleReCaptcha:SecretKey"]; 
             using var client = new HttpClient();
             var response = await client.PostAsync(
                 $"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={token}",
