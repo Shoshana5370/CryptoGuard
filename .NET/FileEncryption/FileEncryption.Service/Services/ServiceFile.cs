@@ -11,28 +11,20 @@ using System.Text;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceFile : IServiceFile
+    public class ServiceFile(IRepositoryManager repositoryManager, IMapper mapper, IAmazonS3 s3client, IConfiguration config) : IServiceFile
     {
-        private readonly IRepositoryManager _repositoryManager;
-        private readonly IMapper _mapper;
-        private readonly IAmazonS3 _s3Client;
-        private readonly IConfiguration _config;
+        private readonly IRepositoryManager _repositoryManager = repositoryManager;
+        private readonly IMapper _mapper = mapper;
+        private readonly IAmazonS3 _s3Client = s3client;
+        private readonly IConfiguration _config = config;
 
-        public ServiceFile(IRepositoryManager repositoryManager, IMapper mapper, IAmazonS3 s3client, IConfiguration config)
-        {
-            _repositoryManager = repositoryManager;
-            _mapper = mapper;
-            _config = config;
-            _s3Client = s3client;
-        }
-
-         public async Task<bool> DiscardFileAsync(int id)
+        public async Task<bool> DiscardFileAsync(int id)
         {  
             
-            bool success = await _repositoryManager.Files.DeleteFileAsync(id); // Call repository method to delete file
+            bool success = await _repositoryManager.Files.DeleteFileAsync(id); 
             if (success)
             {
-                await _repositoryManager.SaveAsync(); // Save changes to the database
+                await _repositoryManager.SaveAsync(); 
                 return true;
             }
             return false;
@@ -79,19 +71,56 @@ namespace FileEncryption.Service.Services
             return updatedFile;
         }
 
+        //public async Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file, FileDto fileDto)
+        //{
+        //    var bucketName = _config["AWS:BucketName"];
+        //    var key = $"uploads/{Guid.NewGuid()}_{file.FileName}";
+        //    using var aes = CreateAes();
+        //    aes.GenerateIV();
+        //    using var uploadStream = new MemoryStream();
+        //    await uploadStream.WriteAsync(aes.IV, 0, aes.IV.Length); 
+        //    using (var cryptoStream = new CryptoStream(uploadStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true))
+        //    {
+        //        await file.Content.CopyToAsync(cryptoStream);
+        //    }
+        //    uploadStream.Position = 0;
+        //    var putRequest = new PutObjectRequest
+        //    {
+        //        BucketName = bucketName,
+        //        Key = key,
+        //        InputStream = uploadStream,
+        //        ContentType = file.ContentType
+        //    };
+
+        //    await _s3Client.PutObjectAsync(putRequest);
+        //    fileDto.EncryptedUrl = key;
+        //    var fileEntity=_mapper.Map<Core.Entities.File>(fileDto);
+        //    await _repositoryManager.Files.AddFileAsync(fileEntity);
+        //    await _repositoryManager.SaveAsync(); 
+        //    return _mapper.Map<FileDto>(fileEntity);
+        //}
         public async Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file, FileDto fileDto)
         {
             var bucketName = _config["AWS:BucketName"];
             var key = $"uploads/{Guid.NewGuid()}_{file.FileName}";
+
             using var aes = CreateAes();
             aes.GenerateIV();
-            using var uploadStream = new MemoryStream();
-            await uploadStream.WriteAsync(aes.IV, 0, aes.IV.Length); // שומרים את ה-IV בתחילת הקובץ
-            using (var cryptoStream = new CryptoStream(uploadStream, aes.CreateEncryptor(), CryptoStreamMode.Write, leaveOpen: true))
+            var encryptedContentStream = new MemoryStream();
+            using (var cryptoStream = new CryptoStream(encryptedContentStream, aes.CreateEncryptor(), CryptoStreamMode.Write))
             {
                 await file.Content.CopyToAsync(cryptoStream);
             }
+            var encryptedBytes = encryptedContentStream.ToArray();
+            using var sha256 = SHA256.Create();
+            var hashBytes = sha256.ComputeHash(encryptedBytes);
+            var hashHex = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+            using var uploadStream = new MemoryStream();
+            await uploadStream.WriteAsync(aes.IV);                    
+            await uploadStream.WriteAsync(encryptedBytes);             
+            await uploadStream.WriteAsync(hashBytes);                
             uploadStream.Position = 0;
+
             var putRequest = new PutObjectRequest
             {
                 BucketName = bucketName,
@@ -99,65 +128,54 @@ namespace FileEncryption.Service.Services
                 InputStream = uploadStream,
                 ContentType = file.ContentType
             };
-
             await _s3Client.PutObjectAsync(putRequest);
+
             fileDto.EncryptedUrl = key;
-            var fileEntity=_mapper.Map<Core.Entities.File>(fileDto);
+            fileDto.Sha256 = hashHex;
+
+            var fileEntity = _mapper.Map<Core.Entities.File>(fileDto);
             await _repositoryManager.Files.AddFileAsync(fileEntity);
-            await _repositoryManager.SaveAsync(); 
+            await _repositoryManager.SaveAsync();
+
             return _mapper.Map<FileDto>(fileEntity);
         }
 
-        //public async Task<Stream> DecryptAndDownloadFileAsync(int fileKey)
-        //{
-        //    var file = await _repositoryManager.Files.GetByIdFileAsync(fileKey);
-        //    if (file == null) throw new Exception("File not found");
-        //    var s3Object = await _s3Client.GetObjectAsync(_config["AWS:BucketName"], file.EncryptedUrl);
-        //    using var responseStream = s3Object.ResponseStream;
-        //    var memoryStream = new MemoryStream();
-        //    await responseStream.CopyToAsync(memoryStream);
-        //    memoryStream.Position = 0;
-        //    // Extract IV from the beginning of the file
-        //    var iv = new byte[16];
-        //    memoryStream.Read(iv, 0, iv.Length);
-        //    using var aes = CreateAes();
-        //    aes.IV = iv;
-        //    var decryptedStream = new MemoryStream();
-        //    using (var cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
-        //    {
-        //        await cryptoStream.CopyToAsync(decryptedStream);
-        //    }
-        //    decryptedStream.Position = 0;
-        //    return decryptedStream;
-        //}
-        public async Task<(Stream Stream, string FileName, string ContentType)> DecryptAndDownloadFileAsync(int fileKey)
+
+        public async Task<(Stream Stream, string FileName, string ContentType ,string Hash)> DecryptAndDownloadFileAsync(int fileKey)
         {
-            var file = await _repositoryManager.Files.GetByIdFileAsync(fileKey);
-            if (file == null) throw new Exception("File not found");
+            var file = await _repositoryManager.Files.GetByIdFileAsync(fileKey)
+                       ?? throw new Exception("File not found");
 
             var s3Object = await _s3Client.GetObjectAsync(_config["AWS:BucketName"], file.EncryptedUrl);
 
             using var responseStream = s3Object.ResponseStream;
-            var memoryStream = new MemoryStream();
-            await responseStream.CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            // Extract IV
+            using var encryptedDataWithHash = new MemoryStream();
+            await responseStream.CopyToAsync(encryptedDataWithHash);
+            encryptedDataWithHash.Position = 0;
             var iv = new byte[16];
-            memoryStream.Read(iv, 0, iv.Length);
-
+            encryptedDataWithHash.Read(iv, 0, iv.Length);
             using var aes = CreateAes();
             aes.IV = iv;
 
-            var decryptedStream = new MemoryStream();
-            using (var cryptoStream = new CryptoStream(memoryStream, aes.CreateDecryptor(), CryptoStreamMode.Read))
-            {
-                await cryptoStream.CopyToAsync(decryptedStream);
-            }
+            var encryptedLength = encryptedDataWithHash.Length - 16 - 32; 
+            var encryptedOnly = new byte[encryptedLength];
+            encryptedDataWithHash.Read(encryptedOnly, 0, encryptedOnly.Length);
 
+            var hash = new byte[32]; 
+            encryptedDataWithHash.Read(hash, 0, hash.Length);
+            using var sha256 = SHA256.Create();
+            var computedHash = sha256.ComputeHash(encryptedOnly);
+            if (!computedHash.SequenceEqual(hash))
+                throw new Exception("File integrity check failed: hash mismatch");
+            using var cryptoStream = new CryptoStream(new MemoryStream(encryptedOnly), aes.CreateDecryptor(), CryptoStreamMode.Read);
+            var decryptedStream = new MemoryStream();
+            await cryptoStream.CopyToAsync(decryptedStream);
             decryptedStream.Position = 0;
-            return (decryptedStream, file.Name, file.ContentType);
+
+            return (decryptedStream, file.Name, file.ContentType,file.OriginalHash);
         }
+
+
 
     }
 }

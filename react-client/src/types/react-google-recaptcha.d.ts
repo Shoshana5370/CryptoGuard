@@ -1,7 +1,6 @@
 
 declare module 'react-google-recaptcha' {
     import * as React from 'react';
-  
     interface ReCAPTCHAProps {
       sitekey: string;
       onChange?: (token: string | null) => void;

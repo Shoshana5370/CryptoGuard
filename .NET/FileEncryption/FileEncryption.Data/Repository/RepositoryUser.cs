@@ -4,14 +4,10 @@ using FileEncryption.Core.IRepository;
 using Microsoft.EntityFrameworkCore;
 namespace FileEncryption.Data.Repository
 {
-    public class RepositoryUser : IRepositoryUser
+    public class RepositoryUser(DataContext data) : IRepositoryUser
     {
-        private readonly DataContext _context;
+        private readonly DataContext _context = data;
 
-        public RepositoryUser(DataContext data)
-        {
-            _context = data;
-        }
         public async Task<User> AddUserAsync(User user)
         {
             if (user == null) return null;
@@ -48,7 +44,7 @@ namespace FileEncryption.Data.Repository
         public async Task<IEnumerable<Core.Entities.File>> GetFilesByUserIdAsync(int id)
         {
             var files = await _context.Files
-               .Where(f => f.CreatedBy == id && !f.isDelete)
+               .Where(f => f.CreatedBy == id && !f.IsDelete)
                   .ToListAsync();
 
             return files;

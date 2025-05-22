@@ -7,14 +7,9 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Data.Repository
 {
-    public class RepositoryFile : IRepositoryFile
+    public class RepositoryFile(DataContext dataContext) : IRepositoryFile
     {
-        private readonly DataContext _dataContext;
-
-        public RepositoryFile(DataContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
+        private readonly DataContext _dataContext = dataContext;
 
         public async Task<Core.Entities.File> AddFileAsync(Core.Entities.File fileEntity)
         {
@@ -30,9 +25,8 @@ namespace FileEncryption.Data.Repository
             {
                 return false;
             }
-            file.isDelete = true;
+            file.IsDelete = true;
             _dataContext.Files.Update(file);
-            //_dataContext.Files.Remove(file);
             return true;
         }
 
@@ -54,12 +48,8 @@ namespace FileEncryption.Data.Repository
             {
                 return null;
             }
-
-            // Map fields as needed
             existingFile.Name = fileEntity.Name;
             existingFile.UpdatedAt = DateTime.Now;
-            // Add more fields if necessary
-
             _dataContext.Files.Update(existingFile);
             return existingFile;
         }

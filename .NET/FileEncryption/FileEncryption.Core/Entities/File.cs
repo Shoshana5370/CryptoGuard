@@ -19,8 +19,10 @@ namespace FileEncryption.Core.Entities
             [ForeignKey(nameof(CreatedBy))]
             public User UserCreated { get; set; }
             public DateTime UpdatedAt { get; set; }
-            public bool isDelete { get; set; }
-            public virtual ICollection<Share> Shares { get; set; }
+            public bool IsDelete { get; set; }
+        public string Sha256 { get; set; }
+        public string OriginalHash { get; set; }
+        public virtual ICollection<Share> Shares { get; set; }
     }
 }
 

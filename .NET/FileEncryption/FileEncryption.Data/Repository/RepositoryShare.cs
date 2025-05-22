@@ -5,16 +5,11 @@ namespace FileEncryption.Data.Repository
 {
 
 
-        public class RepositoryShare : IRepositoryShare
+        public class RepositoryShare(DataContext dataContext) : IRepositoryShare
         {
-            private readonly DataContext _dataContext;
+            private readonly DataContext _dataContext = dataContext;
 
-            public RepositoryShare(DataContext dataContext)
-            {
-                _dataContext = dataContext;
-            }
-
-            public async Task<Share> AddShareAsync(Share shareEntity)
+        public async Task<Share> AddShareAsync(Share shareEntity)
             {
                 if (shareEntity == null) return null;
 
@@ -45,7 +40,7 @@ namespace FileEncryption.Data.Repository
                 return null;
               return await _dataContext.Shares.FirstOrDefaultAsync(s => s.AccessCode == accessCode);
             }
-        public async Task<Share> GetByIdShareAsync(int shareId)
+             public async Task<Share> GetByIdShareAsync(int shareId)
             {
                 return await _dataContext.Shares
                     .FirstOrDefaultAsync(s => s.Id == shareId);

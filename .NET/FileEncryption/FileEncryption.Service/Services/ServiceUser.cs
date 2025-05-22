@@ -5,29 +5,16 @@ using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace FileEncryption.Service.Services
 {
-    public class ServiceUser : IServiceUser
+    public class ServiceUser(IRepositoryManager repositoryManager, IMapper mapper) : IServiceUser
     {
-        readonly private IRepositoryManager _repositoryManager;
-        readonly private IMapper _mapper;
-        private readonly IAmazonS3 _s3Client;
-        private readonly IConfiguration _config;
+        readonly private IRepositoryManager _repositoryManager = repositoryManager;
+        readonly private IMapper _mapper = mapper;
 
-        public ServiceUser(IRepositoryManager repositoryManager ,IMapper mapper)
-        {
-            _repositoryManager = repositoryManager;
-            _mapper = mapper;
-        }
         public async Task<bool> DiscardUserAsync(int id)
         {
-            bool sucsess= await _repositoryManager.Users.DeleteUserAsync(id); // Call repository method to delete user
+            bool sucsess= await _repositoryManager.Users.DeleteUserAsync(id); 
             if(sucsess)
             {
                 await _repositoryManager.SaveAsync();
@@ -38,12 +25,12 @@ namespace FileEncryption.Service.Services
 
         public async Task<IEnumerable<User>> FindAllUsersAsync()
         {
-            return await _repositoryManager.Users.GetAllUserAsync(); // Call repository method to get all users
+            return await _repositoryManager.Users.GetAllUserAsync();
         }
 
         public async Task<User> FindUserByIdAsync(int id)
         {
-            return await _repositoryManager.Users.GetByIdUserAsync(id); // Call repository method to find user by ID
+            return await _repositoryManager.Users.GetByIdUserAsync(id);
         }
 
         public async Task<IEnumerable<FileDto>> GetFilesByUserIdAsync(int id)

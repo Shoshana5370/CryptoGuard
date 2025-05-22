@@ -8,10 +8,12 @@ namespace FileEncryption.Core.DTOs
 {
         public class FileDto
         {
-            public int Id { get; set; } 
+        private string name;
 
-            public string Name { get; set; }
-            public string EncryptedUrl { get; set; } 
+        public int Id { get; set; }
+
+        public string Name { get => name; set => name = value; }
+        public string EncryptedUrl { get; set; } 
             public string ContentType { get; set; }
 
             public DateTime CreatedAt { get; set; } 
@@ -19,8 +21,9 @@ namespace FileEncryption.Core.DTOs
 
             public int CreatedBy { get; set; } 
 
-            public bool isDelete { get; set; }
-
+            public bool IsDelete { get; set; }
+        public string Sha256 { get; set; }
+        public string OriginalHash { get; set; }
     }
 }
 

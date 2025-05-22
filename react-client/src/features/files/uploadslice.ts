@@ -15,9 +15,38 @@ const initialState: UploadState = {
     success: false,
     error: null,
 };
+// export const uploadFileContent = createAsyncThunk<
+//     FilePostModel,                       
+//     { file: File },                      
+//     { rejectValue: string, state: RootState }
+// >(
+//     'upload/uploadFileContent',
+//     async ({ file }, { rejectWithValue }) => {
+//         try {
+//             const formData = new FormData();
+//             formData.append('file', file);
+
+//             const response = await axiosInstance.post<FilePostModel>(
+//                 `/api/Files/upload`,  
+//                 formData,
+//                 {
+//                     headers: {
+//                         'Content-Type': 'multipart/form-data',
+//                     },
+//                 }
+//             );
+//             return response.data;
+//         } catch (err: any) {
+//             const msg = err.response?.data || err.message || 'File upload failed';
+//             return rejectWithValue(msg);
+//         }
+//     }
+// );
+import { hashFileSHA256 } from "../../styles/lib/utils";
+
 export const uploadFileContent = createAsyncThunk<
-    FilePostModel,                       
-    { file: File },                      
+    FilePostModel,
+    { file: File },
     { rejectValue: string, state: RootState }
 >(
     'upload/uploadFileContent',
@@ -25,9 +54,10 @@ export const uploadFileContent = createAsyncThunk<
         try {
             const formData = new FormData();
             formData.append('file', file);
-
+            const originalHash = await hashFileSHA256(file);
+            formData.append('originalHash', originalHash);
             const response = await axiosInstance.post<FilePostModel>(
-                `/api/Files/upload`,  
+                `/api/Files/upload`,
                 formData,
                 {
                     headers: {

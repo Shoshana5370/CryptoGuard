@@ -7,4 +7,6 @@ export interface FileDto {
     updatedAt: string;
     createdBy: number; 
     isDelete: boolean;
+   Sha256? :string;
+   originalHash?: string;
 }

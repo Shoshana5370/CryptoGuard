@@ -10,22 +10,14 @@ namespace FileEncryption.Api.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class FilesController : ControllerBase
+    public class FilesController(IServiceFile fileService, IMapper mapper) : ControllerBase
     {
-        private readonly IServiceFile _fileService;
-        private readonly IMapper _mapper;
+        private readonly IServiceFile _fileService = fileService;
+        private readonly IMapper _mapper = mapper;
 
-        public FilesController(IServiceFile fileService, IMapper mapper)
-        {
-            _fileService = fileService;
-            _mapper = mapper;
-        }
-
-        // GET: api/<FilesController>
         [HttpGet]
         [Authorize(Policy = "UserOrAdmin")]
-         
-        public async Task<ActionResult<IEnumerable<FileDto>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<FileDto>>> Get()
         {
             var files = await _fileService.FindAllFilesAsync();
             if (files == null || !files.Any())
@@ -35,71 +27,71 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(_mapper.Map<IEnumerable<FileDto>>(files));
         }
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<FileDto>> Get(int id)
+        {
+            var file = await _fileService.FindFileByIdAsync(id);
 
-        //// GET api/<FilesController>/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<FileDto>> Get(int id)
-        //{
-        //    var file = await _fileService.FindFileByIdAsync(id);
+            if (file == null)
+            {
+                return NotFound(); 
+            }
 
-        //    if (file == null)
-        //    {
-        //        return NotFound(); // Return 404 if file is not found
-        //    }
+            return Ok(_mapper.Map<FileDto>(file)); 
+        }
+        [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
+        {
+            if (file == null)
+            {
+                return BadRequest(); 
+            }
 
-        //    return Ok(_mapper.Map<FileDto>(file)); // Return 200 OK with the file
-        //}
+            var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
 
-        //// POST api/<FilesController>
-        //[HttpPost]
-        //public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
-        //{
-        //    if (file == null)
-        //    {
-        //        return BadRequest(); // Return 400 Bad Request if the file object is null
-        //    }
-
-        //    var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
-
-        //    if (result != null)
-        //    {
-        //        return Ok(_mapper.Map<FileDto>(result));
-        //    }
-        //    return BadRequest();
-        //}
+            if (result != null)
+            {
+                return Ok(_mapper.Map<FileDto>(result));
+            }
+            return BadRequest();
+        }
         [HttpPut("{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
         {
             if (file == null || file.Id != id)
             {
-                return BadRequest(); // Return 400 Bad Request if the file object is null or id does not match
+                return BadRequest();
             }
 
             var result = await _fileService.UpdateExistingFileAsync(id, file);
             if (result == null)
             {
-                return NotFound(); // Return 404 if the file to update is not found
+                return NotFound();
             }
 
-            return Ok(_mapper.Map<FileDto>(result)); // Return 200 OK on successful update
+            return Ok(_mapper.Map<FileDto>(result));
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<bool>> Delete(int id)
         {
             var result = await _fileService.DiscardFileAsync(id);
 
             if (!result)
             {
-                return NotFound(); // Return 404 if the file to delete is not found
+                return NotFound();
             }
 
-            return NoContent(); // Return 204 No Content on successful deletion
+            return NoContent();
         }
 
         [HttpPost("upload")]
         [Authorize(Policy = "UserOrAdmin")]
-        public async Task<ActionResult<FileDto>> UploadEncryptedFile(IFormFile file)
+        public async Task<ActionResult<FileDto>> UploadEncryptedFile([FromForm] IFormFile file, [FromForm] string originalHash)
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdClaim);
@@ -110,29 +102,22 @@ namespace FileEncryption.Api.Controllers
                 FileName = file.FileName,
                 Content = file.OpenReadStream(),
                 ContentType = file.ContentType
+                
             };
             var fileDto = new FileDto
             {
                 Name = file.FileName,
                 CreatedBy = userId,
-                ContentType = file.ContentType
+                ContentType = file.ContentType,
+                OriginalHash = originalHash
             };
-            var fileResponse= await _fileService.EncryptAndUploadFileAsync(dto,fileDto);
-            if(fileResponse == null)
+            var fileResponse = await _fileService.EncryptAndUploadFileAsync(dto, fileDto);
+            if (fileResponse == null)
             {
                 return BadRequest("Upload a file failed.");
             }
             return Ok(fileResponse);
         }
-        //[HttpGet("download/{fileKey}")]
-        //public async Task<IActionResult> DownloadEncryptedFile(string fileKey)
-        //{
-        //    //var decryptedStream = await _fileService.DecryptAndDownloadFileAsync(fileKey,);
-
-        //    //return File(decryptedStream, "application/octet-stream", "decrypted-file");
-
-        //}
-
 
     }
 }

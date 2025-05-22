@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
 using FileEncryption.Core.IServices;
 using Microsoft.AspNetCore.Authorization;
@@ -10,15 +11,11 @@ namespace FileEncryption.Api.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(IServiceUser userService, IMapper mapper) : ControllerBase
     {
-        private readonly IServiceUser _userService;
-        private readonly IMapper _mapper;
-        public UserController(IServiceUser userService,IMapper mapper)
-        {
-            _userService = userService;
-            _mapper = mapper;
-        }
+        private readonly IServiceUser _userService = userService;
+        private readonly IMapper _mapper = mapper;
+
         [HttpGet("GetFiles")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync()
@@ -79,8 +76,6 @@ namespace FileEncryption.Api.Controllers
             return Ok(shares);
         }
 
-
-        // GET: api/<UserController>
         [HttpGet]
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAsync()
@@ -95,70 +90,72 @@ namespace FileEncryption.Api.Controllers
         }
 
 
-        // GET api/<UserController>/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<UserDto>> Get(int id)
-        //{
-        //    var user = await _userService.FindUserByIdAsync(id);
+ 
+        [HttpGet("{id}")]
+        [Authorize(Policy = "AdminOnly")]
 
-        //    if (user == null)
-        //    {
-        //        return NotFound(); // Return 404 if user is not found
-        //    }
+        public async Task<ActionResult<UserDto>> Get(int id)
+        {
+            var user = await _userService.FindUserByIdAsync(id);
 
-        //    return Ok(_mapper.Map<UserDto>(user)); // Return 200 OK with the user
-        //}
+            if (user == null)
+            {
+                return NotFound(); 
+            }
 
-        //    // POST api/<UserController>
-        //    [HttpPost]
-        //    public async Task<ActionResult<UserDto>> Post([FromBody] UserPostModel user)
-        //    {
-        //        if (user == null)
-        //        {
-        //            return BadRequest(); // Return 400 Bad Request if the user object is null
-        //        }
-        //        //UserDto userDto = _mapper.Map<UserDto>(user);
-        //        var result = await _userService.InsertUserAsync(_mapper.Map<UserDto>(user));
+            return Ok(_mapper.Map<UserDto>(user)); 
+        }
 
-        //        if (result!=null)
-        //        {
-        //            return Ok( _mapper.Map<UserDto>(result));
-        //        }
-        //        return BadRequest();
-        //        //?return StatusCode(500, "A problem happened while handling your request."); // Return 500 Internal Server Error
-        //    }
 
-        //    // PUT api/<UserController>/5
-        //    [HttpPut("{id}")]
-        //    public async Task<ActionResult<UserDto>> Put(int id, [FromBody] UserDto user)
-        //    {
-        //        if (user == null || user.Id != id)
-        //        {
-        //            return BadRequest(); // Return 400 Bad Request if the user object is null or id does not match
-        //        }
+        [HttpPost]
+        [Authorize(Policy = "UserOrAdmin")]
+        public async Task<ActionResult<UserDto>> Post([FromBody] UserPostModel user)
+        {
+            if (user == null)
+            {
+                return BadRequest(); 
+            }
+           
+            var result = await _userService.InsertUserAsync(_mapper.Map<UserDto>(user));
 
-        //        var result = await _userService.UpdateExistingUserAsync(id, user);
-        //        if (result==null)
-        //        {
-        //            return NotFound(); // Return 404 if the user to update is not found
-        //        }
+            if (result != null)
+            {
+                return Ok(_mapper.Map<UserDto>(result));
+            }
+            return BadRequest();
+        
+        }
 
-        //        return Ok(_mapper.Map<UserDto>(result)); // Return 204 No Content on successful update
-        //    }
+        [HttpPut("{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<UserDto>> Put(int id, [FromBody] UserDto user)
+        {
+            if (user == null || user.Id != id)
+            {
+                return BadRequest();
+            }
 
-        //    // DELETE api/<UserController>/5
-        //    [HttpDelete("{id}")]
-        //    public async Task<ActionResult<bool>> Delete(int id)
-        //    {
-        //        var result = await _userService.DiscardUserAsync(id);
+            var result = await _userService.UpdateExistingUserAsync(id, user);
+            if (result == null)
+            {
+                return NotFound();
+            }
 
-        //        if (!result)
-        //        {
-        //            return NotFound(); // Return 404 if the user to delete is not found
-        //        }
+            return Ok(_mapper.Map<UserDto>(result)); }
 
-        //        return NoContent(); // Return 204 No Content on successful deletion
-        //    }
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<bool>> Delete(int id)
+        {
+            var result = await _userService.DiscardUserAsync(id);
+
+            if (!result)
+            {
+                return NotFound(); 
+            }
+
+            return NoContent(); 
+        }
 
 
 

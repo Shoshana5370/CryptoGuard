@@ -1,11 +1,6 @@
 ﻿using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileEncryption.Service.Services
 {
@@ -41,22 +36,13 @@ namespace FileEncryption.Service.Services
 
         public async Task<Share> ShareFileAsync(Share share, string idUser)
         {
-            //if (share == null)
-            //    throw new ArgumentNullException(nameof(share));
-
-            // 1️⃣ Make sure the file exists
-            var file = await _repositoryManager.Files.GetByIdFileAsync(share.FileKey);
-            if (file == null)
-            {
-                throw new Exception($"File with key {share.FileKey} not found.");
-            }
-            if(file.isDelete)
+            var file = await _repositoryManager.Files.GetByIdFileAsync(share.FileKey) ?? throw new Exception($"File with key {share.FileKey} not found.");
+            if (file.IsDelete)
             {
                 throw new Exception($"File with key {share.FileKey} nis deleted.");
             }
-            // 2️⃣ Set the navigation property (optional but good practice)
             share.File = file;
-            share.AccessCode = GenerateAccessCode();
+            share.AccessCode = GenerateAccessCode;
             var recipientUser = await _repositoryManager.Users.FindByEmailAsync(share.RecipientEmail);
             if(recipientUser != null)
             {
@@ -67,17 +53,12 @@ namespace FileEncryption.Service.Services
             int userId = int.Parse(idUser);
             share.SharedByUserId =userId;
             share.SharedByUser = await _repositoryManager.Users.GetByIdUserAsync(userId);
-            // 4️⃣ Save to DB
             _repositoryManager.Shares.AddShareAsync(share);
             await _repositoryManager.SaveAsync();
             return share;
         }
 
-        // Simple method to generate random access code
-        private string GenerateAccessCode()
-        {
-            return Guid.NewGuid().ToString("N").Substring(0, 8);  // Example: 8-char code
-        }
+        private string GenerateAccessCode => Guid.NewGuid().ToString("N")[..8];
         public async Task<bool> ExtendExpirationAsync(int id, string newDate)
         {
             if (!DateTime.TryParse(newDate, out var parsedDate))

@@ -2,12 +2,8 @@
 using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
 using FileEncryption.Core.IServices;
-using FileEncryption.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -33,8 +29,6 @@ namespace FileEncryption.Api.Controllers
             {
                 return BadRequest("Invalid reCAPTCHA");
             }
-
-            // ✅ Step 2: Continue with login
             var result = await _authService.Login(_mapper.Map<UserDto>(user));
             if (result == null)
             {
@@ -62,7 +56,7 @@ namespace FileEncryption.Api.Controllers
                 null);
 
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<ReCaptchaResponse>(json, new JsonSerializerOptions
+            var result = JsonSerializer.Deserialize<ReCaptchaResponse>(json, options: new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });

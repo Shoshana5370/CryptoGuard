@@ -6,15 +6,10 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 namespace FileEncryption.Service.Services
 {
-    public class ServiceEmail : IServiceSendMessage
+    public class ServiceEmail(IConfiguration config) : IServiceSendMessage
     {
 
-        private readonly IConfiguration _config;
-
-        public ServiceEmail(IConfiguration config)
-        {
-            _config = config;
-        }
+        private readonly IConfiguration _config = config;
 
         public async Task<bool> SendAsync(string to, string toUser,string fromUser, string accessCode,string fileName)
         {
@@ -30,7 +25,7 @@ namespace FileEncryption.Service.Services
             email.Body = new TextPart("html")
             {
                 Text = $@"
-              <p>Hello {(toUser != null ? toUser : "guest")},</p>
+              <p>Hello {toUser ?? "guest"},</p>
               <p>User {fromUser} has shared a file with you.</p>
               <p>Your access code to file <b>{fileName}</b> is: <b>{accessCode}</b></p>
               <p>Best regards to you.</p>"

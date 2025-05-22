@@ -39,7 +39,6 @@ builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
           .AllowAnyHeader()
           .AllowAnyMethod();
 }));
-// הוספת הרשאות מבוססות-תפקידים
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -91,7 +90,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(); // Enable Swagger middleware
+    app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -106,7 +105,3 @@ app.UseSession();
 app.MapControllers();
 
 app.Run();
-
-
-
-//מה שאני צריכה לעשות זה:

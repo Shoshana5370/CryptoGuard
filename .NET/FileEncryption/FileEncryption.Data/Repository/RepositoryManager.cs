@@ -8,21 +8,12 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Data.Repository
 {
-    public class RepositoryManager : IRepositoryManager
+    public class RepositoryManager(DataContext context, IRepositoryUser userRepository, IRepositoryFile fileRepository, IRepositoryShare repositoryShare) : IRepositoryManager
     {
-        private readonly DataContext _context;
-        //public IRepositoryUser Users { get; }
-        public IRepositoryUser Users { get; }
-        public IRepositoryFile Files { get; }
-        public IRepositoryShare Shares { get; }
-
-        public RepositoryManager(DataContext context, IRepositoryUser userRepository, IRepositoryFile fileRepository , IRepositoryShare repositoryShare)
-        {
-            _context = context;
-            Users = userRepository;
-            Files = fileRepository;
-            Shares = repositoryShare;
-        }
+        private readonly DataContext _context = context;
+        public IRepositoryUser Users { get; } = userRepository;
+        public IRepositoryFile Files { get; } = fileRepository;
+        public IRepositoryShare Shares { get; } = repositoryShare;
 
         public async Task SaveAsync()
         {

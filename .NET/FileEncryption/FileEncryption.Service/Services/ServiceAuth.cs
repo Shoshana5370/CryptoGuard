@@ -12,22 +12,12 @@ using System.Text;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceAuth:IServiceAuth
+    public class ServiceAuth(IConfiguration configuration, IRepositoryManager repository, IServiceUser userService, IMapper mapper) : IServiceAuth
     {
-        private readonly IConfiguration _configuration;
-        private readonly IRepositoryManager _repositoryManager;
-        private readonly IServiceUser _userService;
-        private readonly IMapper _mapper;
-
-        public ServiceAuth(IConfiguration configuration, IRepositoryManager repository, IServiceUser userService,IMapper mapper)
-        {
-            _configuration = configuration;
-            _repositoryManager = repository;
-            _userService = userService;
-            _mapper = mapper;
-
-        }
-
+        private readonly IConfiguration _configuration = configuration;
+        private readonly IRepositoryManager _repositoryManager = repository;
+        private readonly IServiceUser _userService = userService;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<AuthResponse> Login(UserDto user)
         {

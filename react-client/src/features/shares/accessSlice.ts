@@ -19,31 +19,37 @@ const initialState: AccessState = {
 
 export const accessSharedFile = createAsyncThunk(
   'access/accessSharedFile',
-  async ({ shareId, code }: { shareId: number; code: string }, { rejectWithValue })=> {
+  async ({ shareId, code }: { shareId: number; code: string }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post<Blob>(
+      const response = await axiosInstance.post(
         `/api/Share/access`,
         { code, id: shareId },
-        { headers: { 'Content-Type': 'application/json' }, responseType: 'blob' }
+        { headers: { 'Content-Type': 'application/json' } }
       );
 
-      // Extract filename from Content-Disposition header
-      const disposition = response.headers['content-disposition'];
-      let filename = 'shared-file';
-
-      if (disposition && disposition.includes('filename=')) {
-        const match = disposition.match(/filename="?([^"]+)"?/);
-        if (match && match[1]) {
-          filename = match[1];
-        }
+      const { file, fileName, contentType, originalHash } = response.data;
+      const binary = atob(file);
+      const byteArray = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        byteArray[i] = binary.charCodeAt(i);
       }
 
-      return { blob: response.data, filename };
+      const blob = new Blob([byteArray], { type: contentType });
+      const hashBuffer = await crypto.subtle.digest('SHA-256', byteArray);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+      if (hashHex !== originalHash.toLowerCase()) {
+        throw new Error("File hash verification failed on client");
+      }
+
+      return { blob, filename: fileName };
     } catch (err: any) {
-      return rejectWithValue(err.response?.data || 'Error accessing shared file');
+      return rejectWithValue(err.message || 'Error accessing shared file');
     }
   }
 );
+
 
 const accessSlice = createSlice({
   name: 'access',

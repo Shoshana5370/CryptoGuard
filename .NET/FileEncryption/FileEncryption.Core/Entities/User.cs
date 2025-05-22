@@ -5,23 +5,23 @@ namespace FileEncryption.Core.Entities
     [Table("Users")] // שם הטבלה בבסיס הנתונים
     public class User
     {
-        [Key] // מזהה ייחודי
+        [Key] 
         public int Id { get; set; }
 
-        [Required] // חובה
-        [StringLength(100)] // אורך מקסימלי של 100 תווים
-        [EmailAddress] // אימייל צריך להיות בפורמט נכון
+        [Required] 
+        [StringLength(100)] 
+        [EmailAddress]
         public string Email { get; set; }
         public string Name { get; set; }
 
-        [Required] // חובה
-        public string Password { get; set; } // סיסמה מוצפנת
+        [Required] 
+        public string Password { get; set; } 
 
-        [StringLength(20)] // אורך מקסימלי של 20 תווים
+        [StringLength(20)] 
         public bool IsAdmin { get; set; }
 
-        [Column(TypeName = "DATETIME")] // סוג העמודה
-        public DateTime CreatedAt { get; set; }// תאריך יצירה
+        [Column(TypeName = "DATETIME")] 
+        public DateTime CreatedAt { get; set; }
         [Column(TypeName = "DATETIME")]
         public DateTime UpdatedAt { get; set; }
         public virtual ICollection<FileEncryption.Core.Entities.File> Files { get; set; }

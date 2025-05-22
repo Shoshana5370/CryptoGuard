@@ -6,34 +6,23 @@ using FileEncryption.Core.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FileEncryption.Api.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
-    public class ShareController : ControllerBase
+    public class ShareController(IServiceSendMessage emailService, IServiceShare shareService, IMapper mapper, IServiceFile fileService) : ControllerBase
     {
-        private readonly IServiceSendMessage _emailService;
-        private readonly IServiceShare _shareService;
-        private readonly IMapper _mapper;
-        private readonly IServiceFile _fileService;
-
-        public ShareController(IServiceSendMessage emailService, IServiceShare shareService, IMapper mapper, IServiceFile fileService)
-        {
-            _emailService = emailService;
-            _shareService = shareService;
-            _mapper = mapper;
-            _fileService = fileService;
-        }
+        private readonly IServiceSendMessage _emailService = emailService;
+        private readonly IServiceShare _shareService = shareService;
+        private readonly IMapper _mapper = mapper;
+        private readonly IServiceFile _fileService = fileService;
 
         public class ExtendShareExpirationDto
         {
             public string NewDate { get; set; } = null!;
         }
         [HttpPost("{id}")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<IActionResult> ExtendExpiration(int id, [FromBody] ExtendShareExpirationDto dto)
         {
             var success = await _shareService.ExtendExpirationAsync(id, dto.NewDate);
@@ -42,7 +31,7 @@ namespace FileEncryption.Api.Controllers
                 return NotFound($"Share with ID {id} not found or date invalid.");
             }
 
-            return NoContent(); // 204
+            return NoContent(); 
         }
 
         [HttpPost]
@@ -77,15 +66,28 @@ namespace FileEncryption.Api.Controllers
         public async Task<IActionResult> AccessSharedFile([FromBody] AccessRequestDto requestDto)
         {
             var share = await _shareService.GetValidShareByCodeAsync(requestDto.Code);
-            if(share.Used)
-            {
-                return BadRequest("this file is aleardy used!");
-            }
-            var (stream, fileName, contentType) = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
+         if(  share ==null)
+                return BadRequest("This share is Used or date Expired");
+
+
+            var (stream, fileName, contentType, originalHash) = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
+
             share.Used = true;
             await _shareService.UpdateShareAsync(share);
-            return File(stream, contentType ?? "application/octet-stream", fileName);
+
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var fileBytes = ms.ToArray();
+            return Ok(new
+            {
+                file = Convert.ToBase64String(fileBytes),
+                fileName,
+                contentType,
+                originalHash
+            });
         }
+
+
 
 
     }
