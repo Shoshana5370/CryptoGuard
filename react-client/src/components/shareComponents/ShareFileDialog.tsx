@@ -87,9 +87,8 @@ const ShareFileDialog = ({ isOpen, onClose, file , onShare }: ShareFileDialogPro
             <div className="relative">
               <CalendarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               <Calendar
-                mode="single"
-                selected={expiration}
-                onSelect={setExpiration}
+                selected={expiration ?? null}
+                onChange={(date) => setExpiration(date ?? undefined)}
                 className="pl-10"
               />
             </div>

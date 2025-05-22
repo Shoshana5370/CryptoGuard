@@ -1,8 +1,9 @@
 import * as React from "react";
-import { DayPicker } from "react-day-picker";
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
-declare function Calendar({ className, classNames, showOutsideDays, ...props }: CalendarProps): import("react/jsx-runtime").JSX.Element;
-declare namespace Calendar {
-    var displayName: string;
-}
-export { Calendar };
+export type CalendarProps = {
+    selected: Date | null;
+    onChange: (date: Date | null) => void;
+    className?: string;
+    minDate?: Date;
+    maxDate?: Date;
+};
+export declare function Calendar({ selected, onChange, className, minDate, maxDate, }: CalendarProps): React.JSX.Element;
