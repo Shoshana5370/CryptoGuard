@@ -6,6 +6,6 @@ const ReCaptcha = ({ onVerify }) => {
     const handleChange = (token) => {
         onVerify(token);
     };
-    return (_jsx("div", { children: _jsx(ReCAPTCHA, { sitekey: "6Le9JUMrAAAAAAT1rPMEur0u8bZf_h_05KXF2zjM", ref: recaptchaRef, onChange: handleChange }) }));
+    return (_jsx("div", { children: _jsx(ReCAPTCHA, { sitekey: String(import.meta.env.VITE_RECAPTCHA_SITE_KEY), ref: recaptchaRef, onChange: handleChange }) }));
 };
 export default ReCaptcha;

@@ -14,7 +14,7 @@ const ReCaptcha: React.FC<ReCaptchaProps> = ({ onVerify }) => {
   return (
     <div>
       <ReCAPTCHA
-        sitekey="6Le9JUMrAAAAAAT1rPMEur0u8bZf_h_05KXF2zjM"
+        sitekey={String(import.meta.env.VITE_RECAPTCHA_SITE_KEY)}
         ref={recaptchaRef}
         onChange={handleChange}
       />

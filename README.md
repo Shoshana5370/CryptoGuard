@@ -1,33 +1,36 @@
 # CryptoGuard
 
-**CryptoGuard** is a secure, scalable, and user-friendly file encryption and sharing system built with **.NET 8**, **React (Vite)**, and **AWS S3**. It enables organizations and individuals to protect sensitive files with strong AES encryption, manage access control, and monitor activity—all through a clean and intuitive interface.
+**CryptoGuard** is an advanced file encryption and sharing system built with **.NET 9** and **React 19**. It provides secure file uploads, AES-256 encryption, controlled access, and integrity verification—all within a modern and professional interface.
 
 ---
 
 ## 🛡️ Features
 
-- 🔐 **AES File Encryption** – Encrypt and decrypt files securely on the server.
-- ☁️ **Secure File Uploads** – Upload encrypted files directly to S3 using presigned URLs.
-- 📁 **File Sharing** – Share encrypted files with others using time-limited access tokens.
-- ✅ **File Integrity Verification** – SHA-256 hashes are used to ensure file integrity after decryption.
-- 👥 **User Management** – Basic authentication and registration system.
-- 📊 **Audit Logging (Planned)** – Future support for logging file access and suspicious activity.
-- 🌍 **Modern Frontend** – Fast and responsive UI built with React + TypeScript + Tailwind.
+- 🔐 **AES-256 File Encryption** – Secure files at rest with strong encryption.
+- ☁️ **AWS S3 Secure Uploads** – Files are uploaded using presigned URLs.
+- 📁 **File Sharing** – Share encrypted files with time-limited, secure links.
+- ✅ **File Integrity Check** – Ensure decrypted content matches the original using SHA-256.
+- 👤 **User Authentication** – Register and log in securely.
+- 🧩 **reCAPTCHA v2 Integration** – Protect authentication from abuse.
+- 📊 **Planned Activity Monitoring** – Detect suspicious activity and audit access.
 
 ---
 
-## 📂 Project Structure
+## 🌐 Live Preview
 
-### Backend (.NET 8 - Clean Architecture)
-- **Domain**: Core business logic and encryption interfaces.
-- **Application**: Use cases, DTOs, service interfaces.
-- **Infrastructure**: AWS S3 integration, AES encryption implementation.
-- **API**: REST controllers for file upload, download, and sharing.
+🚧 **Website Under Construction**  
+View the preview:  
+🔗 [https://cryptoguardapplication.onrender.com/](https://cryptoguardapplication.onrender.com/)
 
-### Frontend (React + Vite + Redux)
-- **File Upload & Share**: Drag-and-drop, file preview, expiration setup.
-- **Login/Register**: Integrated with reCAPTCHA v2.
-- **File Viewer**: Supports verifying decrypted file against original hash.
+---
+
+## 🧱 Tech Stack
+
+- **Backend**: .NET 9, ASP.NET Core Web API, Clean Architecture, AWS SDK
+- **Frontend**: React 19, Vite, Redux Toolkit, Tailwind CSS
+- **Security**: AES-256, SHA-256, reCAPTCHA v2, Presigned S3 URLs
+- **Storage**: AWS S3
+- **Database**: PostgreSQL (Clever Cloud)
 
 ---
 
@@ -35,11 +38,11 @@
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download)
+- [.NET 9 SDK](https://dotnet.microsoft.com/)
 - [Node.js (v18+)](https://nodejs.org/)
-- AWS account with S3 bucket
-- GitHub token (for CV feature)
-- reCAPTCHA site key & secret
+- AWS S3 Bucket + Access Keys
+- GitHub Token (for project fetching)
+- reCAPTCHA v2 Site Key & Secret
 
 ### Backend Setup
 
