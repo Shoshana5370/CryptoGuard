@@ -104,6 +104,10 @@ app.UseAuthorization();
 app.UseSession();
 
 app.MapControllers();
-app.MapGet("/", () => "CryptoGuard API is running"); var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}");
+app.MapGet("/", () => "CryptoGuard API is running");
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(int.Parse(port));
+});
 app.Run();
