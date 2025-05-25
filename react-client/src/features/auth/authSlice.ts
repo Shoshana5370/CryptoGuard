@@ -125,7 +125,7 @@ export const loginUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(`${url}/api/Auth/login`, credentials);
+      const response = await axios.post(`${url}api/Auth/login`, credentials);
       sessionStorage.setItem('token', response.data.token);
       sessionStorage.setItem('user', JSON.stringify(response.data.user));
       sessionStorage.setItem('userId', response.data.user.id.toString());
