@@ -14,7 +14,6 @@ const initialState: FilesState = {
     loading: false,
     error: null,
 };
-const url = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Adjust the URL as needed
 export const fetchFilesByUserId = createAsyncThunk<
     FileDto[],
     void,
