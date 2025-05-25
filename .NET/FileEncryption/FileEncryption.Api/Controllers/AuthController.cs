@@ -20,7 +20,16 @@ namespace FileEncryption.Api.Controllers
             _authService = authService;
             _configuration = configuration;
         }
-
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserPostModel user)
+        {
+            var result = await _authService.Register(_mapper.Map<UserDto>(user));
+            if (result == null)
+            {
+                return BadRequest("User already exists or registration failed.");
+            }
+            return Ok(result);
+        }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
@@ -37,16 +46,7 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(result);
         }
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserPostModel user)
-        {
-            var result = await _authService.Register(_mapper.Map<UserDto>(user));
-            if (result == null)
-            {
-                return BadRequest("User already exists or registration failed.");
-            }
-            return Ok(result);
-        }
+
         private async Task<bool> VerifyCaptchaAsync(string token)
         {
             var secret = _configuration["GoogleReCaptcha:SecretKey"]; 

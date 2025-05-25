@@ -1,13 +1,11 @@
-﻿using Amazon.Runtime.Internal.Util;
+﻿
 using Amazon.S3;
 using Amazon.S3.Model;
 using AutoMapper;
 using FileEncryption.Core.DTOs;
-using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
 using Microsoft.Extensions.Configuration;
-using MimeKit;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -101,7 +99,6 @@ namespace FileEncryption.Service.Services
             await uploadStream.WriteAsync(encryptedBytes);             
             await uploadStream.WriteAsync(hashBytes);                
             uploadStream.Position = 0;
-
             var putRequest = new PutObjectRequest
             {
                 BucketName = bucketName,
@@ -125,7 +122,7 @@ namespace FileEncryption.Service.Services
                 Action = "Upload",
                 TargetId = fileEntity.Id.ToString(),
                 TargetType = "File",
-                Description = $"File '{file.FileName}' Download"
+                Description = $"File '{file.FileName}' Upload"
             });
             return _mapper.Map<FileDto>(fileEntity);
         }
@@ -167,7 +164,7 @@ namespace FileEncryption.Service.Services
                 Action = "DownLoad",
                 TargetId = file.Id.ToString(),
                 TargetType = "File",
-                Description = $"File '{file.Name}' uploaded by user {file.UserCreated.Name}"
+                Description = $"File '{file.Name}' download by user {file.UserCreated.Name}"
             });
             return (decryptedStream, file.Name, file.ContentType,file.OriginalHash);
         }

@@ -103,6 +103,16 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
 }
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers["Cross-Origin-Embedder-Policy"] = "";
+        return Task.CompletedTask;
+    });
+
+    await next();
+});
 app.UseHttpsRedirection();
 app.UseCors("MyPolicy");
 
