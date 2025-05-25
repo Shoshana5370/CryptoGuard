@@ -102,7 +102,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { User } from '../../types/UserDto';
-import { env } from 'process';
 
 export interface AuthState {
   user: User | null;
@@ -118,7 +117,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-const url = env.VITE_API_URL || 'https://localhost:7207';
+const url = import.meta.env.VITE_API_BASE_URL;
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (
