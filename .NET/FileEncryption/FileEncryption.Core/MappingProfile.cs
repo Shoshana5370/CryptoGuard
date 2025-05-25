@@ -14,6 +14,8 @@ namespace FileEncryption.Core
                  .ForMember(dest => dest.FileIsDeleted, opt => opt.MapFrom(src => src.File.IsDelete))
                 .ForMember(dest => dest.SharedByUserName, opt => opt.MapFrom(src => src.SharedByUser.Name))
                 .ForMember(dest => dest.RecipientUserName, opt => opt.MapFrom(src => src.RecipientUser != null ? src.RecipientUser.Name : null));
+            CreateMap<ActivityLog, ActivityLogDto>().ReverseMap();
+            CreateMap<CreateActivityLogDto, ActivityLog>().ReverseMap();
         }
     }
 }

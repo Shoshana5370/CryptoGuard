@@ -12,6 +12,7 @@ namespace FileEncryption.Core.IRepository
         IRepositoryUser Users { get; }
         IRepositoryFile Files { get; }
         IRepositoryShare Shares { get; }
+        IRepositoryActivityLogs Logs { get; }
 
         public async Task SaveAsync()
         {

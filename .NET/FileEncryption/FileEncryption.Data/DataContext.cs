@@ -14,6 +14,7 @@ namespace FileEncryption.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Share> Shares { get; set; }
         public DbSet<Core.Entities.File> Files { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

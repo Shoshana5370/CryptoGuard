@@ -1,4 +1,4 @@
-using FileEncryption.Core.IRepository;
+﻿using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
 using FileEncryption.Data.Repository;
 using FileEncryption.Data;
@@ -35,8 +35,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
-    policy.WithOrigins("https://cryptoguardapplication.onrender.com")
-          .AllowAnyHeader()
+    policy.WithOrigins(
+         "https://cryptoguardapplication.onrender.com",
+         "http://localhost:5173"
+     )
+           .AllowAnyHeader()
           .AllowAnyMethod();
 }));
 builder.Services.AddAuthorization(options =>
@@ -62,6 +65,7 @@ var awsOptions = new AWSOptions
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddScoped<IRepositoryFile, RepositoryFile>();
+builder.Services.AddScoped<IRepositoryActivityLogs, RepositoryActivityLogs>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositoryShare, RepositoryShare>();
 builder.Services.AddScoped<IServiceSendMessage,ServiceEmail>();
@@ -69,6 +73,7 @@ builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServiceFile, ServiceFile>();
 builder.Services.AddScoped<IServiceShare, ServiceShare>();
 builder.Services.AddScoped<IServiceUser, ServiceUser>();
+builder.Services.AddScoped<IServiceActivityLogs, ServiceActivityLogs>();
 builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
 var connectionString = builder.Configuration["DbConnectionString"];
 builder.Services.AddDbContext<DataContext>(
@@ -83,9 +88,11 @@ builder.Services.AddDbContext<DataContext>(
     }));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddAutoMapper(typeof(MappingProfilePostModel));
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
-
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(int.Parse(port));
+});
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -101,13 +108,8 @@ app.UseCors("MyPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 
 app.MapControllers();
 app.MapGet("/", () => "CryptoGuard API is running");
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(int.Parse(port));
-});
+
 app.Run();

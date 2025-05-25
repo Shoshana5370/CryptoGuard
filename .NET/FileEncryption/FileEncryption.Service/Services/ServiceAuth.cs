@@ -12,12 +12,13 @@ using System.Text;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceAuth(IConfiguration configuration, IRepositoryManager repository, IServiceUser userService, IMapper mapper) : IServiceAuth
+    public class ServiceAuth(IConfiguration configuration, IRepositoryManager repository, IServiceUser userService, IMapper mapper,IServiceActivityLogs serviceActivityLogs) : IServiceAuth
     {
         private readonly IConfiguration _configuration = configuration;
         private readonly IRepositoryManager _repositoryManager = repository;
         private readonly IServiceUser _userService = userService;
         private readonly IMapper _mapper = mapper;
+        private readonly IServiceActivityLogs _activityLogService=serviceActivityLogs;
 
         public async Task<AuthResponse> Login(UserDto user)
         {
@@ -29,6 +30,12 @@ namespace FileEncryption.Service.Services
             if (userExiting.Password != user.Password)
                 return null;
             var token = GenerateJwtToken(_mapper.Map<UserDto>(userExiting));
+            await _activityLogService.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = user.Id,
+                Action = "Login",
+                Description = "User logged in"
+            });
             return new AuthResponse
             {
                 Token = token,

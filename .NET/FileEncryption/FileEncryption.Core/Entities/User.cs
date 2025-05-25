@@ -27,6 +27,7 @@ namespace FileEncryption.Core.Entities
         public virtual ICollection<FileEncryption.Core.Entities.File> Files { get; set; }
         public virtual ICollection<Share> SharesToOthers { get; set; }
         public virtual ICollection<Share> SharesWithMe { get; set; }
+        public virtual ICollection<ActivityLog> ActivityLogs { get; set; }
 
     }
 }

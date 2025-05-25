@@ -1,4 +1,5 @@
-﻿using FileEncryption.Core.Entities;
+﻿using FileEncryption.Core.DTOs;
+using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
 
@@ -7,16 +8,18 @@ namespace FileEncryption.Service.Services
     public class ServiceShare : IServiceShare
     {
         private readonly IRepositoryManager _repositoryManager;
+        private readonly IServiceActivityLogs _activityLogService;
 
-        public ServiceShare(IRepositoryManager repositoryManager)
+        public ServiceShare(IRepositoryManager repositoryManager ,IServiceActivityLogs serviceActivityLogs)
         {
             _repositoryManager = repositoryManager;
+            _activityLogService = serviceActivityLogs;
         }
 
-        public Task<string> GetByAccessCodeAsync(string accessCode)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<string> GetByAccessCodeAsync(string accessCode)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<Share> GetValidShareByCodeAsync(string accessCode)
         {
@@ -55,6 +58,15 @@ namespace FileEncryption.Service.Services
             share.SharedByUser = await _repositoryManager.Users.GetByIdUserAsync(userId);
             _repositoryManager.Shares.AddShareAsync(share);
             await _repositoryManager.SaveAsync();
+            await _activityLogService.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = share.SharedByUserId,
+                Action = "Share",
+                TargetId = share.Id.ToString(),
+                TargetType = "Share",
+                Description = $"User {share.SharedByUser.Name} shared file {file.Name} with user {share.RecipientUser.Name}"
+            });
+
             return share;
         }
 
@@ -74,6 +86,15 @@ namespace FileEncryption.Service.Services
                 _repositoryManager.SaveAsync();
                 return true;
             }
+            await _activityLogService.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = share.SharedByUserId,
+                Action = "ExtandDate",
+                TargetId = share.Id.ToString(),
+                TargetType = "Share",
+                Description = $"User {share.SharedByUserId} extend date file {share.FileKey} with user {share.RecipientUserId}"
+            });
+
             return false;
         }
         public async Task<bool> UpdateShareAsync(Share share)

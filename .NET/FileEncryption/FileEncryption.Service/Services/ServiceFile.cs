@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using Amazon.Runtime.Internal.Util;
+using Amazon.S3;
 using Amazon.S3.Model;
 using AutoMapper;
 using FileEncryption.Core.DTOs;
@@ -6,18 +7,19 @@ using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
 using Microsoft.Extensions.Configuration;
+using MimeKit;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceFile(IRepositoryManager repositoryManager, IMapper mapper, IAmazonS3 s3client, IConfiguration config) : IServiceFile
+    public class ServiceFile(IRepositoryManager repositoryManager, IMapper mapper, IAmazonS3 s3client, IConfiguration config,IServiceActivityLogs serviceActivityLogs) : IServiceFile
     {
         private readonly IRepositoryManager _repositoryManager = repositoryManager;
         private readonly IMapper _mapper = mapper;
         private readonly IAmazonS3 _s3Client = s3client;
         private readonly IConfiguration _config = config;
-
+        private readonly IServiceActivityLogs _serviceActivityLogs=serviceActivityLogs;
         public async Task<bool> DiscardFileAsync(int id)
         {  
             
@@ -68,6 +70,14 @@ namespace FileEncryption.Service.Services
             {
                 await _repositoryManager.SaveAsync(); 
             }
+            await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = (int)updatedFile.CreatedBy,
+                Action = "RenameFile",
+                TargetId = updatedFile.Id.ToString(),
+                TargetType = "File",
+                Description = $"File '{file.Name}' rename {updatedFile.Name}"
+            });
             return updatedFile;
         }
         public async Task<FileDto> EncryptAndUploadFileAsync(FileFormDto file, FileDto fileDto)
@@ -109,7 +119,14 @@ namespace FileEncryption.Service.Services
             var fileEntity = _mapper.Map<Core.Entities.File>(fileDto);
             await _repositoryManager.Files.AddFileAsync(fileEntity);
             await _repositoryManager.SaveAsync();
-
+            await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = (int)fileEntity.CreatedBy,
+                Action = "Upload",
+                TargetId = fileEntity.Id.ToString(),
+                TargetType = "File",
+                Description = $"File '{file.FileName}' Download"
+            });
             return _mapper.Map<FileDto>(fileEntity);
         }
 
@@ -144,7 +161,14 @@ namespace FileEncryption.Service.Services
             var decryptedStream = new MemoryStream();
             await cryptoStream.CopyToAsync(decryptedStream);
             decryptedStream.Position = 0;
-
+            await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = (int)file.CreatedBy,
+                Action = "DownLoad",
+                TargetId = file.Id.ToString(),
+                TargetType = "File",
+                Description = $"File '{file.Name}' uploaded by user {file.UserCreated.Name}"
+            });
             return (decryptedStream, file.Name, file.ContentType,file.OriginalHash);
         }
 
