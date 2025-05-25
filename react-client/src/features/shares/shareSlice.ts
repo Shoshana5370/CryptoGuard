@@ -30,14 +30,14 @@ const initialState: ShareState = {
     extend: null,
   },
 };
-const apiBase = 'https://localhost:7207';
+
 export const fetchSharesWithMe = createAsyncThunk<
   ShareDto[],
   void,
   { state: RootState; rejectValue: string }
 >('shares/fetchSharesWithMe', async (_, thunkAPI) => {
   try {
-    const response = await axiosInstance.get<ShareDto[]>(`${apiBase}/api/User/GetSharesWithMe`);
+    const response = await axiosInstance.get<ShareDto[]>(`/api/User/GetSharesWithMe`);
   
     return response.data;
   } catch (err: any) {
@@ -52,7 +52,7 @@ export const fetchSharesToOthers = createAsyncThunk<
   { state: RootState; rejectValue: string }
 >('shares/fetchSharesToOthers', async (_, thunkAPI) => {
   try {
-    const response = await axiosInstance.get<ShareDto[]>(`${apiBase}/api/User/GetSharesToOthers`);
+    const response = await axiosInstance.get<ShareDto[]>(`/api/User/GetSharesToOthers`);
     return response.data;
   } catch (err: any) {
     const msg = err.response?.data || err.message || 'Failed to fetch shares to others';
@@ -67,7 +67,7 @@ export const extendShareExpiration = createAsyncThunk<
   "shares/extendExpiration",
   async ({ id, newDate }: { id: number; newDate: string }, thunkAPI) => {
     try {
-      await axiosInstance.post(`${apiBase}/api/Share/${id}`, { newDate });
+      await axiosInstance.post(`/api/Share/${id}`, { newDate });
     } catch (err: any) {
       const msg = err.response?.data || err.message.toString() || 'Failed to extend expiration';
       return thunkAPI.rejectWithValue(msg);

@@ -44,6 +44,7 @@ const RegisterForm = () => {
       setErrors(validationErrors);
       return;
     }
+    debugger;
     dispatch(registerUser({ email, name, password }));
   };
 

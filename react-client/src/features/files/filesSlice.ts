@@ -14,7 +14,7 @@ const initialState: FilesState = {
     loading: false,
     error: null,
 };
-const url = 'https://localhost:7207'
+const url = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Adjust the URL as needed
 export const fetchFilesByUserId = createAsyncThunk<
     FileDto[],
     void,
@@ -24,7 +24,7 @@ export const fetchFilesByUserId = createAsyncThunk<
     async (_, { rejectWithValue }) => {
         try {
             
-            const response = await axiosInstance.get<FileDto[]>(`${url}/api/User/GetFiles`, {
+            const response = await axiosInstance.get<FileDto[]>(`/api/User/GetFiles`, {
             });
             return response.data;
         } catch (err: any) {
@@ -41,7 +41,7 @@ export const deleteFile = createAsyncThunk<
     'files/deleteFile',
     async (fileId, { rejectWithValue }) => {
         try {
-            await axiosInstance.delete(`${url}/api/Files/${fileId}`);
+            await axiosInstance.delete(`/api/Files/${fileId}`);
             return fileId;
         } catch (err: any) {
             const errorMsg = err.response?.data || err.message || 'Failed to delete file';
@@ -57,7 +57,7 @@ export const updateFile = createAsyncThunk<
     'files/updateFile',
     async (file, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.put<FileDto>(`${url}/api/Files/${file.id}`, file);
+            const response = await axiosInstance.put<FileDto>(`/api/Files/${file.id}`, file);
             return response.data;
         } catch (err: any) {
             const errorMsg = err.response?.data || err.message || 'Failed to update file';
