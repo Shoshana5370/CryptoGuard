@@ -41,8 +41,9 @@ builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
          "http://localhost:4200"
 
      )
-           .AllowAnyHeader()
-          .AllowAnyMethod();
+ .AllowAnyMethod()
+    .AllowAnyHeader()            
+    .AllowCredentials();
 }));
 builder.Services.AddAuthorization(options =>
 {
@@ -117,7 +118,6 @@ app.Use(async (context, next) =>
 });
 app.UseHttpsRedirection();
 app.UseCors("MyPolicy");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
