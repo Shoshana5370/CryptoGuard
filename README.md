@@ -3,8 +3,6 @@
 **Advanced File Encryption System**  
 Secure cloud file storage with AES encryption and integrity verification.
 
-🌐 Live Site: [https://cryptoguardapplication.onrender.com](https://cryptoguardapplication.onrender.com)
-
 ---
 
 ## 📦 Tech Stack
