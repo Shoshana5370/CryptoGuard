@@ -34,17 +34,20 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
-builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
-    policy.WithOrigins(
-         "https://cryptoguardapplication.onrender.com",
-         "http://localhost:5173",
-         "http://localhost:4200"
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyPolicy", policy =>
+        policy.WithOrigins(
+            "https://cryptoguardapplication.onrender.com",
+            "http://localhost:5173",
+            "http://localhost:4200"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+    );
+});
 
-     )
- .AllowAnyMethod()
-    .AllowAnyHeader()            
-    .AllowCredentials();
-}));
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -106,16 +109,6 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
 }
-app.Use(async (context, next) =>
-{
-    context.Response.OnStarting(() =>
-    {
-        context.Response.Headers["Cross-Origin-Embedder-Policy"] = "";
-        return Task.CompletedTask;
-    });
-
-    await next();
-});
 app.UseHttpsRedirection();
 app.UseCors("MyPolicy");
 app.UseAuthentication();
