@@ -1,5 +1,6 @@
 ﻿using FileEncryption.Core.DTOs;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,12 +19,14 @@ namespace FileEncryption.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> GetAllLogs() => Ok(await _service.GetLogsAsync());
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetLogsByUser(int userId) => Ok(await _service.GetLogsByUserAsync(userId));
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> GetLog(int id)
         {
             var log = await _service.GetLogAsync(id);
@@ -31,6 +34,7 @@ namespace FileEncryption.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> LogAction([FromBody] CreateActivityLogDto request)
         {
             await _service.LogActionAsync(request);

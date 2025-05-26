@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FileEncryption.Core;
 using FileEncryption.Core.DTOs;
+using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,7 +21,7 @@ namespace FileEncryption.Service.Services
         private readonly IServiceUser _userService = userService;
         private readonly IMapper _mapper = mapper;
         private readonly IServiceActivityLogs _activityLogService=serviceActivityLogs;
-
+        private readonly IPasswordHasher<User> _hasher = new PasswordHasher<User>();
         public async Task<AuthResponse> Login(UserDto user)
         {
             var userExiting = await _repositoryManager.Users.FindByEmailAsync(user.Email);
@@ -27,12 +29,16 @@ namespace FileEncryption.Service.Services
             {
                 return null;
             }
-            if (userExiting.Password != user.Password)
+            var hasher = new PasswordHasher<User>();
+            var result = hasher.VerifyHashedPassword(userExiting, userExiting.Password, user.Password);
+
+            if (result != PasswordVerificationResult.Success)
                 return null;
+            ;
             var token = GenerateJwtToken(_mapper.Map<UserDto>(userExiting));
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
-                UserId = user.Id,
+                UserId = userExiting.Id,
                 Action = "Login",
                 Description = "User logged in"
             });
@@ -43,22 +49,35 @@ namespace FileEncryption.Service.Services
             };
         }
 
-        public async Task<AuthResponse> Register(UserDto user)
+
+
+        public async Task<AuthResponse?> Register(UserDto userDto)
         {
-            var userExiting = await _repositoryManager.Users.FindByEmailAsync(user.Email);
-            if (userExiting != null)
+            var existingUser = await _repositoryManager.Users.FindByEmailAsync(userDto.Email);
+            if (existingUser != null)
+                return null; // Email already exists
+
+            var newUser = new User
             {
-                return null;
-            }
+                Email = userDto.Email,
+                Name = userDto.Name
+            };
 
-            await _userService.InsertUserAsync(user);
+            newUser.Password = _hasher.HashPassword(newUser, userDto.Password);
+            await _repositoryManager.Users.AddUserAsync(newUser);
 
-            var token = GenerateJwtToken(user);
+            var token = GenerateJwtToken(_mapper.Map<UserDto>(newUser));
+            await _activityLogService.LogActionAsync(new CreateActivityLogDto
+            {
+                UserId = newUser.Id,
+                Action = "Register",
+                Description = "New user registered"
+            });
 
             return new AuthResponse
             {
                 Token = token,
-                User = user
+                User = _mapper.Map<UserDto>(newUser)
             };
         }
 

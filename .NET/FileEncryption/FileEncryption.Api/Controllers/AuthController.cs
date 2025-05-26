@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
+using FileEncryption.Core.Entities;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 namespace FileEncryption.Api.Controllers
@@ -13,7 +15,6 @@ namespace FileEncryption.Api.Controllers
         private readonly IServiceAuth _authService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-
         public AuthController(IServiceAuth authService, IMapper mapper,IConfiguration configuration)
         {
             _mapper = mapper;
@@ -22,7 +23,8 @@ namespace FileEncryption.Api.Controllers
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserPostModel user)
-        {
+        {   
+
             var result = await _authService.Register(_mapper.Map<UserDto>(user));
             if (result == null)
             {
@@ -41,7 +43,7 @@ namespace FileEncryption.Api.Controllers
             var result = await _authService.Login(_mapper.Map<UserDto>(user));
             if (result == null)
             {
-                return BadRequest("User not already exists or login failed.");
+                return Unauthorized("Invalid credentials");
             }
 
             return Ok(result);

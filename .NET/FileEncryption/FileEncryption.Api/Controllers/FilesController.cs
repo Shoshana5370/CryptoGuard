@@ -16,7 +16,7 @@ namespace FileEncryption.Api.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpGet]
-        [Authorize(Policy = "UserOrAdmin")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<FileDto>>> Get()
         {
             var files = await _fileService.FindAllFilesAsync();
@@ -27,7 +27,7 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(_mapper.Map<IEnumerable<FileDto>>(files));
         }
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "UserOrAdmin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<FileDto>> Get(int id)
         {

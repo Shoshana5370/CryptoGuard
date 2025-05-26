@@ -37,7 +37,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddCors(opt => opt.AddPolicy("MyPolicy", policy => {
     policy.WithOrigins(
          "https://cryptoguardapplication.onrender.com",
-         "http://localhost:5173"
+         "http://localhost:5173",
+         "http://localhost:4200"
+
      )
            .AllowAnyHeader()
           .AllowAnyMethod();
