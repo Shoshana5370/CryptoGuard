@@ -33,11 +33,11 @@ namespace FileEncryption.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
-            var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);
-            if (!isCaptchaValid)
-            {
-                return BadRequest("Invalid reCAPTCHA");
-            }
+            //var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);
+            //if (!isCaptchaValid)
+            //{
+            //    return BadRequest("Invalid reCAPTCHA");
+            //}
             var result = await _authService.Login(_mapper.Map<UserDto>(user));
             if (result == null)
             {
@@ -47,22 +47,22 @@ namespace FileEncryption.Api.Controllers
             return Ok(result);
         }
 
-        private async Task<bool> VerifyCaptchaAsync(string token)
-        {
-            var secret = _configuration["GoogleReCaptcha:SecretKey"]; 
-            using var client = new HttpClient();
-            var response = await client.PostAsync(
-                $"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={token}",
-                null);
+        //private async Task<bool> VerifyCaptchaAsync(string token)
+        //{
+        //    var secret = _configuration["GoogleReCaptcha:SecretKey"]; 
+        //    using var client = new HttpClient();
+        //    var response = await client.PostAsync(
+        //        $"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={token}",
+        //        null);
 
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<ReCaptchaResponse>(json, options: new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+        //    var json = await response.Content.ReadAsStringAsync();
+        //    var result = JsonSerializer.Deserialize<ReCaptchaResponse>(json, options: new JsonSerializerOptions
+        //    {
+        //        PropertyNameCaseInsensitive = true
+        //    });
 
-            return result?.Success == true;
-        }
+        //    return result?.Success == true;
+        //}
     }
     public class ReCaptchaResponse
     {

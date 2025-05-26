@@ -5,10 +5,9 @@ const initialState = {
     loading: false,
     error: null,
 };
-const url = 'https://localhost:7207';
 export const fetchFilesByUserId = createAsyncThunk('files/fetchFilesByUserId', async (_, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.get(`${url}/api/User/GetFiles`, {});
+        const response = await axiosInstance.get(`/api/User/GetFiles`, {});
         return response.data;
     }
     catch (err) {
@@ -18,7 +17,7 @@ export const fetchFilesByUserId = createAsyncThunk('files/fetchFilesByUserId', a
 });
 export const deleteFile = createAsyncThunk('files/deleteFile', async (fileId, { rejectWithValue }) => {
     try {
-        await axiosInstance.delete(`${url}/api/Files/${fileId}`);
+        await axiosInstance.delete(`/api/Files/${fileId}`);
         return fileId;
     }
     catch (err) {
@@ -28,7 +27,7 @@ export const deleteFile = createAsyncThunk('files/deleteFile', async (fileId, { 
 });
 export const updateFile = createAsyncThunk('files/updateFile', async (file, { rejectWithValue }) => {
     try {
-        const response = await axiosInstance.put(`${url}/api/Files/${file.id}`, file);
+        const response = await axiosInstance.put(`/api/Files/${file.id}`, file);
         return response.data;
     }
     catch (err) {

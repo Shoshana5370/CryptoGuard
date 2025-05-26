@@ -8,7 +8,6 @@ export interface AuthState {
 export declare const loginUser: import("@reduxjs/toolkit").AsyncThunk<any, {
     email: string;
     password: string;
-    captchaToken: string;
 }, {
     state?: unknown;
     dispatch?: import("redux-thunk").ThunkDispatch<unknown, unknown, import("redux").UnknownAction>;

@@ -14,10 +14,9 @@ const initialState = {
         extend: null,
     },
 };
-const apiBase = 'https://localhost:7207';
 export const fetchSharesWithMe = createAsyncThunk('shares/fetchSharesWithMe', async (_, thunkAPI) => {
     try {
-        const response = await axiosInstance.get(`${apiBase}/api/User/GetSharesWithMe`);
+        const response = await axiosInstance.get(`/api/User/GetSharesWithMe`);
         return response.data;
     }
     catch (err) {
@@ -27,7 +26,7 @@ export const fetchSharesWithMe = createAsyncThunk('shares/fetchSharesWithMe', as
 });
 export const fetchSharesToOthers = createAsyncThunk('shares/fetchSharesToOthers', async (_, thunkAPI) => {
     try {
-        const response = await axiosInstance.get(`${apiBase}/api/User/GetSharesToOthers`);
+        const response = await axiosInstance.get(`/api/User/GetSharesToOthers`);
         return response.data;
     }
     catch (err) {
@@ -37,7 +36,7 @@ export const fetchSharesToOthers = createAsyncThunk('shares/fetchSharesToOthers'
 });
 export const extendShareExpiration = createAsyncThunk("shares/extendExpiration", async ({ id, newDate }, thunkAPI) => {
     try {
-        await axiosInstance.post(`${apiBase}/api/Share/${id}`, { newDate });
+        await axiosInstance.post(`/api/Share/${id}`, { newDate });
     }
     catch (err) {
         const msg = err.response?.data || err.message.toString() || 'Failed to extend expiration';
