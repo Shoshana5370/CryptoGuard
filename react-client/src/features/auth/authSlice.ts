@@ -13,12 +13,13 @@ const initialState: AuthState = {
   loading: false,
   error: null,
 };
-const url = import.meta.env.VITE_API_BASE_URL;
+const url = import.meta.env.VITE_API_URL;
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${url}/api/Auth/login`, credentials);
+      console.log(`url`, url);
+      const response = await axios.post(`https://localhost:7207/api/Auth/login`, credentials);
       sessionStorage.setItem("token", response.data.token);
       sessionStorage.setItem("user", JSON.stringify(response.data.user));
       sessionStorage.setItem("userId", response.data.user.id.toString());
