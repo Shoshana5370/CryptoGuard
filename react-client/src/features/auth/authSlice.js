@@ -17,7 +17,10 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
         return response.data;
     }
     catch (err) {
-        return rejectWithValue(err.response.data);
+        if (axios.isAxiosError(err)) {
+            return rejectWithValue(err.response?.data || "An error occurred");
+        }
+        return rejectWithValue("An unexpected error occurred");
     }
 });
 export const registerUser = createAsyncThunk('auth/registerUser', async (userData, { rejectWithValue }) => {

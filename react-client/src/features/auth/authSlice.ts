@@ -25,9 +25,12 @@ export const loginUser = createAsyncThunk(
       sessionStorage.setItem("userId", response.data.user.id.toString());
       return response.data;
     } 
-    catch (err: any) {
-      return rejectWithValue(err.response.data);
-    }
+  catch (err) {
+  if (axios.isAxiosError(err)) {
+    return rejectWithValue(err.response?.data || "An error occurred");
+  }
+  return rejectWithValue("An unexpected error occurred");
+  }
   }
 );
 
