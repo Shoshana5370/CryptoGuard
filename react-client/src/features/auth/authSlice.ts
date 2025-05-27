@@ -13,8 +13,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
 };
-// const url = import.meta.env.VITE_API_URL;
-const url = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7207'; 
+const url = import.meta.env.VITE_API_BASE_URL
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
