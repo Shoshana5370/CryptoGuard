@@ -43,6 +43,7 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
 
     try {
       await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
+      await dispatch(fetchFilesByUserId());
 
     } catch (err) {
       setFile(null);
@@ -67,7 +68,7 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
   useEffect(() => {
     if (success) {
       handleClose();
-      dispatch(fetchFilesByUserId());
+      
     }
   }, [success, dispatch]);
 

@@ -1,5 +1,6 @@
-import { FileDto } from "@/types/FileDto";
-import { SharePostModel } from "@/types/SharePostModel";
+import { FileDto } from "../../types/FileDto";
+import { SharePostModel } from "../../types/SharePostModel";
+
 declare const FileTable: ({ files, onDelete, onRename, onDownload, onShare }: {
     files: FileDto[];
     onDelete: (file: number) => void;

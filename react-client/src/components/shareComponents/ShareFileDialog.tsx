@@ -99,39 +99,39 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
           </div>
         </div>
 
-          <DialogFooter className="mt-4 gap-2">
-            <Button variant="outline" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button
-              className="bg-emerald-600 hover:bg-emerald-700"
-              disabled={!isValidEmail(email) || isSharing || isSuccess}
-              onClick={handleShare}
-            >
-              {isSharing ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="mr-2"
-                  >
-                    <Clock className="w-4 h-4" />
-                  </motion.div>
-                  Sharing...
-                </>
-              ) : isSuccess ? (
-                <>
-                  <Check className="w-4 h-4 mr-2" />
-                  Shared!
-                </>
-              ) : (
-                <>
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </>
-              )}
-            </Button>
-          </DialogFooter>
+        <DialogFooter className="mt-4 gap-2">
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            className="bg-emerald-600 hover:bg-emerald-700"
+            disabled={!isValidEmail(email) || isSharing || isSuccess}
+            onClick={handleShare}
+          >
+            {isSharing ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="mr-2"
+                >
+                  <Clock className="w-4 h-4" />
+                </motion.div>
+                Sharing...
+              </>
+            ) : isSuccess ? (
+              <>
+                <Check className="w-4 h-4 mr-2" />
+                Shared!
+              </>
+            ) : (
+              <>
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </>
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
