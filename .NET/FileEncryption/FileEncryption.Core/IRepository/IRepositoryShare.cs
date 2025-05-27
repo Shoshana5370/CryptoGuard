@@ -7,6 +7,7 @@ namespace FileEncryption.Core.IRepository
     public interface IRepositoryShare
     {
         Task<Share> AddShareAsync(Share shareEntity);
+        Task<List<Share>> GetSharesAsyncByEmail(string email);
         Task<bool> DeleteShareAsync(int id);
         Task<IEnumerable<Share>> GetAllSharesAsync();
         Task<Share> GetByAccessCodeAsync(string accessCode);

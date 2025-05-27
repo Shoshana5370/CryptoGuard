@@ -51,12 +51,11 @@ namespace FileEncryption.Service.Services
 
 
 
-        public async Task<AuthResponse?> Register(UserDto userDto)
+        public async Task<AuthResponse> Register(UserDto userDto)
         {
             var existingUser = await _repositoryManager.Users.FindByEmailAsync(userDto.Email);
             if (existingUser != null)
-                return null; // Email already exists
-
+                return null; 
             var newUser = new User
             {
                 Email = userDto.Email,
@@ -65,6 +64,7 @@ namespace FileEncryption.Service.Services
             };
 
             newUser.Password = _hasher.HashPassword(newUser, userDto.Password);
+            newUser.SharesWithMe = await _repositoryManager.Shares.GetSharesAsyncByEmail(userDto.Email);
             await _repositoryManager.Users.AddUserAsync(newUser);
             _repositoryManager.Save();
             var token = GenerateJwtToken(_mapper.Map<UserDto>(newUser));

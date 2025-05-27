@@ -1,6 +1,7 @@
 ﻿using FileEncryption.Core.Entities;
 using FileEncryption.Core.IRepository;
 using Microsoft.EntityFrameworkCore;
+
 namespace FileEncryption.Data.Repository
 {
 
@@ -46,7 +47,13 @@ namespace FileEncryption.Data.Repository
                     .FirstOrDefaultAsync(s => s.Id == shareId);
             }
 
-            public async Task<Share> UpdateShareAsync(int id, Share shareEntity)
+        public async Task<List<Share>> GetSharesAsyncByEmail(string email)
+        {
+            return await _dataContext.Shares
+                .Where(share => share.RecipientEmail == email)
+                .ToListAsync();
+        }
+        public async Task<Share> UpdateShareAsync(int id, Share shareEntity)
             {
                 var existingShare = await _dataContext.Shares.FindAsync(id);
                 if (existingShare == null)

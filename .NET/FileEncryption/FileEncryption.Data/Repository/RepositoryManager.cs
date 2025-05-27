@@ -15,7 +15,6 @@ namespace FileEncryption.Data.Repository
         public IRepositoryFile Files { get; } = fileRepository;
         public IRepositoryShare Shares { get; } = repositoryShare;
         public IRepositoryActivityLogs Logs { get; } = repositoryActivityLogs;
-
         public async Task Save()
         {
             await _context.SaveChangesAsync();

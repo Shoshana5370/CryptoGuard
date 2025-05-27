@@ -14,8 +14,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -34,26 +36,18 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("MyPolicy", policy =>
-//        policy.WithOrigins(
-//            "https://cryptoguardapplication.onrender.com",
-//            "http://localhost:5173",
-//            "http://localhost:4200"
-//        )
-//        .AllowAnyHeader()
-//        .AllowAnyMethod()
-//        .AllowCredentials()
-//    );
-//});
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        builder => builder.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader());
+    options.AddPolicy("MyPolicy", policy =>
+        policy.WithOrigins(
+            "https://cryptoguardapplication.onrender.com",
+            "http://localhost:5173"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+    );
 });
 
 
@@ -62,11 +56,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserOrAdmin", policy => policy.RequireRole("User", "Admin"));
 });
-builder.Services.AddControllers(); builder.Services.AddControllers().AddJsonOptions(options =>
+
+builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
-}); builder.Services.AddEndpointsApiExplorer();
+});
+
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 var awsOptions = new AWSOptions
@@ -80,19 +77,21 @@ var awsOptions = new AWSOptions
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddScoped<IRepositoryFile, RepositoryFile>();
-builder.Services.AddScoped<IRepositoryActivityLogs,RepositoryActivityLogs>();
+builder.Services.AddScoped<IRepositoryActivityLogs, RepositoryActivityLogs>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositoryShare, RepositoryShare>();
-builder.Services.AddScoped<IServiceSendMessage,ServiceEmail>();
+builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
+builder.Services.AddScoped<IServiceSendMessage, ServiceEmail>();
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServiceFile, ServiceFile>();
 builder.Services.AddScoped<IServiceShare, ServiceShare>();
 builder.Services.AddScoped<IServiceUser, ServiceUser>();
 builder.Services.AddScoped<IServiceActivityLogs, ServiceActivityLogs>();
-builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+
 var connectionString = builder.Configuration["DbConnectionString"];
-builder.Services.AddDbContext<DataContext>(
-    options => options.UseMySql(connectionString,
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseMySql(connectionString,
     new MySqlServerVersion(new Version(8, 0, 41)),
     mysqlOptions =>
     {
@@ -101,14 +100,26 @@ builder.Services.AddDbContext<DataContext>(
             maxRetryDelay: TimeSpan.FromSeconds(30),
             errorNumbersToAdd: null);
     }));
+
+
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddAutoMapper(typeof(MappingProfilePostModel));
+
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(int.Parse(port));
 });
+
 var app = builder.Build();
+
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    KnownNetworks = { }, 
+    KnownProxies = { }
+});
 
 if (app.Environment.IsDevelopment())
 {
@@ -118,9 +129,8 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
 }
-app.UseHttpsRedirection();
-//app.UseCors("MyPolicy");
-app.UseCors("AllowAllOrigins");
+app.UseCors("MyPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
