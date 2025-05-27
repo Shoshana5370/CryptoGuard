@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {  useAppSelector } from "@/hooks";
+import { useAppSelector } from "@/hooks";
 import { SharePostModel } from "@/types/SharePostModel";
 import { FileDto } from "@/types/FileDto";
 import { Button } from "@/styles/ui/button";
@@ -10,7 +10,7 @@ import { CalendarIcon, Check, Clock, Mail, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 
-import { Calendar } from "@/styles/ui/calendar"; 
+import { Calendar } from "@/styles/ui/calendar";
 import { RootState } from "@/store/store";
 
 type ShareFileDialogProps = {
@@ -19,10 +19,11 @@ type ShareFileDialogProps = {
   file: FileDto;
   onShare: (updatedFile: SharePostModel) => void;
 };
-const ShareFileDialog = ({ isOpen, onClose, file , onShare }: ShareFileDialogProps) => {
+const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProps) => {
   const { status } = useAppSelector((state: RootState) => state.shareFile);
   const [email, setEmail] = useState("");
-  const [expiration, setExpiration] = useState<Date | undefined>(new Date());
+  // const [expiration, setExpiration] = useState<Date | undefined>(new Date());
+  const [expiration, setExpiration] = useState<Date | null>(null);
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const handleShare = async () => {
@@ -86,10 +87,10 @@ const ShareFileDialog = ({ isOpen, onClose, file , onShare }: ShareFileDialogPro
             <Label>Expiration Date</Label>
             <div className="relative">
               <CalendarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+
               <Calendar
-                selected={expiration ?? null}
-                onChange={(date) => setExpiration(date ?? undefined)}
-                className="pl-10"
+                selected={expiration}
+                onChange={setExpiration}
               />
             </div>
             {expiration && (

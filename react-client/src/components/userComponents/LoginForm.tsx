@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { loginUser } from '../../features/auth/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
@@ -40,12 +39,15 @@ const LoginForm = () => {
       setErrors(validationErrors);
       return;
     }
-    const resultAction = await dispatch(loginUser({ email, password }));
-
-  if (loginUser.fulfilled.match(resultAction)) {
-    navigate('/home'); 
-  }
+    dispatch(loginUser({ email, password }));
   };
+
+  useEffect(() => {
+    if (!loading && !error && !!useAppSelector((state) => state.auth.user)) {
+      navigate('/home');
+    }
+  }, [loading, error, navigate]);
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
   <div className="hidden md:block bg-[url('/illustration.svg')] bg-cover bg-center" />

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { registerUser } from '../../features/auth/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { Mail, Lock, User, AlertCircle } from "lucide-react";
 import Logo from '../mainComponents/Logo';
@@ -13,29 +13,36 @@ import { Button } from '@/styles/ui/button';
 
 const RegisterForm = () => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const { loading, error, user } = useAppSelector((state) => state.auth);
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; name?: string; password?: string }>({});
 
   const validate = () => {
-        const newErrors: { email?: string; name?: string; password?: string } = {};
-        if (!email) {
-          newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(email)) {
-          newErrors.email = 'Email is invalid';
-        }
-        if (!name) {
-          newErrors.name = 'Name is required';
-        }
-        if (!password) {
-          newErrors.password = 'Password is required';
-        } else if (password.length < 6) {
-          newErrors.password = 'Password must be at least 6 characters';
-        }
-        return newErrors;
-      };
+    const newErrors: { email?: string; name?: string; password?: string } = {};
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email is invalid';
+    }
+    if (!name) {
+      newErrors.name = 'Name is required';
+    }
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    return newErrors;
+  };
+
+  useEffect(() => {
+    if (!loading && !error && user) {
+      navigate('/home');
+    }
+  }, [loading, error, user, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +64,7 @@ const RegisterForm = () => {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <Logo/>
+              <Logo />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
             <p className="text-gray-600 mt-2">Join our secure file encryption platform</p>
