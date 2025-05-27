@@ -1,9 +1,7 @@
+// Calendar.tsx
 import * as React from "react";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import InputAdornment from "@mui/material/InputAdornment";
-import { TextField } from "@mui/material";
 
 export type CalendarProps = {
   selected: Date | null;
@@ -24,30 +22,30 @@ export function Calendar({
 }: CalendarProps): React.JSX.Element {
   return (
     <div className={className}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DatePicker
-          value={selected}
-          onChange={onChange}
-          minDate={minDate}
-          maxDate={maxDate}
-          slots={{
-            textField: (props) => (
-              <TextField
-                {...props}
-                fullWidth
-                size="small"
-                variant="outlined"
-                InputProps={{
-                  ...props.InputProps,
-                  startAdornment: startAdornment ? (
-                    <InputAdornment position="start">{startAdornment}</InputAdornment>
-                  ) : undefined,
-                }}
-              />
-            ),
-          }}
-        />
-      </LocalizationProvider>
+      <DatePicker
+        value={selected}
+        onChange={onChange}
+        minDate={minDate}
+        maxDate={maxDate}
+        slotProps={{
+          textField: {
+            fullWidth: true,
+            size: "small",
+            variant: "outlined",
+            InputProps: {
+              startAdornment: startAdornment ? (
+                <InputAdornment position="start">
+                  {startAdornment}
+                </InputAdornment>
+              ) : undefined,
+            },
+            inputProps: {
+              className: "text-sm py-1", 
+            },
+          },
+        }}
+      />
     </div>
   );
 }
+export default Calendar;

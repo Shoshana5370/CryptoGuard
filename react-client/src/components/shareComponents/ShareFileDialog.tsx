@@ -84,11 +84,14 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
           </div>
 
           <div className="space-y-2">
-            <Label>Expiration Date</Label>
+            <label className="block text-sm font-medium text-gray-700">
+              Expiration Date
+            </label>
             <Calendar
               selected={expiration}
               onChange={setExpiration}
               startAdornment={<CalendarIcon className="h-5 w-5 text-gray-400" />}
+              className="w-full"
             />
             {expiration && (
               <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
@@ -97,6 +100,7 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
               </p>
             )}
           </div>
+
         </div>
 
         <DialogFooter className="mt-4 gap-2">

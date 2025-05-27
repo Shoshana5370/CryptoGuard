@@ -8,3 +8,4 @@ export type CalendarProps = {
     startAdornment?: React.ReactNode;
 };
 export declare function Calendar({ selected, onChange, className, minDate, maxDate, startAdornment, }: CalendarProps): React.JSX.Element;
+export default Calendar;
