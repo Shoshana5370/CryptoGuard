@@ -15,12 +15,6 @@ namespace FileEncryption.Service.Services
             _repositoryManager = repositoryManager;
             _activityLogService = serviceActivityLogs;
         }
-
-        //public Task<string> GetByAccessCodeAsync(string accessCode)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public async Task<Share> GetValidShareByCodeAsync(string accessCode)
         {
             if (string.IsNullOrEmpty(accessCode))
@@ -56,7 +50,7 @@ namespace FileEncryption.Service.Services
             int userId = int.Parse(idUser);
             share.SharedByUserId =userId;
             share.SharedByUser = await _repositoryManager.Users.GetByIdUserAsync(userId);
-            _repositoryManager.Shares.AddShareAsync(share);
+            await _repositoryManager.Shares.AddShareAsync(share);
             await _repositoryManager.SaveAsync();
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
@@ -80,10 +74,10 @@ namespace FileEncryption.Service.Services
             if (share == null) return false;
 
             share.ExpiresAt = parsedDate;
-          var s=  await _repositoryManager.Shares.UpdateShareAsync(id,share);
-            if(s!=null)
+            var s=  await _repositoryManager.Shares.UpdateShareAsync(id,share);
+            if(s != null)
             {
-                _repositoryManager.SaveAsync();
+                _ = _repositoryManager.SaveAsync();
                 return true;
             }
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
@@ -101,7 +95,8 @@ namespace FileEncryption.Service.Services
         {
             var s=await _repositoryManager.Shares.UpdateShareAsync(share.Id, share);
             if(s!=null)
-            { _repositoryManager.SaveAsync();
+            {
+                _ = _repositoryManager.SaveAsync();
                 return true;
             }
             return false;

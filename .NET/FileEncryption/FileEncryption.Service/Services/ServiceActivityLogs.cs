@@ -15,19 +15,16 @@ namespace FileEncryption.Service.Services
             _repository = repository;
             _mapper = mapper;
         }
-
         public async Task<IEnumerable<ActivityLogDto>> GetLogsAsync()
         {
             var logs = await _repository.Logs.GetAllAsync();
             return _mapper.Map<IEnumerable<ActivityLogDto>>(logs);
         }
-
         public async Task<IEnumerable<ActivityLogDto>> GetLogsByUserAsync(int userId)
         {
             var logs = await _repository.Logs.GetByUserIdAsync(userId);
             return _mapper.Map<IEnumerable<ActivityLogDto>>(logs);
         }
-
         public async Task<ActivityLogDto?> GetLogAsync(int id)
         {
             var log = await _repository.Logs.GetByIdAsync(id);
@@ -38,6 +35,7 @@ namespace FileEncryption.Service.Services
         {
             var log = _mapper.Map<ActivityLog>(dto);
             await _repository.Logs.AddAsync(log);
+            await _repository.SaveAsync();
         }
     }
 }

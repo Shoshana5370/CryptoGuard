@@ -65,7 +65,7 @@ namespace FileEncryption.Service.Services
 
             newUser.Password = _hasher.HashPassword(newUser, userDto.Password);
             await _repositoryManager.Users.AddUserAsync(newUser);
-
+            await _repositoryManager.SaveAsync();
             var token = GenerateJwtToken(_mapper.Map<UserDto>(newUser));
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {

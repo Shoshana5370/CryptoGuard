@@ -27,7 +27,6 @@ namespace FileEncryption.Data.Repository
         public async Task AddAsync(ActivityLog log)
         {
             await _context.ActivityLogs.AddAsync(log);
-            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
@@ -36,7 +35,6 @@ namespace FileEncryption.Data.Repository
             if (log != null)
             {
                 _context.ActivityLogs.Remove(log);
-                await _context.SaveChangesAsync();
             }
         }
     }
