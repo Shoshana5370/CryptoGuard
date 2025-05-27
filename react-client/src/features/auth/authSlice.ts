@@ -27,6 +27,7 @@ export const loginUser = createAsyncThunk(
     } 
   catch (err) {
   if (axios.isAxiosError(err)) {
+    console.log();
     return rejectWithValue(err.response?.data || "An error occurred");
   }
   return rejectWithValue("An unexpected error occurred");
