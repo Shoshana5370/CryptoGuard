@@ -43,6 +43,7 @@ export const uploadFileContent = createAsyncThunk<
                     },
                 }
             );
+            console.log(response.data);   
             return response.data;
         } catch (err: any) {
             const msg = err.response?.data || err.message || 'File upload failed';

@@ -26,8 +26,7 @@ const Files=()=> {
   const handleDelete = (fileId: number) => {
     dispatch(deleteFile(fileId));
     dispatch(fetchSharesWithMe());
-    dispatch(fetchSharesToOthers());
-    
+    dispatch(fetchSharesToOthers());   
 };
   const handleDownload = (file:number) => {
     console.log('Download file:', file);
