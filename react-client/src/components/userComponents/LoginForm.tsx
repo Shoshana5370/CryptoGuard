@@ -12,6 +12,7 @@ import Logo from '../mainComponents/Logo';
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const user= useAppSelector((state) => state.auth.user);
   const { loading, error } = useAppSelector((state) => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,7 +44,7 @@ const LoginForm = () => {
   };
 
   useEffect(() => {
-    if (!loading && !error && !!useAppSelector((state) => state.auth.user)) {
+    if (!loading && !error &&user) {
       navigate('/home');
     }
   }, [loading, error, navigate]);
