@@ -53,6 +53,7 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
 
   const handleClose = () => {
     setFile(null);
+    setCustomFileName("");
     dispatch(resetUploadState());
     onClose();
   };
