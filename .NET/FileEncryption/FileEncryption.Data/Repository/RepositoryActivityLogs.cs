@@ -9,13 +9,9 @@ using System.Threading.Tasks;
 
 namespace FileEncryption.Data.Repository
 {
-    public class RepositoryActivityLogs : IRepositoryActivityLogs
+    public class RepositoryActivityLogs(DataContext context) : IRepositoryActivityLogs
     {
-        private readonly DataContext _context;
-        public RepositoryActivityLogs(DataContext context)
-        {
-            _context = context;
-        }
+        private readonly DataContext _context = context;
 
         public async Task<IEnumerable<ActivityLog>> GetAllAsync() => await _context.ActivityLogs.ToListAsync();
 

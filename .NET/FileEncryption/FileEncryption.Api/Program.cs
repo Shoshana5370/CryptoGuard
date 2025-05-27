@@ -80,7 +80,7 @@ var awsOptions = new AWSOptions
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddScoped<IRepositoryFile, RepositoryFile>();
-builder.Services.AddScoped<IRepositoryActivityLogs, RepositoryActivityLogs>();
+builder.Services.AddScoped<IRepositoryActivityLogs,RepositoryActivityLogs>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositoryShare, RepositoryShare>();
 builder.Services.AddScoped<IServiceSendMessage,ServiceEmail>();

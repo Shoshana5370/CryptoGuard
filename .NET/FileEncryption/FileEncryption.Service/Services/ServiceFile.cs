@@ -33,13 +33,21 @@ namespace FileEncryption.Service.Services
         private Aes CreateAes()
         {
             var secretKey = _config["Encryption:SecretKey"];
+            if (string.IsNullOrWhiteSpace(secretKey))
+                throw new InvalidOperationException("Encryption:SecretKey is not set in configuration.");
+
+            var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+
+            if (keyBytes.Length != 32) 
+                throw new InvalidOperationException("Encryption key must be 32 bytes (256 bits) long.");
+
             var aes = Aes.Create();
-            aes.Key = Encoding.UTF8.GetBytes(secretKey);
+            aes.Key = keyBytes;
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
             return aes;
         }
- 
+
         public async Task<IEnumerable<Core.Entities.File>> FindAllFilesAsync()
         {
             return await _repositoryManager.Files.GetAllFileAsync();
