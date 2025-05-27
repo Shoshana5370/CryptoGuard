@@ -3,6 +3,7 @@ using FileEncryption.Api.Models;
 using FileEncryption.Core.DTOs;
 using FileEncryption.Core.Entities;
 using FileEncryption.Core.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -22,6 +23,7 @@ namespace FileEncryption.Api.Controllers
             _configuration = configuration;
         }
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserPostModel user)
         {   
 
@@ -33,6 +35,7 @@ namespace FileEncryption.Api.Controllers
             return Ok(result);
         }
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
             //var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);

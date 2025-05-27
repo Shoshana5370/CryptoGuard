@@ -34,19 +34,28 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("MyPolicy", policy =>
+//        policy.WithOrigins(
+//            "https://cryptoguardapplication.onrender.com",
+//            "http://localhost:5173",
+//            "http://localhost:4200"
+//        )
+//        .AllowAnyHeader()
+//        .AllowAnyMethod()
+//        .AllowCredentials()
+//    );
+//});
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyPolicy", policy =>
-        policy.WithOrigins(
-            "https://cryptoguardapplication.onrender.com",
-            "http://localhost:5173",
-            "http://localhost:4200"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials()
-    );
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
 });
+
 
 builder.Services.AddAuthorization(options =>
 {
@@ -110,7 +119,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseHttpsRedirection();
-app.UseCors("MyPolicy");
+//app.UseCors("MyPolicy");
+app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
