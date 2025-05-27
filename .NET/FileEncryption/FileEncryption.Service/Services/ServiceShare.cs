@@ -51,14 +51,14 @@ namespace FileEncryption.Service.Services
             share.SharedByUserId =userId;
             share.SharedByUser = await _repositoryManager.Users.GetByIdUserAsync(userId);
             await _repositoryManager.Shares.AddShareAsync(share);
-            await _repositoryManager.SaveAsync();
+            _repositoryManager.Save();
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
                 UserId = share.SharedByUserId,
                 Action = "Share",
                 TargetId = share.Id.ToString(),
                 TargetType = "Share",
-                Description = $"User {share.SharedByUser.Name} shared file {file.Name} with user {share.RecipientUser.Name}"
+                Description = $"User {share.SharedByUser?.Name ?? "Unknown"} shared file {file.Name} with user {share.RecipientUser?.Name ?? share.RecipientEmail}"
             });
 
             return share;
@@ -75,11 +75,11 @@ namespace FileEncryption.Service.Services
 
             share.ExpiresAt = parsedDate;
             var s=  await _repositoryManager.Shares.UpdateShareAsync(id,share);
-            if(s != null)
+            if(s == null)
             {
-                _ = _repositoryManager.SaveAsync();
-                return true;
+                return false;
             }
+             _repositoryManager.Save();
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
                 UserId = share.SharedByUserId,
@@ -89,14 +89,14 @@ namespace FileEncryption.Service.Services
                 Description = $"User {share.SharedByUserId} extend date file {share.FileKey} with user {share.RecipientUserId}"
             });
 
-            return false;
+            return true;
         }
         public async Task<bool> UpdateShareAsync(Share share)
         {
             var s=await _repositoryManager.Shares.UpdateShareAsync(share.Id, share);
             if(s!=null)
             {
-                _ = _repositoryManager.SaveAsync();
+                  _repositoryManager.Save();
                 return true;
             }
             return false;

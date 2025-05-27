@@ -6,6 +6,6 @@ namespace FileEncryption.Api.Models
     {
         public int FileKey { get; set; }
         public DateTime ExpiresAt { get; set; }
-        public string RecipientEmail { get; set; }
+        public required string RecipientEmail { get; set; }
     }
 }

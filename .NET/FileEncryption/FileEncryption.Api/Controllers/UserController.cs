@@ -38,7 +38,6 @@ namespace FileEncryption.Api.Controllers
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<IEnumerable<ShareDto>>> GetSharesWithMeAsync()
         {
-            // Extract user ID from token (from the claims)
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
@@ -48,12 +47,7 @@ namespace FileEncryption.Api.Controllers
 
             var shares = await _userService.GetSharesWithMeAsync(userId);
 
-            if (shares == null || !shares.Any())
-            {
-                return NotFound("No shares found.");
-            }
-
-            return Ok(shares);
+            return Ok(shares ?? []);
         }
         [HttpGet("GetSharesToOthers")]
         [Authorize(Policy = "UserOrAdmin")]
@@ -68,12 +62,7 @@ namespace FileEncryption.Api.Controllers
 
             var shares = await _userService.GetSharesToOthersAsync(userId);
 
-            if (shares == null || !shares.Any())
-            {
-                return NotFound("No shares to others found.");
-            }
-
-            return Ok(shares);
+            return Ok(shares ?? []);
         }
 
         [HttpGet]

@@ -5,16 +5,11 @@ using FileEncryption.Core.IRepository;
 using FileEncryption.Core.IServices;
 namespace FileEncryption.Service.Services
 {
-    public class ServiceActivityLogs : IServiceActivityLogs
+    public class ServiceActivityLogs(IRepositoryManager repository, IMapper mapper) : IServiceActivityLogs
     {
-        private readonly IRepositoryManager _repository;
-        private readonly IMapper _mapper;
+        private readonly IRepositoryManager _repository = repository;
+        private readonly IMapper _mapper = mapper;
 
-        public ServiceActivityLogs(IRepositoryManager repository, IMapper mapper)
-        {
-            _repository = repository;
-            _mapper = mapper;
-        }
         public async Task<IEnumerable<ActivityLogDto>> GetLogsAsync()
         {
             var logs = await _repository.Logs.GetAllAsync();
@@ -35,7 +30,7 @@ namespace FileEncryption.Service.Services
         {
             var log = _mapper.Map<ActivityLog>(dto);
             await _repository.Logs.AddAsync(log);
-            await _repository.SaveAsync();
+            _repository.Save();
         }
     }
 }

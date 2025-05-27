@@ -60,12 +60,13 @@ namespace FileEncryption.Service.Services
             var newUser = new User
             {
                 Email = userDto.Email,
-                Name = userDto.Name
+                Name = userDto.Name,
+                Password = _hasher.HashPassword(null, userDto.Password) 
             };
 
             newUser.Password = _hasher.HashPassword(newUser, userDto.Password);
             await _repositoryManager.Users.AddUserAsync(newUser);
-            await _repositoryManager.SaveAsync();
+            _repositoryManager.Save();
             var token = GenerateJwtToken(_mapper.Map<UserDto>(newUser));
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {

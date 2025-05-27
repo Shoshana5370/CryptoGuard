@@ -58,7 +58,7 @@ namespace FileEncryption.Api.Controllers
         public class AccessRequestDto
         {
             public int Id { get; set; }
-            public string Code { get; set; }
+            public required string Code { get; set; }
         }
 
         [HttpPost("access")]

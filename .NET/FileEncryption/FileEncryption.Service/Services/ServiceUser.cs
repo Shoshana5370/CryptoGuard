@@ -17,7 +17,7 @@ namespace FileEncryption.Service.Services
             bool sucsess= await _repositoryManager.Users.DeleteUserAsync(id); 
             if(sucsess)
             {
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.Save();
                 return true;
             }
             return false;
@@ -53,7 +53,7 @@ namespace FileEncryption.Service.Services
         {
             var userEntity = _mapper.Map<User>(user);
             await _repositoryManager.Users.AddUserAsync(userEntity); 
-            await _repositoryManager.SaveAsync(); 
+            _repositoryManager.Save(); 
             return userEntity;
         }
 
@@ -62,7 +62,7 @@ namespace FileEncryption.Service.Services
             User u= await _repositoryManager.Users.UpdateUserAsync(id, _mapper.Map<User>(user));
             if (u != null)
             {
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.Save();
             }
             return u;
         }

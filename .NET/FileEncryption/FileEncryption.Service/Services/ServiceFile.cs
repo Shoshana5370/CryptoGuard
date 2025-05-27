@@ -24,7 +24,7 @@ namespace FileEncryption.Service.Services
             bool success = await _repositoryManager.Files.DeleteFileAsync(id); 
             if (success)
             {
-                await _repositoryManager.SaveAsync(); 
+                _repositoryManager.Save(); 
                 return true;
             }
             return false;
@@ -64,7 +64,7 @@ namespace FileEncryption.Service.Services
             fileEntity.CreatedAt = DateTime.Now;
             fileEntity.Name = Path.GetFileNameWithoutExtension(fileEntity.Name);
             await _repositoryManager.Files.AddFileAsync(fileEntity); 
-            await _repositoryManager.SaveAsync(); 
+            _repositoryManager.Save(); 
             return fileEntity;
         }
 
@@ -74,7 +74,7 @@ namespace FileEncryption.Service.Services
             var updatedFile = await _repositoryManager.Files.UpdateFileAsync(id, fileEntity); 
             if (updatedFile != null)
             {
-                await _repositoryManager.SaveAsync(); 
+                _repositoryManager.Save(); 
             }
             await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
             {
@@ -123,7 +123,7 @@ namespace FileEncryption.Service.Services
 
             var fileEntity = _mapper.Map<Core.Entities.File>(fileDto);
             await _repositoryManager.Files.AddFileAsync(fileEntity);
-            await _repositoryManager.SaveAsync();
+            _repositoryManager.Save();
             await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
             {
                 UserId = (int)fileEntity.CreatedBy,
