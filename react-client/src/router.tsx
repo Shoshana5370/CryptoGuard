@@ -20,27 +20,28 @@ const Router = createBrowserRouter([
             },
             {
                 path: "/auth",
-                children: [{ path: "login", element: <LoginForm /> }, { path: "register", element: <RegisterForm /> }],
+                children: [{ path: "login", element: <LoginForm />, errorElement: <NotFound />}, { path: "register", element: <RegisterForm /> ,errorElement: <NotFound />}                  
+                ],
             },
             {
                 path: "/shares",
-                element: <Shares />,
+                element: <Shares />,errorElement: <NotFound />
             },
             {
                 path: "/home",
-                element: <HomePage />,
+                element: <HomePage />,errorElement: <NotFound />
             },
             {
                 path: "/settings",
-                element: <Setting />,
+                element: <Setting />,errorElement: <NotFound />
             },
             {
                 path: "/profile",
-                element: <Profile />,
+                element: <Profile />,errorElement: <NotFound />
             },
             {
                 path: "/files",
-                element: <Files />,
+                element: <Files />,errorElement: <NotFound />
             },
             { path: "*", element: <UnderConstruction /> },
             { errorElement: <NotFound /> },
