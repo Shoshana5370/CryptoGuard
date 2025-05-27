@@ -85,16 +85,13 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
 
           <div className="space-y-2">
             <Label>Expiration Date</Label>
-            <div className="relative">
-              <CalendarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-
-              <Calendar
-                selected={expiration}
-                onChange={setExpiration}
-              />
-            </div>
+            <Calendar
+              selected={expiration}
+              onChange={setExpiration}
+              startAdornment={<CalendarIcon className="h-5 w-5 text-gray-400" />}
+            />
             {expiration && (
-              <p className="text-xs text-gray-500 flex items-center gap-1">
+              <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                 <Clock className="w-3 h-3" />
                 Expires on {format(expiration, "MMM d, yyyy")}
               </p>
@@ -102,39 +99,39 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
           </div>
         </div>
 
-        <DialogFooter className="mt-4 gap-2">
-          <Button variant="outline" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            className="bg-emerald-600 hover:bg-emerald-700"
-            disabled={!isValidEmail(email) || isSharing || isSuccess}
-            onClick={handleShare}
-          >
-            {isSharing ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="mr-2"
-                >
-                  <Clock className="w-4 h-4" />
-                </motion.div>
-                Sharing...
-              </>
-            ) : isSuccess ? (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Shared!
-              </>
-            ) : (
-              <>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </>
-            )}
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="mt-4 gap-2">
+            <Button variant="outline" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-emerald-600 hover:bg-emerald-700"
+              disabled={!isValidEmail(email) || isSharing || isSuccess}
+              onClick={handleShare}
+            >
+              {isSharing ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="mr-2"
+                  >
+                    <Clock className="w-4 h-4" />
+                  </motion.div>
+                  Sharing...
+                </>
+              ) : isSuccess ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  Shared!
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share
+                </>
+              )}
+            </Button>
+          </DialogFooter>
       </DialogContent>
     </Dialog>
   );
