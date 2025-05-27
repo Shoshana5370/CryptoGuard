@@ -1,8 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { registerUser } from '../../features/auth/authSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { Mail, Lock, User, AlertCircle } from "lucide-react";
 import Logo from '../mainComponents/Logo';
@@ -11,7 +11,8 @@ import { Input } from '@/styles/ui/input';
 import { Button } from '@/styles/ui/button';
 const RegisterForm = () => {
     const dispatch = useAppDispatch();
-    const { loading, error } = useAppSelector((state) => state.auth);
+    const navigate = useNavigate();
+    const { loading, error, user } = useAppSelector((state) => state.auth);
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -35,6 +36,11 @@ const RegisterForm = () => {
         }
         return newErrors;
     };
+    useEffect(() => {
+        if (!loading && !error && user) {
+            navigate('/home');
+        }
+    }, [loading, error, user, navigate]);
     const handleSubmit = (e) => {
         e.preventDefault();
         const validationErrors = validate();

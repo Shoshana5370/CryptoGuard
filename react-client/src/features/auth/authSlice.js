@@ -6,7 +6,8 @@ const initialState = {
     loading: false,
     error: null,
 };
-const url = import.meta.env.VITE_API_URL;
+// const url = import.meta.env.VITE_API_URL;
+const url = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7207';
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
     try {
         console.log(`url`, url);
@@ -18,6 +19,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
     }
     catch (err) {
         if (axios.isAxiosError(err)) {
+            console.log();
             return rejectWithValue(err.response?.data || "An error occurred");
         }
         return rejectWithValue("An unexpected error occurred");

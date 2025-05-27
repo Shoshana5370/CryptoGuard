@@ -74,7 +74,7 @@ namespace FileEncryption.Service.Services
             var updatedFile = await _repositoryManager.Files.UpdateFileAsync(id, fileEntity); 
             if (updatedFile != null)
             {
-                _repositoryManager.Save(); 
+                _ = _repositoryManager.Save(); 
             }
             await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
             {
@@ -90,7 +90,6 @@ namespace FileEncryption.Service.Services
         {
             var bucketName = _config["AWS:BucketName"];
             var key = $"uploads/{Guid.NewGuid()}_{file.FileName}";
-
             using var aes = CreateAes();
             aes.GenerateIV();
             var encryptedContentStream = new MemoryStream();
@@ -120,10 +119,10 @@ namespace FileEncryption.Service.Services
             fileDto.Sha256 = hashHex;
             fileDto.CreatedAt = DateTime.Now;
             fileDto.UpdatedAt = DateTime.Now;
-
             var fileEntity = _mapper.Map<Core.Entities.File>(fileDto);
-            await _repositoryManager.Files.AddFileAsync(fileEntity);
-            _repositoryManager.Save();
+            var f = await _repositoryManager.Files.AddFileAsync(fileEntity);
+            await _repositoryManager.Save();
+            Console.WriteLine("this is log the file", f);
             await _serviceActivityLogs.LogActionAsync(new CreateActivityLogDto
             {
                 UserId = (int)fileEntity.CreatedBy,
@@ -132,7 +131,7 @@ namespace FileEncryption.Service.Services
                 TargetType = "File",
                 Description = $"File '{file.FileName}' Upload"
             });
-            return _mapper.Map<FileDto>(fileEntity);
+            return _mapper.Map<FileDto>(f);
         }
 
 

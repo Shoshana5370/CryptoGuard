@@ -68,8 +68,6 @@ namespace FileEncryption.Api.Controllers
             var share = await _shareService.GetValidShareByCodeAsync(requestDto.Code);
            if(share ==null)
                 return BadRequest("This share is Used or date Expired");
-
-
             var (stream, fileName, contentType, originalHash) = await _fileService.DecryptAndDownloadFileAsync(share.FileKey);
 
             share.Used = true;

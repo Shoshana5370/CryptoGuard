@@ -30,7 +30,7 @@ namespace FileEncryption.Service.Services
         {
             var log = _mapper.Map<ActivityLog>(dto);
             await _repository.Logs.AddAsync(log);
-            _repository.Save();
+            await _repository.Save();
         }
     }
 }

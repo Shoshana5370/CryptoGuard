@@ -5,5 +5,6 @@ export type CalendarProps = {
     className?: string;
     minDate?: Date;
     maxDate?: Date;
+    startAdornment?: React.ReactNode;
 };
-export declare function Calendar({ selected, onChange, className, minDate, maxDate, }: CalendarProps): React.JSX.Element;
+export declare function Calendar({ selected, onChange, className, minDate, maxDate, startAdornment, }: CalendarProps): React.JSX.Element;

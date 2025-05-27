@@ -92,9 +92,9 @@ namespace FileEncryption.Api.Controllers
         [HttpPost("upload")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> UploadEncryptedFile(
-      [FromForm] IFormFile file,
-      [FromForm] string originalHash,
-      [FromForm] string? customFileName)
+        [FromForm] IFormFile file,
+        [FromForm] string originalHash,
+        [FromForm] string? customFileName)
         {
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int userId = int.Parse(userIdClaim);
@@ -110,7 +110,6 @@ namespace FileEncryption.Api.Controllers
                 Content = file.OpenReadStream(),
                 ContentType = file.ContentType
             };
-
             var fileDto = new FileDto
             {
                 Name = finalName,
@@ -118,7 +117,6 @@ namespace FileEncryption.Api.Controllers
                 ContentType = file.ContentType,
                 OriginalHash = originalHash
             };
-
             var fileResponse = await _fileService.EncryptAndUploadFileAsync(dto, fileDto);
 
             if (fileResponse == null)

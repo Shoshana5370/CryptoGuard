@@ -50,8 +50,8 @@ namespace FileEncryption.Service.Services
             int userId = int.Parse(idUser);
             share.SharedByUserId =userId;
             share.SharedByUser = await _repositoryManager.Users.GetByIdUserAsync(userId);
-            await _repositoryManager.Shares.AddShareAsync(share);
-            _repositoryManager.Save();
+            var s= await _repositoryManager.Shares.AddShareAsync(share);
+            await _repositoryManager.Save();
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
                 UserId = share.SharedByUserId,
@@ -61,7 +61,7 @@ namespace FileEncryption.Service.Services
                 Description = $"User {share.SharedByUser?.Name ?? "Unknown"} shared file {file.Name} with user {share.RecipientUser?.Name ?? share.RecipientEmail}"
             });
 
-            return share;
+            return s;
         }
 
         private string GenerateAccessCode => Guid.NewGuid().ToString("N")[..8];
@@ -79,7 +79,7 @@ namespace FileEncryption.Service.Services
             {
                 return false;
             }
-             _repositoryManager.Save();
+             await _repositoryManager.Save();
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
                 UserId = share.SharedByUserId,
@@ -96,7 +96,7 @@ namespace FileEncryption.Service.Services
             var s=await _repositoryManager.Shares.UpdateShareAsync(share.Id, share);
             if(s!=null)
             {
-                  _repositoryManager.Save();
+                await  _repositoryManager.Save();
                 return true;
             }
             return false;

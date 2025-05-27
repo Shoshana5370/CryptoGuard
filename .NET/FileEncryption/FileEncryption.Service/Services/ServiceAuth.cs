@@ -66,7 +66,7 @@ namespace FileEncryption.Service.Services
             newUser.Password = _hasher.HashPassword(newUser, userDto.Password);
             newUser.SharesWithMe = await _repositoryManager.Shares.GetSharesAsyncByEmail(userDto.Email);
             await _repositoryManager.Users.AddUserAsync(newUser);
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
             var token = GenerateJwtToken(_mapper.Map<UserDto>(newUser));
             await _activityLogService.LogActionAsync(new CreateActivityLogDto
             {
@@ -92,7 +92,6 @@ namespace FileEncryption.Service.Services
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Role, user.IsAdmin?"Admin":"User")
             };
-
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
