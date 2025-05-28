@@ -436,7 +436,7 @@ const RegisterForm = () => {
                   {loading ? (
                     <motion.div className="flex items-center justify-center gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                       <Loader className="animate-spin h-5 w-5" />
-                      <span>Creating...</span>
+                      <span>Signing Up...</span>
                     </motion.div>
                   ) : (
                     <span>Sign Up</span>

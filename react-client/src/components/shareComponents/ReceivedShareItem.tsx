@@ -1,44 +1,3 @@
-// import { ShareDto } from "@/types/ShareDto";
-
-// interface Props {
-//     share: ShareDto;
-//     onSelect: (shareId: string, fileName: string) => void;
-// }
-
-// const ReceivedShareItem: React.FC<Props> = ({ share, onSelect }) => {
-//     const isInactive = share.used || share.fileIsDeleted;
-//     return (
-//         <li
-//             onClick={() => {
-//                 if (!isInactive) onSelect(share.id.toString(), share.fileName ?? "");
-//             }}
-//             className="group bg-white border border-gray-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between transition-shadow hover:shadow-md cursor-pointer"
-//         >
-//             <div className="text-gray-800 text-sm space-y-1">
-//                 <p className="text-base font-semibold text-gray-900">
-//                     From: <span className="font-medium">{share.sharedByUserName}</span>
-//                 </p>
-//                 <p>
-//                     File: <span className="font-medium">{share.fileName}</span>
-//                 </p>
-//                 {(share.used || share.fileIsDeleted) && (
-//                     <div className="flex flex-wrap gap-2 mt-2">
-//                         {share.used && (
-//                             <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium w-fit">
-//                               📥 Downloaded
-//                             </span>
-//                         )}
-//                         {share.fileIsDeleted && (
-//                             <span className="text-xs px-2 py-1 bg-rose-100 text-rose-700 rounded-full font-medium w-fit">
-//                               🚫 Unavailable
-//                             </span>
-//                         )}             </div>
-//                 )}
-//             </div>
-//         </li>
-//     );
-// }
-// export default ReceivedShareItem;
 import { ShareDto } from "@/types/ShareDto";
 import { User, FileText, CheckCircle, AlertCircle, ChevronRight, Clock, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
@@ -100,16 +59,12 @@ const ReceivedShareItem: React.FC<Props> = ({ share, onSelect }) => {
               <span className="text-sm text-gray-600">File:</span>
               <span className="font-medium text-gray-900">{share.fileName}</span>
             </div>
-
-            {/* Expiration info for active shares */}
             {!isInactive && !isExpired && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Calendar className="w-4 h-4" />
                 <span>Expires: {new Date(share.expiresAt).toLocaleDateString()}</span>
               </div>
             )}
-            
-            {/* Status badges */}
             <div className="flex flex-wrap gap-2">
               {share.used && (
                 <motion.span

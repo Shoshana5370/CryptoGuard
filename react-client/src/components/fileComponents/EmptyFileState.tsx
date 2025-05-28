@@ -1,4 +1,3 @@
-
 import { File } from "lucide-react";
 import { motion } from "framer-motion";
 const EmptyFileState = () => {
@@ -6,8 +5,7 @@ const EmptyFileState = () => {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="text-center py-16"
-    >
+      className="text-center py-16">
       <div className="p-6 rounded-full bg-emerald-100 w-fit mx-auto mb-6">
         <File className="h-12 w-12 text-emerald-400" />
       </div>

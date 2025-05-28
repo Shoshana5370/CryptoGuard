@@ -221,8 +221,6 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
                   <span className="text-sm text-gray-600">File:</span>
                   <span className="font-medium text-gray-900">{share.fileName}</span>
                 </div>
-
-                {/* Expiration info for active shares */}
                 {!share.used && !share.fileIsDeleted && (
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="w-4 h-4 text-gray-400" />
@@ -231,8 +229,6 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
                     </span>
                   </div>
                 )}
-                
-                {/* Status badges */}
                 <div className="flex flex-wrap gap-2">
                   {share.fileIsDeleted && (
                     <motion.span
@@ -268,8 +264,6 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
               </div>
             </div>
           </div>
-
-          {/* Action buttons */}
           <div className="flex items-center gap-3">
             <ShareQuickActions
               share={share}

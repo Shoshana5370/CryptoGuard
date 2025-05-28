@@ -13,7 +13,6 @@ interface FileGridViewProps {
   onShare: (file: SharePostModel) => void;
   onDelete: (fileId: number) => void;
 }
-
 const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGridViewProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -26,7 +25,6 @@ const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGr
           className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md hover:border-emerald-200 transition-all duration-200 group"
         >
           <div className="flex flex-col h-full">
-            {/* File Icon and Header */}
             <div className="flex items-start justify-between mb-4">
               <div className="p-3 rounded-xl bg-gray-50 group-hover:bg-emerald-50 transition-colors">
                 <FileIcon fileType={file.contentType} className="w-8 h-8" />

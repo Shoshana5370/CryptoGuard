@@ -216,7 +216,6 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Email Input */}
           <div className="space-y-3">
             <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
               Recipient Email Address
@@ -243,8 +242,6 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
               )}
             </div>
           </div>
-
-          {/* Calendar */}
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <CalendarIcon className="w-4 h-4" />
