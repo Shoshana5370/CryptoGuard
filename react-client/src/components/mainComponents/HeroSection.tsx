@@ -42,7 +42,7 @@ const HeroSection = () => {
               className="border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300 text-lg px-8 py-6"
                 onClick={() => {navigate('/auth/login')}}
             >
-              Get Start!
+              Get Start
             </Button>
           </div>
         </motion.div>
