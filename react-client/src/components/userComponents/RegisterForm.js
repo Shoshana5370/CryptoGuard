@@ -266,20 +266,30 @@ const RegisterForm = () => {
         console.log('came to func');
         e.preventDefault();
         const fieldErrors = {};
-        if (!fullName)
+        if (!fullName) {
             fieldErrors.fullName = "Full name is required";
-        if (!email)
+        }
+        if (!email) {
             fieldErrors.email = "Email is required";
-        if (!password)
+        }
+        else if (!/\S+@\S+\.\S+/.test(email)) {
+            fieldErrors.email = "Email is not valid";
+        }
+        if (!password) {
             fieldErrors.password = "Password is required";
-        if (password !== confirm)
+        }
+        else if (password.length < 6) {
+            fieldErrors.password = "Password must be at least 6 characters";
+        }
+        if (password !== confirm) {
             fieldErrors.confirm = "Passwords do not match";
+        }
         if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors);
             return;
         }
+        setErrors({});
         try {
-            console.log('came to try');
             dispatch(registerUser({ email, password, name: fullName }));
         }
         catch (err) {

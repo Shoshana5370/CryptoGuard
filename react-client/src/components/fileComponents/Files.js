@@ -1,4 +1,4 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 // // import { deleteFile, fetchFilesByUserId, updateFile } from "@/features/files/filesSlice";
 // // import { useAppDispatch, useAppSelector } from "@/hooks";
 // // import { Alert, AlertDescription } from "@/styles/ui/alert";
@@ -342,11 +342,112 @@ import FileTable from "./FileTable";
 import UploadFileDialog from "./UploadFile";
 import { shareFile } from "@/features/shares/shareFileSlice";
 import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareSlice";
+import FileGridView from "./FileGridWiew";
+import FileStats from "./FileStats";
+import SearchAndFilter from "../shareComponents/SearchAndFilter";
+import ViewToggle from "../shareComponents/ViewToggle";
+import { useFileFilters } from "@/features/useFileFilters";
+// const Files = () => {
+//   const dispatch = useAppDispatch();
+//   const { user } = useAppSelector(state => state.auth);
+//   const { items: files, loading, error } = useAppSelector(state => state.files);
+//   const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
+//   useEffect(() => {
+//     if (user) {
+//       dispatch(fetchFilesByUserId());
+//     }
+//   }, [dispatch, user]);
+//   const handleDelete = async (fileId: number) => {
+//     try {
+//       await dispatch(deleteFile(fileId)).unwrap();
+//       dispatch(fetchFilesByUserId());
+//       dispatch(fetchSharesWithMe());
+//       dispatch(fetchSharesToOthers());
+//     } catch (err) {
+//       console.error("Failed to delete file:", err);
+//     }
+//   };
+//   const handleRename = async (updatedFile: FileDto) => {
+//     try {
+//       await dispatch(updateFile(updatedFile)).unwrap();
+//       dispatch(fetchFilesByUserId());
+//     } catch (err) {
+//       console.error("Failed to update file:", err);
+//     }
+//   };
+//   const handleDownload = (fileId: number) => {
+//     console.log(`Download file with ID: ${fileId}`);
+//   };
+//   const handleShare = async (sharePostModel: SharePostModel) => {
+//     try {
+//       await dispatch(shareFile(sharePostModel)).unwrap();
+//       dispatch(fetchSharesWithMe());
+//       dispatch(fetchSharesToOthers());
+//     } catch (err) {
+//       console.error("Failed to share file:", err);
+//     }
+//   };
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50">
+//       <div className="container mx-auto px-4 py-8">
+//         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+//           <div>
+//             <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+//               My Files
+//             </h1>
+//             <p className="text-gray-600 mt-2 text-lg">
+//               Manage your encrypted files securely
+//             </p>
+//           </div>
+//           {user && (
+//             <Button 
+//               onClick={() => setUploadFileIsOpen(true)} 
+//               className="h-12 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
+//             >
+//               <Upload className="w-5 h-5 mr-2" />
+//               Upload File
+//             </Button>
+//           )}
+//           <UploadFileDialog isOpen={isUploadFileOpen} onClose={() => setUploadFileIsOpen(false)} />
+//         </div>
+//         {error && (
+//           <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
+//             <AlertDescription className="text-red-700">
+//               {typeof error === 'string' ? error : 'Failed to load files'}
+//             </AlertDescription>
+//           </Alert>
+//         )}
+//         {loading ? (
+//           <div className="flex justify-center items-center py-20">
+//             <div className="text-center">
+//               <div className="relative">
+//                 <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mx-auto" />
+//                 <div className="absolute inset-0 w-12 h-12 rounded-full border-2 border-emerald-200 mx-auto"></div>
+//               </div>
+//               <span className="mt-4 block text-lg text-gray-600 font-medium">Loading files...</span>
+//               <span className="mt-1 block text-sm text-gray-500">Decrypting your secure files</span>
+//             </div>
+//           </div>
+//         ) : (
+//           <FileTable
+//             files={files}
+//             onDelete={handleDelete}
+//             onRename={handleRename}
+//             onDownload={handleDownload}
+//             onShare={handleShare}
+//           />
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
 const Files = () => {
     const dispatch = useAppDispatch();
-    const { user } = useAppSelector(state => state.auth);
+    const user = useAppSelector(state => state.auth.user);
     const { items: files, loading, error } = useAppSelector(state => state.files);
     const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
+    const [view, setView] = useState('table');
+    const { searchTerm, setSearchTerm, sortBy, setSortBy, sortOrder, toggleSortOrder, filterType, setFilterType, filteredAndSortedFiles, resetFilters, } = useFileFilters(files);
     useEffect(() => {
         if (user) {
             dispatch(fetchFilesByUserId());
@@ -354,7 +455,10 @@ const Files = () => {
     }, [dispatch, user]);
     const handleDelete = async (fileId) => {
         try {
-            await dispatch(deleteFile(fileId)).unwrap();
+            const result = await dispatch(deleteFile(fileId));
+            if (result.error) {
+                throw result.error;
+            }
             dispatch(fetchFilesByUserId());
             dispatch(fetchSharesWithMe());
             dispatch(fetchSharesToOthers());
@@ -365,7 +469,7 @@ const Files = () => {
     };
     const handleRename = async (updatedFile) => {
         try {
-            await dispatch(updateFile(updatedFile)).unwrap();
+            await dispatch(updateFile(updatedFile));
             dispatch(fetchFilesByUserId());
         }
         catch (err) {
@@ -377,7 +481,7 @@ const Files = () => {
     };
     const handleShare = async (sharePostModel) => {
         try {
-            await dispatch(shareFile(sharePostModel)).unwrap();
+            await dispatch(shareFile(sharePostModel));
             dispatch(fetchSharesWithMe());
             dispatch(fetchSharesToOthers());
         }
@@ -385,6 +489,7 @@ const Files = () => {
             console.error("Failed to share file:", err);
         }
     };
-    return (_jsx("div", { className: "min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50", children: _jsxs("div", { className: "container mx-auto px-4 py-8", children: [_jsxs("div", { className: "flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4", children: [_jsxs("div", { children: [_jsx("h1", { className: "text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent", children: "My Files" }), _jsx("p", { className: "text-gray-600 mt-2 text-lg", children: "Manage your encrypted files securely" })] }), user && (_jsxs(Button, { onClick: () => setUploadFileIsOpen(true), className: "h-12 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200", children: [_jsx(Upload, { className: "w-5 h-5 mr-2" }), "Upload File"] })), _jsx(UploadFileDialog, { isOpen: isUploadFileOpen, onClose: () => setUploadFileIsOpen(false) })] }), error && (_jsx(Alert, { variant: "destructive", className: "mb-6 border-red-200 bg-red-50", children: _jsx(AlertDescription, { className: "text-red-700", children: typeof error === 'string' ? error : 'Failed to load files' }) })), loading ? (_jsx("div", { className: "flex justify-center items-center py-20", children: _jsxs("div", { className: "text-center", children: [_jsxs("div", { className: "relative", children: [_jsx(Loader2, { className: "w-12 h-12 animate-spin text-emerald-600 mx-auto" }), _jsx("div", { className: "absolute inset-0 w-12 h-12 rounded-full border-2 border-emerald-200 mx-auto" })] }), _jsx("span", { className: "mt-4 block text-lg text-gray-600 font-medium", children: "Loading files..." }), _jsx("span", { className: "mt-1 block text-sm text-gray-500", children: "Decrypting your secure files" })] }) })) : (_jsx(FileTable, { files: files, onDelete: handleDelete, onRename: handleRename, onDownload: handleDownload, onShare: handleShare }))] }) }));
+    const activeFiles = files.filter(file => !file.isDelete);
+    return (_jsx("div", { className: "min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50", children: _jsxs("div", { className: "container mx-auto px-4 py-8", children: [_jsxs("div", { className: "flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4", children: [_jsxs("div", { children: [_jsx("h1", { className: "text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent", children: "My Files" }), _jsx("p", { className: "text-gray-600 mt-2 text-lg", children: "Manage your encrypted files securely" })] }), _jsxs("div", { className: "flex items-center gap-3", children: [_jsx(ViewToggle, { view: view, onViewChange: setView }), user && (_jsxs(Button, { onClick: () => setUploadFileIsOpen(true), className: "h-12 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200", children: [_jsx(Upload, { className: "w-5 h-5 mr-2" }), "Upload File"] }))] }), _jsx(UploadFileDialog, { isOpen: isUploadFileOpen, onClose: () => setUploadFileIsOpen(false) })] }), error && (_jsx(Alert, { variant: "destructive", className: "mb-6 border-red-200 bg-red-50", children: _jsx(AlertDescription, { className: "text-red-700", children: typeof error === 'string' ? error : 'Failed to load files' }) })), loading ? (_jsx("div", { className: "flex justify-center items-center py-20", children: _jsxs("div", { className: "text-center", children: [_jsxs("div", { className: "relative", children: [_jsx(Loader2, { className: "w-12 h-12 animate-spin text-emerald-600 mx-auto" }), _jsx("div", { className: "absolute inset-0 w-12 h-12 rounded-full border-2 border-emerald-200 mx-auto" })] }), _jsx("span", { className: "mt-4 block text-lg text-gray-600 font-medium", children: "Loading files..." }), _jsx("span", { className: "mt-1 block text-sm text-gray-500", children: "Decrypting your secure files" })] }) })) : (_jsxs(_Fragment, { children: [_jsx(FileStats, { files: activeFiles }), _jsx(SearchAndFilter, { searchTerm: searchTerm, onSearchChange: setSearchTerm, sortBy: sortBy, onSortChange: setSortBy, sortOrder: sortOrder, onSortOrderToggle: toggleSortOrder, filterType: filterType, onFilterTypeChange: setFilterType, onReset: resetFilters, totalFiles: activeFiles.length, filteredFiles: filteredAndSortedFiles.length }), view === 'grid' ? (_jsxs("div", { className: "bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 overflow-hidden", children: [_jsx("div", { className: "bg-gradient-to-r from-emerald-500 to-orange-500 h-1" }), _jsx("div", { className: "p-6", children: filteredAndSortedFiles.length === 0 ? (_jsx("div", { className: "text-center py-16", children: _jsx("p", { className: "text-gray-500 text-lg", children: "No files match your search criteria" }) })) : (_jsx(FileGridView, { files: filteredAndSortedFiles, onDelete: handleDelete, onRename: handleRename, onDownload: handleDownload, onShare: handleShare })) })] })) : (_jsx(FileTable, { files: filteredAndSortedFiles, onDelete: handleDelete, onRename: handleRename, onDownload: handleDownload, onShare: handleShare }))] }))] }) }));
 };
 export default Files;

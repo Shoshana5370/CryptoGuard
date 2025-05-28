@@ -10,6 +10,8 @@ import UnderConstruction from "./components/mainComponents/UnderConstruction";
 import Shares from "./components/shareComponents/Shares";
 import Setting from "./components/userComponents/Setting";
 import Profile from "./components/userComponents/Profile";
+import About from "./components/footerComponents/About";
+import Blog from "./components/footerComponents/Blog";
 const Router = createBrowserRouter([
     {
         path: "/",
@@ -46,6 +48,8 @@ const Router = createBrowserRouter([
             },
             { path: "*", element: _jsx(UnderConstruction, {}) },
             { errorElement: _jsx(NotFound, {}) },
+            { path: "/about", element: _jsx(About, {}) },
+            { path: "/blog", element: _jsx(Blog, {}) }
         ],
     }
 ]);

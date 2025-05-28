@@ -1,11 +1,14 @@
-import { FileDto } from "../../types/FileDto";
-import { SharePostModel } from "../../types/SharePostModel";
 
-declare const FileTable: ({ files, onDelete, onRename, onDownload, onShare }: {
+
+import { FileDto } from '../../types/FileDto';
+import { SharePostModel } from '../../types/SharePostModel';
+
+interface FileTableProps {
     files: FileDto[];
-    onDelete: (file: number) => void;
+    onDownload: (fileId: number) => void;
     onRename: (file: FileDto) => void;
-    onDownload: (file: number) => void;
-    onShare: (file: SharePostModel) => void;
-}) => import("react/jsx-runtime").JSX.Element;
+    onShare: (shareModel: SharePostModel) => void;
+    onDelete: (fileId: number) => void;
+}
+declare const FileTable: ({}: FileTableProps) => import("react/jsx-runtime").JSX.Element;
 export default FileTable;
