@@ -60,8 +60,7 @@ const ShareStats = ({ shares, type }: ShareStatsProps) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
       {statItems.map((item, index) => {
-        const Icon = item.icon;
-        
+        const Icon = item.icon;      
         return (
           <motion.div
             key={item.key}

@@ -40,7 +40,6 @@ const ShareSearchAndFilter = ({
     <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-6 mb-6">
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
         <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
-          {/* Search Input */}
           <div className="relative flex-1 min-w-[250px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -50,8 +49,6 @@ const ShareSearchAndFilter = ({
               className="h-11 pl-10 pr-4 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
             />
           </div>
-
-          {/* Status Filter */}
           <div className="flex items-center gap-2 min-w-[180px]">
             <Filter className="w-4 h-4 text-gray-500" />
             <Select value={filterStatus} onValueChange={onFilterStatusChange}>
@@ -70,7 +67,6 @@ const ShareSearchAndFilter = ({
         </div>
 
         <div className="flex items-center gap-3 w-full lg:w-auto">
-          {/* Sort Controls */}
           <div className="flex items-center gap-2 min-w-[160px]">
             <Calendar className="w-4 h-4 text-gray-500" />
             <Select value={sortBy} onValueChange={onSortChange}>
@@ -87,8 +83,6 @@ const ShareSearchAndFilter = ({
               </SelectContent>
             </Select>
           </div>
-
-          {/* Sort Order Toggle */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               variant="outline"
@@ -103,8 +97,6 @@ const ShareSearchAndFilter = ({
               }
             </Button>
           </motion.div>
-
-          {/* Reset Filters */}
           {hasActiveFilters && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -124,8 +116,6 @@ const ShareSearchAndFilter = ({
           )}
         </div>
       </div>
-
-      {/* Results Summary */}
       {(searchTerm || filterStatus !== 'all') && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}

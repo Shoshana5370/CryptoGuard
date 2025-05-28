@@ -9,7 +9,6 @@ import { motion } from "framer-motion";
 import { useShareFilters } from "@/features/useShareFilters";
 import ShareStats from "./ShareStats";
 import ShareSearchAndFilter from "./ShareSearchAndFilter";
-
 interface Props {
   onSelect: (shareId: string, fileName: string) => void;
 }
