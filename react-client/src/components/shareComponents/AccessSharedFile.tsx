@@ -13,7 +13,6 @@ type AccessSharedFileProps = {
   code: string;
   fileName: string;
 };
-
 const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   const [shareCode, setShareCode] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);

@@ -1,12 +1,10 @@
 import { Users, Send, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import { motion } from "framer-motion";
 import { ShareDto } from "@/types/ShareDto";
-
 interface ShareStatsProps {
   shares: ShareDto[];
   type: 'received' | 'sent';
 }
-
 const ShareStats = ({ shares, type }: ShareStatsProps) => {
   const activeShares = shares.filter(share => !share.used && !share.fileIsDeleted);
   const usedShares = shares.filter(share => share.used);
@@ -16,7 +14,6 @@ const ShareStats = ({ shares, type }: ShareStatsProps) => {
     const expiryDate = new Date(share.expiresAt);
     return expiryDate < now && !share.used && !share.fileIsDeleted;
   });
-
   const statItems = [
     { 
       key: 'total', 
