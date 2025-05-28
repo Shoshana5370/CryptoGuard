@@ -406,7 +406,6 @@ const Files = () => {
   };
 
   const handleDownload = (fileId: number) => {
-    // Logic to trigger file download
     console.log(`Download file with ID: ${fileId}`);
   };
 

@@ -240,26 +240,31 @@ import { Button } from '@/styles/ui/button';
 //   // );
 // };
 // export default RegisterForm;
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle, Shield, Sparkles, Lock, Eye, EyeOff, Loader, Mail, User } from "lucide-react";
 import LoginInfoPanel from "./LoginInfoPanel";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "@/hooks";
+import { registerUser } from "@/features/auth/authSlice";
 const RegisterForm = () => {
+    const dispatch = useAppDispatch();
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [focusedField, setFocusedField] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+    const { loading, error, user } = useAppSelector((state) => state.auth);
     const [errors, setErrors] = useState({});
+    useEffect(() => {
+        if (!loading && !error && user) {
+            navigate('/home');
+        }
+    }, [loading, error, user, navigate]);
     const handleSubmit = async (e) => {
+        console.log('came to func');
         e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setErrors({});
-        // Basic validation
         const fieldErrors = {};
         if (!fullName)
             fieldErrors.fullName = "Full name is required";
@@ -271,21 +276,16 @@ const RegisterForm = () => {
             fieldErrors.confirm = "Passwords do not match";
         if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors);
-            setLoading(false);
             return;
         }
-        // Submit logic here (API call)
         try {
-            // await registerUser({ fullName, email, password });
+            console.log('came to try');
+            dispatch(registerUser({ email, password, name: fullName }));
         }
         catch (err) {
-            setError("Registration failed.");
-        }
-        finally {
-            setLoading(false);
         }
     };
-    return (_jsxs("div", { className: "min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden", children: [_jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30", children: _jsxs("div", { className: "absolute top-0 left-0 w-full h-full", children: [_jsx(motion.div, { initial: { opacity: 0, scale: 0.8 }, animate: { opacity: 0.1, scale: 1 }, transition: { duration: 20, repeat: Infinity, repeatType: "reverse" }, className: "absolute top-10 left-10 w-32 h-32 bg-emerald-200 rounded-full blur-xl" }), _jsx(motion.div, { initial: { opacity: 0, scale: 0.6 }, animate: { opacity: 0.08, scale: 1.2 }, transition: { duration: 15, repeat: Infinity, repeatType: "reverse", delay: 5 }, className: "absolute bottom-20 right-20 w-40 h-40 bg-emerald-300 rounded-full blur-2xl" }), _jsx(motion.div, { initial: { opacity: 0, x: -100 }, animate: { opacity: 0.05, x: 100 }, transition: { duration: 25, repeat: Infinity, repeatType: "reverse", delay: 2 }, className: "absolute top-1/2 left-1/4 w-24 h-24 bg-emerald-400 rounded-full blur-xl" })] }) }), _jsx("div", { className: "flex items-center justify-center p-4 relative z-10", children: _jsx(motion.div, { initial: { opacity: 0, y: 30, scale: 0.95 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 0.8, ease: "easeOut" }, className: "w-full max-w-md", children: _jsxs(motion.div, { className: "bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-10 relative overflow-hidden", whileHover: { y: -2 }, transition: { duration: 0.3 }, children: [_jsx("div", { className: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700" }), _jsx("div", { className: "absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full opacity-20 blur-sm" }), _jsxs("div", { className: "text-center mb-10", children: [_jsx(motion.div, { className: "flex justify-center mb-6", initial: { scale: 0.8, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { delay: 0.2, duration: 0.6 }, children: _jsxs("div", { className: "relative", children: [_jsx(Logo, {}), _jsx(motion.div, { className: "absolute -top-1 -right-1 w-3 h-3", animate: { rotate: 360 }, transition: { duration: 8, repeat: Infinity, ease: "linear" }, children: _jsx(Sparkles, { className: "w-3 h-3 text-emerald-500" }) })] }) }), _jsxs(motion.div, { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { delay: 0.3, duration: 0.6 }, children: [_jsx("h2", { className: "text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-2", children: "Create Account" }), _jsxs("p", { className: "text-gray-600 flex items-center justify-center gap-2", children: [_jsx(Shield, { className: "w-4 h-4 text-emerald-600" }), "Join to securely manage your files"] })] })] }), error && (_jsx(motion.div, { initial: { opacity: 0, scale: 0.95 }, animate: { opacity: 1, scale: 1 }, className: "mb-6", children: _jsxs(Alert, { variant: "destructive", className: "border-red-200 bg-red-50/50 backdrop-blur-sm", children: [_jsx(AlertCircle, { className: "h-4 w-4" }), _jsx(AlertDescription, { className: "text-red-700", children: error })] }) })), _jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [[
+    return (_jsxs("div", { className: "min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden", children: [_jsx("div", { className: "absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30", children: _jsxs("div", { className: "absolute top-0 left-0 w-full h-full", children: [_jsx(motion.div, { initial: { opacity: 0, scale: 0.8 }, animate: { opacity: 0.1, scale: 1 }, transition: { duration: 20, repeat: Infinity, repeatType: "reverse" }, className: "absolute top-10 left-10 w-32 h-32 bg-emerald-200 rounded-full blur-xl" }), _jsx(motion.div, { initial: { opacity: 0, scale: 0.6 }, animate: { opacity: 0.08, scale: 1.2 }, transition: { duration: 15, repeat: Infinity, repeatType: "reverse", delay: 5 }, className: "absolute bottom-20 right-20 w-40 h-40 bg-emerald-300 rounded-full blur-2xl" }), _jsx(motion.div, { initial: { opacity: 0, x: -100 }, animate: { opacity: 0.05, x: 100 }, transition: { duration: 25, repeat: Infinity, repeatType: "reverse", delay: 2 }, className: "absolute top-1/2 left-1/4 w-24 h-24 bg-emerald-400 rounded-full blur-xl" })] }) }), _jsx("div", { className: "flex items-center justify-center p-4 relative z-10", children: _jsx(motion.div, { initial: { opacity: 0, y: 30, scale: 0.95 }, animate: { opacity: 1, y: 0, scale: 1 }, transition: { duration: 0.8, ease: "easeOut" }, className: "w-full max-w-md", children: _jsxs(motion.div, { className: "bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-10 relative overflow-hidden", whileHover: { y: -2 }, transition: { duration: 0.3 }, children: [_jsx("div", { className: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-600 to-emerald-700" }), _jsx("div", { className: "absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full opacity-20 blur-sm" }), _jsxs("div", { className: "text-center mb-10", children: [_jsx(motion.div, { className: "flex justify-center mb-6", initial: { scale: 0.8, opacity: 0 }, animate: { scale: 1, opacity: 1 }, transition: { delay: 0.2, duration: 0.6 }, children: _jsxs("div", { className: "relative", children: [_jsx(Logo, {}), _jsx(motion.div, { className: "absolute -top-1 -right-1 w-3 h-3", animate: { rotate: 360 }, transition: { duration: 8, repeat: Infinity, ease: "linear" }, children: _jsx(Sparkles, { className: "w-3 h-3 text-emerald-500" }) })] }) }), _jsxs(motion.div, { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { delay: 0.3, duration: 0.6 }, children: [_jsx("h2", { className: "text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-2", children: "Create Account" }), _jsxs("p", { className: "text-gray-600 flex items-center justify-center gap-2", children: [_jsx(Shield, { className: "w-4 h-4 text-emerald-600" }), "Join to securely manage your files"] })] })] }), error && (_jsx(motion.div, { initial: { opacity: 0, scale: 0.95 }, animate: { opacity: 1, scale: 1 }, className: "mb-6", children: _jsxs(Alert, { variant: "destructive", className: "border-red-200 bg-red-50/50 backdrop-blur-sm", children: [_jsx(AlertCircle, { className: "h-4 w-4" }), _jsx(AlertDescription, { className: "text-red-700", children: error.toString() })] }) })), _jsxs("form", { onSubmit: handleSubmit, className: "space-y-6", children: [[
                                         { type: "text", name: "fullName", placeholder: "Full name", icon: _jsx(User, {}), value: fullName, setValue: setFullName },
                                         { type: "email", name: "email", placeholder: "Your email", icon: _jsx(Mail, {}), value: email, setValue: setEmail }
                                     ].map(({ type, name, placeholder, icon, value, setValue }, idx) => (_jsxs(motion.div, { className: "space-y-2", initial: { opacity: 0, x: -20 }, animate: { opacity: 1, x: 0 }, transition: { delay: 0.3 + idx * 0.1, duration: 0.5 }, children: [_jsxs("div", { className: "relative group", children: [_jsx(motion.div, { className: `absolute left-3 top-2.5 transition-colors duration-200 ${focusedField === name ? "text-emerald-600" : "text-gray-400"}`, animate: { scale: focusedField === name ? 1.1 : 1 }, children: icon }), _jsx(Input, { type: type, placeholder: placeholder, value: value, onChange: (e) => setValue(e.target.value), onFocus: () => setFocusedField(name), onBlur: () => setFocusedField(null), className: "pl-10 h-12 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500/20 bg-white/50 backdrop-blur-sm hover:bg-white/70 transition-all" })] }), errors[name] && (_jsxs(motion.p, { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 }, className: "text-sm text-red-500 flex items-center gap-1", children: [_jsx(AlertCircle, { className: "w-3 h-3" }), errors[name]] }))] }, name))), [

@@ -55,7 +55,7 @@ import { Button } from '@/styles/ui/button';
 //     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-50 to-stone-100">
 //       {/* LoginInfoPanel will be on the left for desktop, hidden on mobile */}
 //       <LoginInfoPanel /> 
-      
+
 //       {/* Registration Form on the right for desktop, full width on mobile */}
 //       <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-12">
 //         <motion.div
@@ -268,44 +268,63 @@ import { useEffect, useState } from "react";
 import { AlertCircle, Shield, Sparkles, Lock, Eye, EyeOff, Loader, Mail, User } from "lucide-react";
 import LoginInfoPanel from "./LoginInfoPanel";
 import { Link, useNavigate } from "react-router-dom";
-import { useAppSelector } from "@/hooks";
+import { useAppSelector, useAppDispatch } from "@/hooks";
 import { registerUser } from "@/features/auth/authSlice";
 
 
-const RegisterForm=()=> {
+const RegisterForm = () => {
+  const dispatch = useAppDispatch();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const { loading, error, user } = useAppSelector((state) => state.auth);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
   useEffect(() => {
     if (!loading && !error && user) {
       navigate('/home');
     }
   }, [loading, error, user, navigate]);
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    console.log('came to func');
 
+    e.preventDefault();
     const fieldErrors: { [key: string]: string } = {};
-    if (!fullName) fieldErrors.fullName = "Full name is required";
-    if (!email) fieldErrors.email = "Email is required";
-    if (!password) fieldErrors.password = "Password is required";
-    if (password !== confirm) fieldErrors.confirm = "Passwords do not match";
+
+    if (!fullName) {
+      fieldErrors.fullName = "Full name is required";
+    }
+
+    if (!email) {
+      fieldErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      fieldErrors.email = "Email is not valid";
+    }
+
+    if (!password) {
+      fieldErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      fieldErrors.password = "Password must be at least 6 characters";
+    }
+
+    if (password !== confirm) {
+      fieldErrors.confirm = "Passwords do not match";
+    }
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
       return;
     }
+    setErrors({});
     try {
-       await registerUser({ email, password, name: fullName });
+      dispatch(registerUser({ email, password, name: fullName }));
     } catch (err: any) {
-      
-    } 
+
+    }
   };
 
   return (

@@ -1,7 +1,6 @@
 
 import { File } from "lucide-react";
 import { motion } from "framer-motion";
-
 const EmptyFileState = () => {
   return (
     <motion.div

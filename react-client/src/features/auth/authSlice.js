@@ -26,6 +26,7 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
 });
 export const registerUser = createAsyncThunk('auth/registerUser', async (userData, { rejectWithValue }) => {
     try {
+        console.log('came to registerApi');
         const response = await axios.post(`${url}/api/Auth/register`, userData);
         sessionStorage.setItem("token", response.data.token);
         sessionStorage.setItem("userId", response.data.user.id.toString());

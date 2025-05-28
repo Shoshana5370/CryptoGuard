@@ -373,7 +373,6 @@ const Files = () => {
         }
     };
     const handleDownload = (fileId) => {
-        // Logic to trigger file download
         console.log(`Download file with ID: ${fileId}`);
     };
     const handleShare = async (sharePostModel) => {

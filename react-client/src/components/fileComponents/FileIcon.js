@@ -1,21 +1,32 @@
 import { jsx as _jsx } from "react/jsx-runtime";
-import { Archive, Code, File, FileText, Image, Music, Video } from "lucide-react";
+import { Image, FileText, Music, Video, Archive, Code, File, FileSpreadsheet, FileType2, Presentation, } from "lucide-react";
+const iconMap = {
+    "image": { icon: Image, color: "text-rose-500" },
+    "application/pdf": { icon: FileText, color: "text-red-500" },
+    "application/msword": { icon: FileType2, color: "text-blue-500" },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": { icon: FileType2, color: "text-blue-500" },
+    "application/vnd.ms-excel": { icon: FileSpreadsheet, color: "text-green-500" },
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": { icon: FileSpreadsheet, color: "text-green-500" },
+    "application/vnd.ms-powerpoint": { icon: Presentation, color: "text-orange-500" },
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": { icon: Presentation, color: "text-orange-500" },
+    "audio": { icon: Music, color: "text-orange-500" },
+    "video": { icon: Video, color: "text-emerald-500" },
+    "application/zip": { icon: Archive, color: "text-amber-500" },
+    "application/x-7z-compressed": { icon: Archive, color: "text-amber-500" },
+    "application/x-rar-compressed": { icon: Archive, color: "text-amber-500" },
+    "application/x-tar": { icon: Archive, color: "text-amber-500" },
+    "text/x-python": { icon: Code, color: "text-emerald-600" },
+    "application/x-python": { icon: Code, color: "text-emerald-600" },
+    "application/javascript": { icon: Code, color: "text-emerald-600" },
+    "text/javascript": { icon: Code, color: "text-emerald-600" },
+    "text/x-c++src": { icon: Code, color: "text-emerald-600" },
+};
 const FileIcon = ({ fileType, className = "w-5 h-5" }) => {
-    const [type, subtype] = fileType.toLowerCase().split('/');
-    if (type === 'image')
-        return _jsx(Image, { className: `${className} text-rose-500` });
-    if (fileType === 'application/pdf')
-        return _jsx(FileText, { className: `${className} text-red-500` });
-    if (type === 'audio')
-        return _jsx(Music, { className: `${className} text-orange-500` });
-    if (type === 'video')
-        return _jsx(Video, { className: `${className} text-emerald-500` });
-    if (['zip', 'x-7z-compressed', 'x-rar-compressed', 'x-tar'].includes(subtype)) {
-        return _jsx(Archive, { className: `${className} text-amber-500` });
-    }
-    if (['x-python', 'x-javascript', 'x-c++'].includes(subtype)) {
-        return _jsx(Code, { className: `${className} text-emerald-600` });
-    }
-    return _jsx(File, { className: `${className} text-gray-500` });
+    const lowerType = fileType.toLowerCase();
+    const [type] = lowerType.split("/");
+    const match = iconMap[lowerType];
+    const fallback = iconMap[type];
+    const { icon: Icon, color } = match || fallback || { icon: File, color: "text-gray-500" };
+    return _jsx(Icon, { className: `${className} ${color}` });
 };
 export default FileIcon;
