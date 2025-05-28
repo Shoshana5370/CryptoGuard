@@ -23,24 +23,27 @@ const Files = () => {
     }
   }, [dispatch, user]);
 
-  const handleDelete = (fileId: number) => {
-    dispatch(deleteFile(fileId));
-    dispatch(fetchSharesWithMe());
-    dispatch(fetchSharesToOthers());
+  const handleDelete = async (fileId: number) => {
+    await dispatch(deleteFile(fileId));
+    await dispatch(fetchFilesByUserId());
+    await dispatch(fetchSharesWithMe());
+    await dispatch(fetchSharesToOthers());
   };
   const handleDownload = (file: number) => {
     console.log('Download file:', file);
   };
 
-  const handleRename = (updatedFile: FileDto) => {
-    dispatch(updateFile(updatedFile));
-    dispatch(fetchSharesWithMe());
-    dispatch(fetchSharesToOthers());
+  const handleRename = async (updatedFile: FileDto) => {
+    await dispatch(updateFile(updatedFile));
+    await dispatch(fetchFilesByUserId());
+    await dispatch(fetchSharesWithMe());
+    await dispatch(fetchSharesToOthers());
   };
-  const handleShare = (updatedFile: SharePostModel) => {
-    dispatch(shareFile(updatedFile));
-    dispatch(fetchSharesWithMe());
-    dispatch(fetchSharesToOthers());
+  const handleShare = async (updatedFile: SharePostModel) => {
+    await dispatch(shareFile(updatedFile));
+    await dispatch(fetchFilesByUserId());
+    await dispatch(fetchSharesWithMe());
+    await dispatch(fetchSharesToOthers());
   };
   return (
     <div className="container mx-auto px-4 py-8">

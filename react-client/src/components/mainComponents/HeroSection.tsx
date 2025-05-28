@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 
 import { Button } from "@/styles/ui/button";
-import { Upload, ArrowRight } from "lucide-react";
 import EncryptionVisualizer from "./EncraptionVizualer";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
   return (
     <section className="flex flex-col lg:flex-row items-center justify-between gap-16 mb-32">
       <div className="max-w-2xl lg:w-1/2">
@@ -34,21 +35,14 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button 
-              size="lg"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-600/25 hover:shadow-2xl hover:shadow-emerald-600/30 transition-all duration-300 text-lg px-8 py-6 group"
-              onClick={() => {}}
-            >
-              <Upload className="mr-3 h-5 w-5 group-hover:scale-110 transition-transform" />
-              Select File
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+    
             <Button 
               size="lg"
               variant="outline"
               className="border-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-300 text-lg px-8 py-6"
+                onClick={() => {navigate('/auth/login')}}
             >
-              Learn More
+              Get Start!
             </Button>
           </div>
         </motion.div>
