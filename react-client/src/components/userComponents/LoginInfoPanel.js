@@ -31,7 +31,7 @@ const LoginInfoPanel = () => {
             role: "Chief Information Security Officer"
         },
         {
-            text: "An incredibly intuitive interface paired with formidable encryption. SecureVault sets a new standard for secure file management.",
+            text: "An incredibly intuitive interface paired with formidable encryption. CryptoGuard sets a new standard for secure file management.",
             author: "Marcus Cole",
             role: "Cybersecurity Lead, Tech Solutions Inc."
         }

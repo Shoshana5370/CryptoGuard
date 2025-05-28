@@ -1,84 +1,86 @@
-
 import { motion } from "framer-motion";
 import EncryptionVisualizer from "./EncraptionVizualer";
-import Logo from "./Logo";
+
+import { Upload, ArrowRight, Users, Shield, Star, CheckCircle } from "lucide-react";
 import { Button } from "@/styles/ui/button";
-import EncryptionSteps from "./EncraptionSteps";
 import SecurityFeatures from "./SecuirtyFeateras";
-import { Upload } from "lucide-react"
+import EncryptionSteps from "./EncraptionSteps";
+import CTASection from "./CTASection";
+import TestimonialsSection from "./TestimonialsSection";
+import HeroSection from "./HeroSection";
 
-const Home=() =>{
+const HomePage = () => {
+
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-stone-50">
-      <main className="container mx-auto px-4 py-12 max-w-7xl">
-        <section className="flex flex-col md:flex-row items-center justify-between gap-12 mb-24">
-          <div className="max-w-xl">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="mb-6"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <Logo />
-              </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight mb-6">
-                Advanced File Encryption System
-              </h1>
-              <p className="text-gray-600 text-lg leading-relaxed mb-8">
-              Protect your organization's most sensitive documents with powerful encryption, custom file access, and secure, time-limited sharing.  
-              Take full control over who can view, download, or share your data — with complete visibility and security.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  size="lg"
-                  className="bg-emerald-700 hover:bg-emerald-800 text-white"
-                  onClick={() => {}}
-                  >
-                  <Upload className="mr-2 h-5 w-5" />
-                  Select File
-                </Button>
-                <Button 
-                  size="lg"
-                  variant="outline"
-                  className="border-emerald-700 text-emerald-700 hover:bg-emerald-50">
-                  Learn More
-                </Button>
-              </div>
-            </motion.div>
-          </div>
+    <div className="min-h-screen">
+      <main className="container mx-auto px-4 py-16 max-w-7xl">
+        {/* Hero Section */}
+        <HeroSection />
 
-          <div className="w-full md:w-1/2">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              <EncryptionVisualizer />
-            </motion.div>
-          </div>
-        </section>
-        <section className="mb-24">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Advanced Security Features</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+        {/* Stats Section */}
+        <StatsSection />
+
+        {/* Security Features Section */}
+        <section className="mb-32">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-full border border-emerald-100 mb-6">
+              <span className="text-emerald-700 text-sm font-medium">Security First</span>
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Advanced Security{" "}
+              <span className="bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-transparent">
+                Features
+              </span>
+            </h2>
+            <p className="text-gray-600 text-xl max-w-3xl mx-auto">
               Our encryption system uses cutting-edge technology to ensure your files remain private and secure
             </p>
-          </div>     
+          </motion.div>     
           <SecurityFeatures />
         </section>
-        <section className="mb-24">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+
+        {/* How It Works Section */}
+        <section className="mb-32">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 rounded-full border border-amber-100 mb-6">
+              <span className="text-amber-700 text-sm font-medium">Simple Process</span>
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              How It{" "}
+              <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                Works
+              </span>
+            </h2>
+            <p className="text-gray-600 text-xl max-w-3xl mx-auto">
               Our advanced encryption process is simple to use yet extremely secure
             </p>
-          </div>
+          </motion.div>
           
           <EncryptionSteps />
         </section>
+
+        {/* Testimonials Section */}
+        <TestimonialsSection />
+
+        {/* CTA Section */}
+        <CTASection />
       </main>
     </div>
   );
-}
-export default Home;
+};
+
+export default HomePage;
