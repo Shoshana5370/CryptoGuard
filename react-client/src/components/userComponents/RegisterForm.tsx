@@ -264,10 +264,12 @@ import { Button } from '@/styles/ui/button';
 // export default RegisterForm;
 
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle, Shield, Sparkles, Lock, Eye, EyeOff, Loader, Mail, User } from "lucide-react";
 import LoginInfoPanel from "./LoginInfoPanel";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppSelector } from "@/hooks";
+import { registerUser } from "@/features/auth/authSlice";
 
 
 const RegisterForm=()=> {
@@ -277,17 +279,18 @@ const RegisterForm=()=> {
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+  const { loading, error, user } = useAppSelector((state) => state.auth);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
+  
+  useEffect(() => {
+    if (!loading && !error && user) {
+      navigate('/home');
+    }
+  }, [loading, error, user, navigate]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setErrors({});
 
-    // Basic validation
     const fieldErrors: { [key: string]: string } = {};
     if (!fullName) fieldErrors.fullName = "Full name is required";
     if (!email) fieldErrors.email = "Email is required";
@@ -296,18 +299,13 @@ const RegisterForm=()=> {
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
-      setLoading(false);
       return;
     }
-
-    // Submit logic here (API call)
     try {
-      // await registerUser({ fullName, email, password });
+       await registerUser({ email, password, name: fullName });
     } catch (err: any) {
-      setError("Registration failed.");
-    } finally {
-      setLoading(false);
-    }
+      
+    } 
   };
 
   return (
@@ -349,7 +347,7 @@ const RegisterForm=()=> {
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-6">
                 <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-sm">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription className="text-red-700">{error}</AlertDescription>
+                  <AlertDescription className="text-red-700">{error.toString()}</AlertDescription>
                 </Alert>
               </motion.div>
             )}
