@@ -1,18 +1,12 @@
 import { motion } from "framer-motion";
-import EncryptionVisualizer from "./EncraptionVizualer";
-
-import { Upload, ArrowRight, Users, Shield, Star, CheckCircle } from "lucide-react";
-import { Button } from "@/styles/ui/button";
 import SecurityFeatures from "./SecuirtyFeateras";
 import EncryptionSteps from "./EncraptionSteps";
 import CTASection from "./CTASection";
 import TestimonialsSection from "./TestimonialsSection";
 import HeroSection from "./HeroSection";
+import StatsSection from "./StatsSection";
 
 const HomePage = () => {
-
-
-
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 py-16 max-w-7xl">
