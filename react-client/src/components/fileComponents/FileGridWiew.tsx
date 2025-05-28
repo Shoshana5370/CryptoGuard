@@ -67,8 +67,6 @@ const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGr
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
-            {/* File Info */}
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-base">
                 {file.name}

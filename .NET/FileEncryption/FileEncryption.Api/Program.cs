@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +77,13 @@ var awsOptions = new AWSOptions
 };
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonS3>();
+var s3Client = new AmazonS3Client(awsOptions.Credentials, awsOptions.Region);
+
+builder.Services.AddDataProtection()
+    .SetApplicationName("CryptoGuardApp").PersistKeysToAwsS3(s3Client, new AspNetCore.DataProtection.Aws.S3.S3XmlRepositoryConfig
+    (
+        bucket: builder.Configuration["AWS:S3BucketName"],
+        keyPrefix: "DataProtectionKeys/"));
 builder.Services.AddScoped<IRepositoryFile, RepositoryFile>();
 builder.Services.AddScoped<IRepositoryActivityLogs, RepositoryActivityLogs>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();

@@ -6,14 +6,12 @@ import { FileDto } from "@/types/FileDto";
 import { Pencil, FileText } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-
 interface RenameDialogProps {
   isOpen: boolean;
   onClose: () => void;
   file: FileDto;
   onRename: (file: FileDto) => void;
 }
-
 const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) => {
   const [newName, setNewName] = useState(file?.name || '');
 
@@ -27,7 +25,6 @@ const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) =>
     onRename(updatedFile);
     onClose();
   };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
@@ -46,7 +43,6 @@ const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) =>
             Give <span className="font-semibold text-orange-600">"{file?.name}"</span> a new name
           </DialogDescription>
         </DialogHeader>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
             <Label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
@@ -74,7 +70,6 @@ const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) =>
               </motion.div>
             )}
           </div>
-
           <DialogFooter className="gap-3">
             <Button 
               type="button" 
@@ -83,8 +78,7 @@ const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) =>
               className="flex-1 h-12 rounded-xl border-gray-200 hover:bg-gray-50 transition-all"
             >
               Cancel
-            </Button>
-            
+            </Button>          
             <Button 
               type="submit" 
               className="flex-1 h-12 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-200"

@@ -171,7 +171,7 @@ namespace FileEncryption.Service.Services
                 Action = "DownLoad",
                 TargetId = file.Id.ToString(),
                 TargetType = "File",
-                Description = $"File '{file.Name}' download by user {file.UserCreated.Name}"
+                Description = $"File '{file.Name}' download by user {(file.UserCreated?.Name ?? "Unknown")}"
             });
             return (decryptedStream, file.Name, file.ContentType,file.OriginalHash);
         }

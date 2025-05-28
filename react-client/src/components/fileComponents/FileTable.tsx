@@ -56,13 +56,9 @@ const FileTable = ({
   };
 
   const activeFiles = files.filter(file => !file.isDelete);
-
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 overflow-hidden">
       <div className="bg-gradient-to-r from-emerald-500 to-orange-500 h-1"></div>
-
-      <h3 className="text-lg font-semibold mb-4">Files Table View</h3>
-      <p className="text-gray-500">Table view for files will be displayed here</p>
       {activeFiles.length === 0 ? (
         <EmptyFileState />
       ) : (
