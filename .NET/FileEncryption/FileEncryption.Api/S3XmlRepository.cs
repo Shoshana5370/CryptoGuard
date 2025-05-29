@@ -1,10 +1,9 @@
-﻿using System.Xml.Linq;
-using Microsoft.AspNetCore.DataProtection.Repositories;
-using Amazon.S3;
-using Amazon.S3.Model;
-namespace FileEncryption.Api
+﻿namespace FileEncryption.Api
 {
-
+    using Amazon.S3.Model;
+    using Amazon.S3;
+    using Microsoft.AspNetCore.DataProtection.Repositories;
+    using System.Xml.Linq;
 
     public class S3XmlRepository : IXmlRepository
     {
@@ -27,11 +26,13 @@ namespace FileEncryption.Api
             {
                 BucketName = _bucketName,
                 Prefix = _prefix
-            }).Result;
+            }).GetAwaiter().GetResult();
 
             foreach (var obj in listResponse.S3Objects)
             {
-                var getResponse = _s3Client.GetObjectAsync(_bucketName, obj.Key).Result;
+                var getResponse = _s3Client.GetObjectAsync(_bucketName, obj.Key)
+                    .GetAwaiter().GetResult();
+
                 using var reader = new StreamReader(getResponse.ResponseStream);
                 var xmlString = reader.ReadToEnd();
                 result.Add(XElement.Parse(xmlString));
@@ -50,8 +51,7 @@ namespace FileEncryption.Api
                 ContentBody = element.ToString(SaveOptions.DisableFormatting)
             };
 
-            var putResponse = _s3Client.PutObjectAsync(putRequest).Result;
+            var putResponse = _s3Client.PutObjectAsync(putRequest).GetAwaiter().GetResult();
         }
     }
-
 }

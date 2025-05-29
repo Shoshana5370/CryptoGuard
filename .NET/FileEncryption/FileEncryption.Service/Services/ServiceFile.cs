@@ -64,7 +64,7 @@ namespace FileEncryption.Service.Services
             fileEntity.CreatedAt = DateTime.Now;
             fileEntity.Name = Path.GetFileNameWithoutExtension(fileEntity.Name);
             await _repositoryManager.Files.AddFileAsync(fileEntity); 
-            _repositoryManager.Save(); 
+            _=_repositoryManager.Save(); 
             return fileEntity;
         }
 
