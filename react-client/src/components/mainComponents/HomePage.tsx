@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
-import SecurityFeatures from "./SecuirtyFeateras";
+
 import EncryptionSteps from "./EncraptionSteps";
 import CTASection from "./CTASection";
-import TestimonialsSection from "./TestimonialsSection";
+
 import HeroSection from "./HeroSection";
 import StatsSection from "./StatsSection";
+import SecurityFeatures from "./SecurityFeatures";
+import TestimonialsSection from "./TestimonialsSection";
+
 
 const HomePage = () => {
   return (

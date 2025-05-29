@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ChevronDown, LogOut, } from "lucide-react";
-import Logo from "./Logo";
+import Logo from './Logo';
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { logout } from "@/features/auth/authSlice";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/styles/ui/dropdown-menu";

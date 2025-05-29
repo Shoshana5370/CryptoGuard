@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 import { Button } from "@/styles/ui/button";
-import EncryptionVisualizer from "./EncraptionVizualer";
+import EncryptionVisualizer from "./EncryptionVisualizer";
 import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {

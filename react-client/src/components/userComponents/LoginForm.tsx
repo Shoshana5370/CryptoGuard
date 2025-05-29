@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../mainComponents/Logo";
+import Logo from '../mainComponents/Logo';
 import { AlertCircle, Mail, Shield, Sparkles, Lock, Eye, EyeOff, Loader } from "lucide-react";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Input } from "@/styles/ui/input";

@@ -11,10 +11,11 @@ import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareS
 import { useFileFilters } from "@/features/useFileFilters";
 import FileGridView from "./FileGridWiew";
 import SearchAndFilter from "../shareComponents/SearchAndFilter";
-import FileStats from "./FileStats";
+
 import ViewToggle from "../shareComponents/ViewToggle";
 import { shareFile } from "@/features/shares/shareFileSlice";
 import UploadFileDialog from "./UploadFile";
+import FileStats from "./FileStas";
 
 
 const Files = () => {

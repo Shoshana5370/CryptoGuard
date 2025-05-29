@@ -1,7 +1,5 @@
 
 import { motion } from "framer-motion";
-
-import Logo from '../mainComponents/Logo';
 import { Alert, AlertDescription, } from '@/styles/ui/alert';
 import { Input } from '@/styles/ui/input';
 import { Button } from '@/styles/ui/button';
@@ -270,6 +268,7 @@ import LoginInfoPanel from "./LoginInfoPanel";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "@/hooks";
 import { registerUser } from "@/features/auth/authSlice";
+import Logo from "../mainComponents/Logo";
 
 
 const RegisterForm = () => {
