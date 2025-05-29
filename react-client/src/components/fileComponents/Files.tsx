@@ -47,9 +47,9 @@ const Files = () => {
   const handleDelete = async (fileId: number) => {
     try {
       await dispatch(deleteFile(fileId));
-      dispatch(fetchFilesByUserId());
-      dispatch(fetchSharesWithMe());
-      dispatch(fetchSharesToOthers());
+      // dispatch(fetchFilesByUserId());
+      // dispatch(fetchSharesWithMe());
+      // dispatch(fetchSharesToOthers());
     } catch (err) {
       console.error("Failed to delete file:", err);
     }
@@ -58,7 +58,7 @@ const Files = () => {
   const handleRename = async (updatedFile: FileDto) => {
     try {
       await dispatch(updateFile(updatedFile));
-      dispatch(fetchFilesByUserId());
+      // dispatch(fetchFilesByUserId());
     } catch (err) {
       console.error("Failed to update file:", err);
     }
@@ -70,7 +70,7 @@ const Files = () => {
 
   const handleShare = async (updatedFile: SharePostModel) => {
     await dispatch(shareFile(updatedFile));
-    await dispatch(fetchFilesByUserId());
+    // await dispatch(fetchFilesByUserId());
     await dispatch(fetchSharesWithMe());
     await dispatch(fetchSharesToOthers());
   };
