@@ -150,7 +150,6 @@ const filesSlice = createSlice({
                 state.fetchError = action.payload as string;
                 state.hasFetched = false;
             })
-
             // --- Delete file ---
             .addCase(deleteFile.pending, (state, action) => {
                 const id = action.meta.arg;
@@ -168,7 +167,6 @@ const filesSlice = createSlice({
                 state.isDeletingById[id] = false;
                 state.deleteErrorById[id] = action.payload as string;
             })
-
             .addCase(updateFile.pending, (state) => {
                 state.isUpdating = true;
                 state.updateError = null;
@@ -209,6 +207,5 @@ const filesSlice = createSlice({
             });
     },
 });
-
 export const { clearFiles, resetUploadState, setProgress } = filesSlice.actions;
 export default filesSlice.reducer;
