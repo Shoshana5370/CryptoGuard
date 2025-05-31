@@ -7,14 +7,13 @@ import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
 import { FileDto } from "@/types/FileDto";
 import { SharePostModel } from "@/types/SharePostModel";
-import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareSlice";
 import { useFileFilters } from "@/features/useFileFilters";
 import FileGridView from "./FileGridWiew";
 import SearchAndFilter from "../shareComponents/SearchAndFilter";
 import ViewToggle from "../mainComponents/ViewToggle";
-import { shareFile } from "@/features/shares/shareSlice";
 import UploadFileDialog from "./UploadFile";
 import FileStats from "./FileStas";
+import { shareFile } from "../../features/shares/shareSlice";
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
@@ -43,7 +42,6 @@ const Files = () => {
     try {
       await dispatch(deleteFile(fileId)).unwrap();
     } catch {
-      // error managed in slice state per fileId
     }
   };
 
@@ -57,11 +55,8 @@ const Files = () => {
   const handleDownload = (fileId: number) => {
     console.log(`Download file with ID: ${fileId}`);
   };
-
   const handleShare = async (updatedFile: SharePostModel) => {
-    await dispatch(shareFile(updatedFile));
-    await dispatch(fetchSharesWithMe());
-    await dispatch(fetchSharesToOthers());
+    await dispatch(shareFile(updatedFile)).unwrap();
   };
   const handleUpload = async (file: File, customFileName: string) => {
     try {
