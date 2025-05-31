@@ -8,6 +8,7 @@ import { hashFileSHA256 } from "../../styles/lib/utils";
 export interface FilesState {
     items: FileDto[];
     isFetching: boolean;
+    hasFetched: boolean;
     fetchError: string | null;
     isDeletingById: { [fileId: number]: boolean };
     deleteErrorById: { [fileId: number]: string | null };
@@ -22,6 +23,7 @@ export interface FilesState {
 const initialState: FilesState = {
     items: [],
     isFetching: false,
+    hasFetched: false,
     fetchError: null,
     isDeletingById: {},
     deleteErrorById: {},
@@ -119,6 +121,7 @@ const filesSlice = createSlice({
         clearFiles(state) {
             state.items = [];
             state.fetchError = null;
+            
         },
         resetUploadState(state) {
             state.uploading = false;
@@ -140,10 +143,12 @@ const filesSlice = createSlice({
             .addCase(fetchFilesByUserId.fulfilled, (state, action: PayloadAction<FileDto[]>) => {
                 state.isFetching = false;
                 state.items = action.payload;
+                state.hasFetched = true;
             })
             .addCase(fetchFilesByUserId.rejected, (state, action) => {
                 state.isFetching = false;
                 state.fetchError = action.payload as string;
+                state.hasFetched = false;
             })
 
             // --- Delete file ---

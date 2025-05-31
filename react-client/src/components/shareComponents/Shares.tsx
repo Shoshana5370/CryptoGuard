@@ -14,15 +14,14 @@ const Shares = () => {
   const [selectedShareCode, setSelectedShareCode] = useState("");
   const [selectedShareName, setSelectedShareName] = useState("");
   const { user } = useAppSelector((state) => state.auth);
-  const { sharesWithMe, sharesToOthers } = useAppSelector((state) => state.share);
+  const { sharesWithMe, sharesToOthers, status } = useAppSelector((state) => state.share);
 
   useEffect(() => {
-    if (user) {
+    if (user && status.fetchWithMe === 'idle' && status.fetchToOthers === 'idle') {
       dispatch(fetchSharesWithMe());
       dispatch(fetchSharesToOthers());
     }
-  }, [dispatch, user]);
-
+  }, [dispatch, user, status.fetchWithMe, status.fetchToOthers]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50">
       <div className="container mx-auto px-4 py-8">

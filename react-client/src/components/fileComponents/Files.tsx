@@ -17,7 +17,7 @@ import { shareFile } from "../../features/shares/shareSlice";
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
-  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress } = useAppSelector(state => state.files);
+  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress,hasFetched } = useAppSelector(state => state.files);
   const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
   const [view, setView] = useState<'table' | 'grid' | 'compact'>('table');
   const {
@@ -34,10 +34,10 @@ const Files = () => {
   } = useFileFilters(files);
 
   useEffect(() => {
-    if (user && !isFetching) {
+    if (user && !hasFetched) {
       dispatch(fetchFilesByUserId());
     }
-  }, [dispatch, user, isFetching]);
+  }, [dispatch, user, hasFetched]);
   const handleDelete = async (fileId: number) => {
     try {
       await dispatch(deleteFile(fileId)).unwrap();
