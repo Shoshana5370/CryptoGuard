@@ -155,7 +155,6 @@ const shareSlice = createSlice({
         state.status.access = 'failed';
         state.error.access = action.payload as string;
       })
-
       // Share file
       .addCase(shareFile.pending, (state) => {
         state.status.share = 'loading';

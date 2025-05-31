@@ -46,8 +46,6 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
       setFileUrl(url);
       const inferredType = currentFile?.blob.type;
       setFileType(inferredType);
-      // dispatch(fetchSharesWithMe());
-      // dispatch(fetchSharesToOthers());
     }
   }, [currentFile?.blob]);
 

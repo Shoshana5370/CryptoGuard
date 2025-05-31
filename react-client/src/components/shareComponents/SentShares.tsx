@@ -34,7 +34,7 @@ const SentShares = () => {
         </Alert>
       )}
       
-      {status.fetchToOthers ? (
+      {status.fetchToOthers=== "loading" ? (
         <div className="flex flex-col justify-center items-center py-16">
           <div className="p-4 rounded-full bg-orange-100 mb-4">
             <Loader2 className="w-8 h-8 animate-spin text-orange-600" />

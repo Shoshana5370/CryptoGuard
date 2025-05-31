@@ -18,7 +18,6 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
   const isExpired = new Date(share.expiresAt) <= new Date();
 
   const handleCopyLink = () => {
-    // This would copy the share link to clipboard
     navigator.clipboard.writeText(`${window.location.origin}/share/${share.id}`);
   };
 
