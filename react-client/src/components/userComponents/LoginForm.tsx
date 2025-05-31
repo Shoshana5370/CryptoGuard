@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Input } from "@/styles/ui/input";
 import { Button } from "@/styles/ui/button";
 import LoginInfoPanel from "./LoginInfoPanel";
+import { useToast } from "@/styles/hooks/use-toast";
 
 //   const [email, setEmail] = useState('');
 //   const [password, setPassword] = useState('');
@@ -46,7 +47,7 @@ import LoginInfoPanel from "./LoginInfoPanel";
 //     if (!captchaToken) {
 //       setErrors((prev) => ({ ...prev, captcha: 'Captcha is required' }));
 //     }
-    
+
 //     if (Object.keys(validationErrors).length > 0) {
 //       setErrors(validationErrors);
 //       return;
@@ -169,8 +170,8 @@ import LoginInfoPanel from "./LoginInfoPanel";
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const { user, loading, error } = useAppSelector((state) => state.auth);
+  const { toast } = useToast();
+  const { user, loginLoading, loginError } = useAppSelector((state) => state.auth);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -189,6 +190,7 @@ const LoginForm = () => {
     } else if (password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
+
     return newErrors;
   };
 
@@ -202,11 +204,21 @@ const LoginForm = () => {
     dispatch(loginUser({ email, password }));
   };
 
-  useEffect(() => {
-    if (!loading && !error && user) {
+ useEffect(() => {
+    if (!loginLoading && user) {
+      toast({
+        title: "Login Successful",
+        description: `Welcome back, ${user.name || "user"}!`,
+      });
       navigate("/home");
     }
-  }, [loading, error, user, navigate]);
+    if (!loginLoading && loginError) {
+      toast({
+        title: "Login Failed",
+        description: loginError,
+      });
+    }
+  }, [loginLoading, loginError, user, navigate, toast]);
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden">
@@ -243,12 +255,12 @@ const LoginForm = () => {
               </motion.div>
             </div>
 
-            {error && (
+            {loginError && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mb-6">
                 <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-sm">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription className="text-red-700">
-                    {typeof error === 'string' ? error : JSON.stringify(error, null, 2)}
+                    {loginError}
                   </AlertDescription>
                 </Alert>
               </motion.div>
@@ -309,8 +321,8 @@ const LoginForm = () => {
               </motion.div>
 
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }}>
-                <Button type="submit" disabled={loading} className="w-full h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all">
-                  {loading ? (
+                <Button type="submit" disabled={loginLoading} className="w-full h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all">
+                  {loginLoading ? (
                     <motion.div className="flex items-center justify-center gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                       <Loader className="animate-spin h-5 w-5" />
                       <span>Signing in...</span>

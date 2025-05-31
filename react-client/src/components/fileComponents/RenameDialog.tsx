@@ -1,35 +1,74 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/styles/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/styles/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/styles/ui/dialog";
 import { Input } from "@/styles/ui/input";
 import { Label } from "@/styles/ui/label";
-import { FileDto } from "@/types/FileDto";
 import { Pencil, FileText } from "lucide-react";
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { toast } from "@/styles/hooks/use-toast"; 
+
 interface RenameDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  file: FileDto;
-  onRename: (file: FileDto) => void;
+  file: { name: string; [key: string]: any } | null;
+  onRename: (updatedFile: any) => void;
+  updateError?: string | null;
+  isUpdating?: boolean;
 }
-const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) => {
-  const [newName, setNewName] = useState(file?.name || '');
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedFile = {
-      ...file,
-      name: newName,
-      updatedAt: new Date().toISOString(),
-    };    
-    onRename(updatedFile);
-    onClose();
+const RenameDialog = ({
+  isOpen,
+  onClose,
+  file,
+  onRename,
+  updateError,
+  isUpdating,
+}: RenameDialogProps) => {
+  const [newName, setNewName] = useState(file?.name || "");
+
+  useEffect(() => {
+    setNewName(file?.name || "");
+  }, [file]);
+
+ useEffect(() => {
+  if (updateError) {
+    toast({
+      title: "Rename failed",
+      description: updateError,
+      variant: "destructive",
+    });
+  }
+}, [updateError]);
+
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!newName.trim() || newName === file?.name) return;
+
+  const updatedFile = {
+    ...file,
+    name: newName.trim(),
+    updatedAt: new Date().toISOString(),
   };
+
+  onRename(updatedFile);
+
+  toast({
+    title: "File renamed",
+    description: `New name: ${newName.trim()}`,
+  });
+};
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
         <div className="bg-gradient-to-r from-orange-500 to-pink-500 h-1 -mt-6 mx-6 rounded-t-lg"></div>
-        
+
         <DialogHeader className="text-center pb-6">
           <DialogTitle className="flex items-center justify-center gap-3 text-xl">
             <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg">
@@ -40,12 +79,20 @@ const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) =>
             </span>
           </DialogTitle>
           <DialogDescription className="text-gray-600 mt-2">
-            Give <span className="font-semibold text-orange-600">"{file?.name}"</span> a new name
+            Give{" "}
+            <span className="font-semibold text-orange-600">
+              "{file?.name}"
+            </span>{" "}
+            a new name
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
-            <Label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <Label
+              htmlFor="name"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
               <FileText className="w-4 h-4" />
               New File Name
             </Label>
@@ -70,22 +117,35 @@ const RenameDialog = ({ isOpen, onClose, file, onRename }: RenameDialogProps) =>
               </motion.div>
             )}
           </div>
+
           <DialogFooter className="gap-3">
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={onClose}
               className="flex-1 h-12 rounded-xl border-gray-200 hover:bg-gray-50 transition-all"
+              disabled={isUpdating}
             >
               Cancel
-            </Button>          
-            <Button 
-              type="submit" 
+            </Button>
+            <Button
+              type="submit"
               className="flex-1 h-12 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={!newName.trim() || newName === file?.name}
+              disabled={
+                !newName.trim() || newName === file?.name || isUpdating
+              }
             >
-              <Pencil className="w-4 h-4 mr-2" />
-              Rename File
+              {isUpdating ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                  Renaming...
+                </span>
+              ) : (
+                <>
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Rename File
+                </>
+              )}
             </Button>
           </DialogFooter>
         </form>

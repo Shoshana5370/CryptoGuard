@@ -2,10 +2,8 @@ import { TableCell } from "@/styles/ui/table";
 import { FileDto } from "@/types/FileDto";
 import { motion } from "framer-motion";
 import FileIcon from "./FileIcon";
-
 import FileActions from "./FileActions";
 import FileTypeLabel from "./FileTypeLevel";
-
 interface FileRowProps {
   file: FileDto;
   index: number;
@@ -13,9 +11,11 @@ interface FileRowProps {
   onRename: (file: FileDto) => void;
   onShare: (file: FileDto) => void;
   onDelete: (fileId: number) => void;
+  isDeleting: boolean;
+  deleteError: string | null;
 }
 
-const FileRow = ({ file, index, onDownload, onRename, onShare, onDelete }: FileRowProps) => {
+const FileRow = ({ file, index, onDownload, onRename, onShare, onDelete, isDeleting, deleteError }: FileRowProps) => {
   return (
     <motion.tr
       key={file.id}
@@ -39,19 +39,21 @@ const FileRow = ({ file, index, onDownload, onRename, onShare, onDelete }: FileR
         <FileTypeLabel mimeType={file.contentType} />
       </TableCell>
       <TableCell className="text-gray-600 font-medium">
-        {new Date(file.updatedAt).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
+        {new Date(file.updatedAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
         })}
       </TableCell>
       <TableCell>
         <FileActions
           file={file}
-          onDownload={onDownload}
-          onRename={onRename}
-          onShare={onShare}
-          onDelete={onDelete}
+          onDownload={() => onDownload(file.id)}
+          onRename={() => onRename(file)}
+          onShare={() => onShare(file)}
+          onDelete={() => onDelete(file.id)}
+          isDeleting={isDeleting}
+          deleteError={deleteError}
         />
       </TableCell>
     </motion.tr>

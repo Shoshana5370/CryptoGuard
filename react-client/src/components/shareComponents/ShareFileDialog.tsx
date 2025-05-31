@@ -18,15 +18,12 @@ type ShareFileDialogProps = {
   file: FileDto;
   onShare: (updatedFile: SharePostModel) => void;
 };
-
 const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProps) => {
-  const { status } = useAppSelector((state: RootState) => state.shareFile);
+  const { status } = useAppSelector((state: RootState) => state.share);
   const [email, setEmail] = useState("");
   const [expiration, setExpiration] = useState<Date | null>(null);
-  
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    
   const handleShare = async () => {
     if (!email || !file?.id) return;
     const payload: SharePostModel = {
@@ -48,8 +45,8 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
     onClose();
   };
 
-  const isSharing = status === "loading";
-  const isSuccess = status === "succeeded";
+  const isSharing = status.share === "loading";
+  const isSuccess = status.share === "succeeded";
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => open ? null : handleClose()}>

@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileDto } from "@/types/FileDto";
 import { motion } from "framer-motion";
 import FileIcon from "./FileIcon";
@@ -9,14 +9,31 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { SharePostModel } from "@/types/SharePostModel";
 import RenameDialog from "./RenameDialog";
 import ShareFileDialog from "../shareComponents/ShareFileDialog";
+import { toast } from "@/styles/hooks/use-toast";
+
 interface FileGridViewProps {
     files: FileDto[];
     onDownload: (fileId: number) => void;
     onRename: (file: FileDto) => void;
     onShare: (file: SharePostModel) => void;
     onDelete: (fileId: number) => void;
+    deleteErrorById: { [fileId: number]: string | null };
+    isDeletingById: { [fileId: number]: boolean };
+    isUpdating?: boolean;
+    updateError?: string | null;
 }
-const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGridViewProps) => {
+
+const FileGridView = ({
+    files,
+    onDownload,
+    onRename,
+    onShare,
+    onDelete,
+    deleteErrorById,
+    isDeletingById,
+    isUpdating,
+    updateError,
+}: FileGridViewProps) => {
     const [isRenameOpen, setIsRenameOpen] = useState(false);
     const [isShareOpen, setIsShareOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<FileDto | null>(null);
@@ -51,6 +68,21 @@ const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGr
         onRename(updatedFile);
         handleCloseRename();
     };
+
+    useEffect(() => {
+        Object.entries(deleteErrorById).forEach(([fileId, errorMessage]) => {
+            if (errorMessage) {
+                const file = files.find(f => f.id === Number(fileId));
+                if (file) {
+                    toast({
+                        title: `Failed to delete "${file.name}"`,
+                        description: errorMessage,
+                        variant: "destructive",
+                    });
+                }
+            }
+        });
+    }, [deleteErrorById]);
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {files.map((file, index) => (
@@ -85,32 +117,34 @@ const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGr
                                         <Pencil className="w-4 h-4 mr-2" />
                                         Rename
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            handleOpenShare(file)}
-                                        className="hover:bg-rose-50"
-                                    >
+                                    <DropdownMenuItem onClick={() => handleOpenShare(file)} className="hover:bg-rose-50">
                                         <Share2 className="w-4 h-4 mr-2" />
                                         Share
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => onDelete(file.id)} className="hover:bg-red-50 text-red-600">
-                                        <Trash2 className="w-4 h-4 mr-2" />
-                                        Delete
+                                    <DropdownMenuItem
+                                        onClick={() => !isDeletingById[file.id] && onDelete(file.id)}
+                                        disabled={isDeletingById[file.id]}
+                                        className="hover:bg-red-50 text-red-600 flex items-center"
+                                    >
+                                        {isDeletingById[file.id] ? (
+                                            <div className="w-4 h-4 mr-2 animate-spin border-2 border-t-transparent border-red-600 rounded-full"></div>
+                                        ) : (
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                        )}
+                                        {isDeletingById[file.id] ? "Deleting..." : "Delete"}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
                         <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-base">
-                                {file.name}
-                            </h3>
+                            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-base">{file.name}</h3>
                             <div className="space-y-2">
                                 <FileTypeLabel mimeType={file.contentType} />
                                 <p className="text-sm text-gray-500">
-                                    {new Date(file.updatedAt).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric'
+                                    {new Date(file.updatedAt).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "numeric",
+                                        year: "numeric",
                                     })}
                                 </p>
                             </div>
@@ -124,19 +158,15 @@ const FileGridView = ({ files, onDownload, onRename, onShare, onDelete }: FileGr
                     onClose={handleCloseRename}
                     file={selectedFile}
                     onRename={handleDialogRename}
+                    isUpdating={isUpdating}
+                    updateError={updateError}
                 />
             )}
 
             {selectedFileShare && (
-                <ShareFileDialog
-                    isOpen={isShareOpen}
-                    onClose={handleCloseShare}
-                    file={selectedFileShare}
-                    onShare={handleDialogShare}
-                />
+                <ShareFileDialog isOpen={isShareOpen} onClose={handleCloseShare} file={selectedFileShare} onShare={handleDialogShare} />
             )}
         </div>
-
     );
 };
 

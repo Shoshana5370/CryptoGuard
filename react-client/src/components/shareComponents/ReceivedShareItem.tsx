@@ -6,7 +6,6 @@ interface Props {
   share: ShareDto;
   onSelect: (shareId: string, fileName: string) => void;
 }
-
 const ReceivedShareItem: React.FC<Props> = ({ share, onSelect }) => {
   const isInactive = share.used || share.fileIsDeleted;
   const isExpired = new Date(share.expiresAt) <= new Date();
@@ -62,7 +61,7 @@ const ReceivedShareItem: React.FC<Props> = ({ share, onSelect }) => {
             {!isInactive && !isExpired && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Calendar className="w-4 h-4" />
-                <span>Expires: {new Date(share.expiresAt).toLocaleDateString()}</span>
+                <span> Expires: {new Date(share.expiresAt).toLocaleDateString()}</span>
               </div>
             )}
             <div className="flex flex-wrap gap-2">

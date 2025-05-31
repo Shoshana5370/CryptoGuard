@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { accessSharedFile, clearAccess } from "@/features/shares/accessSlice";
+import { accessSharedFile, clearAccess } from "@/features/shares/shareSlice";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/styles/ui/card";
 import { Input } from "@/styles/ui/input";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
 import { AlertTriangle, Download, Link, ExternalLink, FileText, Sparkles } from "lucide-react";
-import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareSlice";
 import { motion } from "framer-motion";
 
 type AccessSharedFileProps = {
@@ -19,25 +18,24 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   const [fileType, setFileType] = useState<string | null>(null);
 
   const dispatch = useAppDispatch();
-  const { fileBlob, status, error } = useAppSelector((state) => state.access);
-  
+  const { currentFile, status, error } = useAppSelector((state) => state.share);
   useEffect(() => {
     return () => {
       dispatch(clearAccess());
-      dispatch(fetchSharesWithMe());
-      dispatch(fetchSharesToOthers());
+      // dispatch(fetchSharesWithMe());
+      // dispatch(fetchSharesToOthers());
     };
   }, []);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(accessSharedFile({ shareId: parseInt(code), code: shareCode.trim() }));
-    dispatch(fetchSharesWithMe());
-    dispatch(fetchSharesToOthers());
+    // dispatch(fetchSharesWithMe());
+    // dispatch(fetchSharesToOthers());
   };
 
   const handleDownload = () => {
-    if (fileBlob && fileUrl) {
+    if (currentFile?.blob && fileUrl) {
       const link = document.createElement("a");
       link.href = fileUrl;
       link.setAttribute("download", fileName);
@@ -46,17 +44,16 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
       link.remove();
     }
   };
-
   useEffect(() => {
-    if (fileBlob) {
-      const url = window.URL.createObjectURL(fileBlob);
+    if (currentFile?.blob) {
+      const url = window.URL.createObjectURL(currentFile?.blob);
       setFileUrl(url);
-      const inferredType = fileBlob.type;
+      const inferredType = currentFile?.blob.type;
       setFileType(inferredType);
-      dispatch(fetchSharesWithMe());
-      dispatch(fetchSharesToOthers());
+      // dispatch(fetchSharesWithMe());
+      // dispatch(fetchSharesToOthers());
     }
-  }, [fileBlob]);
+  }, [currentFile?.blob]);
 
   const isPreviewable = (type: string | null) => {
     if (!type) return false;
@@ -135,11 +132,11 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
                 value={shareCode}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShareCode(e.target.value)}
                 className="pl-12 h-12 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                disabled={status === "loading"}
+                disabled={status.access === "loading"}
               />
             </div>
 
-            {status === "failed" && (
+            {status.access === "failed" && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -156,9 +153,9 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
             <Button
               type="submit"
               className="w-full h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={status === "loading" || !shareCode.trim()}
+              disabled={status.access === "loading" || !shareCode.trim()}
             >
-              {status === "loading" ? (
+              {status.access === "loading" ? (
                 <motion.div className="flex items-center gap-2">
                   <motion.div
                     animate={{ rotate: 360 }}

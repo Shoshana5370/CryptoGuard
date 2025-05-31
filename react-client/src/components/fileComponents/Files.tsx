@@ -1,8 +1,8 @@
-import { deleteFile, fetchFilesByUserId, updateFile } from "@/features/files/filesSlice";
+import { deleteFile, fetchFilesByUserId, updateFile, uploadFileContent } from "@/features/files/filesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
-import { Loader2, Upload, } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import FileTable from "./FileTable";
 import { FileDto } from "@/types/FileDto";
@@ -11,20 +11,16 @@ import { fetchSharesToOthers, fetchSharesWithMe } from "@/features/shares/shareS
 import { useFileFilters } from "@/features/useFileFilters";
 import FileGridView from "./FileGridWiew";
 import SearchAndFilter from "../shareComponents/SearchAndFilter";
-
-import ViewToggle from "../shareComponents/ViewToggle";
-import { shareFile } from "@/features/shares/shareFileSlice";
+import ViewToggle from "../mainComponents/ViewToggle";
+import { shareFile } from "@/features/shares/shareSlice";
 import UploadFileDialog from "./UploadFile";
 import FileStats from "./FileStas";
-
-
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
-  const { items: files, loading, error } = useAppSelector(state => state.files);
+  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress } = useAppSelector(state => state.files);
   const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
   const [view, setView] = useState<'table' | 'grid' | 'compact'>('table');
-
   const {
     searchTerm,
     setSearchTerm,
@@ -43,24 +39,18 @@ const Files = () => {
       dispatch(fetchFilesByUserId());
     }
   }, [dispatch, user]);
-
   const handleDelete = async (fileId: number) => {
     try {
-      await dispatch(deleteFile(fileId));
-      // dispatch(fetchFilesByUserId());
-      // dispatch(fetchSharesWithMe());
-      // dispatch(fetchSharesToOthers());
-    } catch (err) {
-      console.error("Failed to delete file:", err);
+      await dispatch(deleteFile(fileId)).unwrap();
+    } catch {
+      // error managed in slice state per fileId
     }
   };
 
   const handleRename = async (updatedFile: FileDto) => {
     try {
-      await dispatch(updateFile(updatedFile));
-      // dispatch(fetchFilesByUserId());
-    } catch (err) {
-      console.error("Failed to update file:", err);
+      await dispatch(updateFile(updatedFile)).unwrap();
+    } catch {
     }
   };
 
@@ -70,9 +60,15 @@ const Files = () => {
 
   const handleShare = async (updatedFile: SharePostModel) => {
     await dispatch(shareFile(updatedFile));
-    // await dispatch(fetchFilesByUserId());
     await dispatch(fetchSharesWithMe());
     await dispatch(fetchSharesToOthers());
+  };
+  const handleUpload = async (file: File, customFileName: string) => {
+    try {
+      await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
+    } catch (err) {
+      console.error("Failed to upload file:", err);
+    }
   };
   const activeFiles = files.filter(file => !file.isDelete);
   return (
@@ -99,18 +95,25 @@ const Files = () => {
               </Button>
             )}
           </div>
-          <UploadFileDialog isOpen={isUploadFileOpen} onClose={() => setUploadFileIsOpen(false)} />
+          <UploadFileDialog
+            isOpen={isUploadFileOpen}
+            onClose={() => setUploadFileIsOpen(false)}
+            onUpload={handleUpload}
+            uploading={uploading}
+            uploadError={uploadError}
+            progress={progress}
+          />
         </div>
 
-        {error && (
+        {fetchError && (
           <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
             <AlertDescription className="text-red-700">
-              {typeof error === 'string' ? error : 'Failed to load files'}
+              {fetchError}
             </AlertDescription>
           </Alert>
         )}
-        
-        {loading ? (
+
+        {isFetching ? (
           <div className="flex justify-center items-center py-20">
             <div className="text-center">
               <div className="relative">
@@ -152,6 +155,10 @@ const Files = () => {
                       onRename={handleRename}
                       onDownload={handleDownload}
                       onShare={handleShare}
+                      isDeletingById={isDeletingById}
+                      deleteErrorById={deleteErrorById}
+                      isUpdating={isUpdating}
+                      updateError={updateError}
                     />
                   )}
                 </div>
@@ -163,6 +170,10 @@ const Files = () => {
                 onRename={handleRename}
                 onDownload={handleDownload}
                 onShare={handleShare}
+                isDeletingById={isDeletingById}
+                deleteErrorById={deleteErrorById}
+                isUpdating={isUpdating}
+                updateError={updateError}
               />
             )}
           </>
@@ -173,3 +184,4 @@ const Files = () => {
 };
 
 export default Files;
+

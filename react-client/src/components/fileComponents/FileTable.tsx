@@ -7,18 +7,27 @@ import { SharePostModel } from "@/types/SharePostModel";
 import EmptyFileState from "./EmptyFileState";
 import ShareFileDialog from "../shareComponents/ShareFileDialog";
 import FileRow from "./FileRow";
+
 const FileTable = ({
   files,
   onDelete,
   onRename,
   onDownload,
-  onShare
+  onShare,
+  deleteErrorById,
+  isDeletingById,
+  isUpdating,
+  updateError,
 }: {
   files: FileDto[],
   onDelete: (file: number) => void,
   onRename: (file: FileDto) => void,
   onDownload: (file: number) => void,
-  onShare: (file: SharePostModel) => void
+  onShare: (file: SharePostModel) => void,
+  deleteErrorById?: { [fileId: number]: string | null },
+  isDeletingById?: { [fileId: number]: boolean },
+  isUpdating: boolean,
+  updateError: string | null,
 }) => {
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -29,36 +38,38 @@ const FileTable = ({
     setSelectedFileShare(file);
     setIsShareOpen(true);
   };
-  
+
   const handleCloseShare = () => {
     setIsShareOpen(false);
     setSelectedFileShare(null);
   };
-  
+
   const handleDialogShare = (updatedFile: SharePostModel) => {
-    onShare(updatedFile); 
-    handleCloseShare();   
+    onShare(updatedFile);
+    handleCloseShare();
   };
-  
+
   const handleOpenRename = (file: FileDto) => {
     setSelectedFile(file);
     setIsRenameOpen(true);
   };
-  
+
   const handleCloseRename = () => {
     setSelectedFile(null);
     setIsRenameOpen(false);
   };
-  
+
   const handleDialogRename = (updatedFile: FileDto) => {
-    onRename(updatedFile); 
-    handleCloseRename();  
+    onRename(updatedFile);
+    handleCloseRename();
   };
 
   const activeFiles = files.filter(file => !file.isDelete);
+
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border-0 overflow-hidden">
       <div className="bg-gradient-to-r from-emerald-500 to-orange-500 h-1"></div>
+
       {activeFiles.length === 0 ? (
         <EmptyFileState />
       ) : (
@@ -72,6 +83,7 @@ const FileTable = ({
                 <TableHead className="font-semibold text-gray-700 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               <AnimatePresence mode="popLayout">
                 {activeFiles.map((file, index) => (
@@ -83,6 +95,8 @@ const FileTable = ({
                     onRename={handleOpenRename}
                     onShare={handleOpenShare}
                     onDelete={onDelete}
+                    isDeleting={isDeletingById?.[file.id] ?? false}
+                    deleteError={deleteErrorById?.[file.id] ?? null}
                   />
                 ))}
               </AnimatePresence>
@@ -90,15 +104,18 @@ const FileTable = ({
           </Table>
         </div>
       )}
+
       {selectedFile && (
         <RenameDialog
           isOpen={isRenameOpen}
           onClose={handleCloseRename}
           file={selectedFile}
           onRename={handleDialogRename}
+          isUpdating={isUpdating}
+          updateError={updateError}
         />
       )}
-      
+
       {selectedFileShare && (
         <ShareFileDialog
           isOpen={isShareOpen}
@@ -110,4 +127,5 @@ const FileTable = ({
     </div>
   );
 };
+
 export default FileTable;

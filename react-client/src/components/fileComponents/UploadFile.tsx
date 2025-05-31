@@ -1,7 +1,4 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks";
-import { uploadFileContent, resetUploadState } from "@/features/files/uploadslice";
-import { RootState } from "@/store/store";
 import {
   Dialog,
   DialogContent,
@@ -13,29 +10,38 @@ import {
 import { Input } from "@/styles/ui/input";
 import { Button } from "@/styles/ui/button";
 import { Label } from "@/styles/ui/label";
-import { UploadCloud,Check, FileText, Sparkles } from "lucide-react";
+import { UploadCloud, Check, FileText, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { fetchFilesByUserId } from "@/features/files/filesSlice";
+import { toast } from "@/styles/hooks/use-toast";
 
 type UploadFileDialogProps = {
   isOpen: boolean;
   onClose: () => void;
+  onUpload: (file: File, customFileName: string) => Promise<void>;
+  uploading: boolean;
+  uploadError: string | null;
+  progress: number;
 };
 
-const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
-  const dispatch = useAppDispatch();
-  const { uploading, success, error } = useAppSelector(
-    (state: RootState) => state.upFiles
-  );
-
+const UploadFileDialog = ({
+  isOpen,
+  onClose,
+  onUpload,
+  uploading,
+  uploadError,
+  progress,
+}: UploadFileDialogProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [customFileName, setCustomFileName] = useState<string>("");
+  const [customFileName, setCustomFileName] = useState("");
   const [dragActive, setDragActive] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files?.[0]) {
       setFile(e.target.files[0]);
-      dispatch(resetUploadState());
+      setLocalError(null);
     }
   };
 
@@ -53,9 +59,9 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.[0]) {
       setFile(e.dataTransfer.files[0]);
-      dispatch(resetUploadState());
+      setLocalError(null);
     }
   };
 
@@ -63,41 +69,61 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
     e.preventDefault();
     if (!file) return;
 
+    if (file.size > MAX_FILE_SIZE) {
+      const message = "File size exceeds 100MB limit.";
+      setLocalError(message);
+      toast({
+        title: "File too large",
+        description: message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLocalError(null);
     try {
-      await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
-      await dispatch(fetchFilesByUserId());
-    } catch (err) {
-      setFile(null);
-      setCustomFileName("");
-      dispatch(resetUploadState());
+      await onUpload(file, customFileName);
+      toast({
+        title: "Upload successful",
+        description: `${file.name} was uploaded and encrypted.`,
+      });
+      setSuccess(true);
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
+    } catch {
+      const errorMessage = "Upload failed. Please try again.";
+      setLocalError(errorMessage);
+      toast({
+        title: "Upload failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
   const handleClose = () => {
     setFile(null);
     setCustomFileName("");
-    dispatch(resetUploadState());
+    setLocalError(null);
+    setSuccess(false);
     onClose();
   };
 
   useEffect(() => {
     if (!isOpen) {
       setFile(null);
-      dispatch(resetUploadState());
+      setCustomFileName("");
+      setLocalError(null);
+      setSuccess(false);
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    if (success) {
-      handleClose();
-    }
-  }, [success, dispatch]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => (open ? null : handleClose())}>
       <DialogContent className="sm:max-w-[500px] border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
         <div className="bg-gradient-to-r from-emerald-500 to-pink-500 h-1 -mt-6 mx-6 rounded-t-lg"></div>
-        
+
         <DialogHeader className="text-center pb-6">
           <DialogTitle className="flex items-center justify-center gap-3 text-2xl">
             <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg">
@@ -114,7 +140,10 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
 
         <form onSubmit={handleUpload} className="space-y-6">
           <div className="space-y-3">
-            <Label htmlFor="fileName" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <Label
+              htmlFor="fileName"
+              className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+            >
               <FileText className="w-4 h-4" />
               Custom File Name (Optional)
             </Label>
@@ -128,19 +157,19 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
               className="h-12 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
             />
           </div>
+
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-gray-700">
               Choose File
             </Label>
-            
+
             <div
-              className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
-                dragActive 
-                  ? 'border-emerald-500 bg-emerald-50' 
-                  : file 
-                    ? 'border-emerald-300 bg-emerald-50' 
-                    : 'border-gray-300 hover:border-emerald-400 hover:bg-emerald-50/50'
-              }`}
+              className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${dragActive
+                  ? "border-emerald-500 bg-emerald-50"
+                  : file
+                    ? "border-emerald-300 bg-emerald-50"
+                    : "border-gray-300 hover:border-emerald-400 hover:bg-emerald-50/50"
+                }`}
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
@@ -152,7 +181,7 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 disabled={uploading || success}
               />
-              
+
               {file ? (
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -180,7 +209,9 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
                     <UploadCloud className="w-6 h-6 text-gray-400" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">Drop files here or click to browse</p>
+                    <p className="font-medium text-gray-900">
+                      Drop files here or click to browse
+                    </p>
                     <p className="text-sm text-gray-500 mt-1">
                       Supports all file types up to 100MB
                     </p>
@@ -190,28 +221,28 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
             </div>
           </div>
 
-          {error && (
+          {(localError || uploadError) && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="p-3 bg-red-50 rounded-lg border border-red-200"
             >
               <p className="text-sm text-red-700 font-medium">
-                Upload failed. Please try again.
+                {localError || uploadError}
               </p>
             </motion.div>
           )}
 
           <DialogFooter className="gap-3">
-            <Button 
+            <Button
               type="button"
-              variant="outline" 
+              variant="outline"
               onClick={handleClose}
               className="flex-1 h-12 rounded-xl border-gray-200 hover:bg-gray-50 transition-all"
             >
               Cancel
             </Button>
-            
+
             <Button
               type="submit"
               className="flex-1 h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
@@ -245,6 +276,16 @@ const UploadFileDialog = ({ isOpen, onClose }: UploadFileDialogProps) => {
             </Button>
           </DialogFooter>
         </form>
+
+        {file && uploading && (
+          <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+            <div
+              className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+            <p className="text-xs text-gray-500 mt-1 text-center">{progress}%</p>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );
