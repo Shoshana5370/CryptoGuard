@@ -8,7 +8,7 @@ import { useShareFilters } from "@/features/useShareFilters";
 import ShareStats from "./ShareStats";
 import ShareSearchAndFilter from "./ShareSearchAndFilter";
 const SentShares = () => {
-  const { sharesToOthers, loading, error } = useAppSelector((state) => state.share);
+  const { sharesToOthers, status, error } = useAppSelector((state) => state.share);
   
   const {
     searchTerm,
@@ -25,16 +25,16 @@ const SentShares = () => {
   
   return (
     <TabsContent value="sent" className="mt-0">
-      {error.toOthers && (
+      {error.fetchToOthers && (
         <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            {typeof error.toOthers === "string" ? error.toOthers : "Failed to load shared files."}
+            {typeof error.fetchToOthers === "string" ? error.fetchToOthers : "Failed to load shared files."}
           </AlertDescription>
         </Alert>
       )}
       
-      {loading.toOthers ? (
+      {status.fetchToOthers ? (
         <div className="flex flex-col justify-center items-center py-16">
           <div className="p-4 rounded-full bg-orange-100 mb-4">
             <Loader2 className="w-8 h-8 animate-spin text-orange-600" />

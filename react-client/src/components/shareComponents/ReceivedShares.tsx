@@ -12,10 +12,9 @@ import ShareSearchAndFilter from "./ShareSearchAndFilter";
 interface Props {
   onSelect: (shareId: string, fileName: string) => void;
 }
-
 const ReceivedShares = ({ onSelect }: Props) => {
-  const { sharesWithMe, loading, error } = useAppSelector((state) => state.share);
-  
+  const { sharesWithMe, status, error } = useAppSelector((state) => state.share);
+
   const {
     searchTerm,
     setSearchTerm,
@@ -28,19 +27,19 @@ const ReceivedShares = ({ onSelect }: Props) => {
     filteredAndSortedShares,
     resetFilters,
   } = useShareFilters(sharesWithMe, 'received');
-  
+
   return (
     <TabsContent value="received" className="mt-0">
-      {error.withMe && (
+      {error.fetchToOthers && (
         <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            {typeof error.withMe === "string" ? error.withMe : "Failed to load files"}
+            {error.fetchToOthers}
           </AlertDescription>
         </Alert>
       )}
-      
-      {loading.withMe ? (
+
+      {status.fetchWithMe === "loading" ? (
         <div className="flex flex-col justify-center items-center py-16">
           <div className="p-4 rounded-full bg-emerald-100 mb-4">
             <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
@@ -54,7 +53,7 @@ const ReceivedShares = ({ onSelect }: Props) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <ShareStats shares={sharesWithMe} type="received" />         
+          <ShareStats shares={sharesWithMe} type="received" />
           <ShareSearchAndFilter
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
