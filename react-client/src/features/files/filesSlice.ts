@@ -7,13 +7,10 @@ import { hashFileSHA256 } from "../../styles/lib/utils";
 
 export interface FilesState {
     items: FileDto[];
-
     isFetching: boolean;
     fetchError: string | null;
-
     isDeletingById: { [fileId: number]: boolean };
     deleteErrorById: { [fileId: number]: string | null };
-
     isUpdating: boolean;
     updateError: string | null;
     uploading: boolean;

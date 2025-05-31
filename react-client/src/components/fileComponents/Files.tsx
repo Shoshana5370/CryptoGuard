@@ -34,10 +34,10 @@ const Files = () => {
   } = useFileFilters(files);
 
   useEffect(() => {
-    if (user) {
+    if (user && !isFetching) {
       dispatch(fetchFilesByUserId());
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, isFetching]);
   const handleDelete = async (fileId: number) => {
     try {
       await dispatch(deleteFile(fileId)).unwrap();

@@ -22,16 +22,12 @@ const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
   useEffect(() => {
     return () => {
       dispatch(clearAccess());
-      // dispatch(fetchSharesWithMe());
-      // dispatch(fetchSharesToOthers());
     };
   }, []);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(accessSharedFile({ shareId: parseInt(code), code: shareCode.trim() }));
-    // dispatch(fetchSharesWithMe());
-    // dispatch(fetchSharesToOthers());
   };
 
   const handleDownload = () => {
