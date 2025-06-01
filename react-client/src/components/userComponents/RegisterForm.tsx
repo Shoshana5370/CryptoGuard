@@ -494,7 +494,7 @@ import { AlertCircle, Shield, Sparkles, Lock, Eye, EyeOff, Loader, Mail, User } 
 import LoginInfoPanel from "./LoginInfoPanel";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "@/hooks";
-import { registerUser } from "@/features/auth/authSlice";
+import { registerUser } from "../../features/auth/authSlice";
 import Logo from "../mainComponents/Logo";
 import { useToast } from "@/styles/hooks/use-toast";
 

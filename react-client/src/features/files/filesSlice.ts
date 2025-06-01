@@ -2,9 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FileDto } from '../../types/FileDto';
 import { FilePostModel } from '../../types/FilePostModel';
 import { RootState } from '../../store/store';
-import axiosInstance from '../../axiosInstance';
 import { hashFileSHA256 } from "../../styles/lib/utils";
-
+import axiosInstance from '../../axiosInstance';
 export interface FilesState {
     items: FileDto[];
     isFetching: boolean;

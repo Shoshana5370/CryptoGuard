@@ -1,9 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import axiosInstance from '@/axiosInstance';
 import { RootState } from '@/store/store';
 import { ShareDto } from '@/types/ShareDto';
 import { SharePostModel } from '@/types/SharePostModel';
-
+import axiosInstance from '@/axiosInstance';
 export interface ShareState {
   currentFile?: {
     blob: Blob;

@@ -4,9 +4,9 @@ import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import RenameDialog from "./RenameDialog";
 import { SharePostModel } from "@/types/SharePostModel";
-import EmptyFileState from "./EmptyFileState";
 import ShareFileDialog from "../shareComponents/ShareFileDialog";
 import FileRow from "./FileRow";
+import EmptyFileState from "./EmptyFileState";
 
 const FileTable = ({
   files,

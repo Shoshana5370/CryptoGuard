@@ -5,7 +5,7 @@
 //   const navigate = useNavigate();
 //   const { loading, error } = useAppSelector((state) => state.auth);
 
-import { loginUser } from "@/features/auth/authSlice";
+import { loginUser } from "../../features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
