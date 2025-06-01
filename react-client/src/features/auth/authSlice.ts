@@ -21,7 +21,6 @@ const initialState: AuthState = {
 };
 
 const url = import.meta.env.VITE_API_URL
-
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (
@@ -29,6 +28,7 @@ export const loginUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      console.log(url);    
       const response = await axios.post(`${url}/api/Auth/login`, credentials);
       sessionStorage.setItem('token', response.data.token);
       sessionStorage.setItem('user', JSON.stringify(response.data.user));
