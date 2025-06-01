@@ -60,15 +60,6 @@ const Files = () => {
     await dispatch(shareFile(updatedFile)).unwrap();
     await dispatch(fetchSharesToOthers()).unwrap();
   };
-/*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Uploads a file and its content to the server.
-   * If the server responds with an error, it logs the error to the console.
-   * @param file The file to be uploaded.
-   * @param customFileName The custom filename to be used when uploading the file.
-   * If this is not provided, the original filename is used.
-   */
-/*******  73773b0a-bcb5-4c6c-a9ac-5cf1d4029c34  *******/
   const handleUpload = async (file: File, customFileName: string) => {
     try {
       await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
