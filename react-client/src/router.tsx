@@ -1,4 +1,4 @@
-import { Files, Contact } from "lucide-react";
+
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import About from "./components/footerComponents.tsx/About";
 import Blog from "./components/footerComponents.tsx/Blog";
@@ -18,6 +18,8 @@ import LoginForm from "./components/userComponents/LoginForm";
 import Profile from "./components/userComponents/Profile";
 import RegisterForm from "./components/userComponents/RegisterForm";
 import Setting from "./components/userComponents/Setting";
+import Contact from "./components/footerComponents.tsx/Contact";
+import Files from "./components/fileComponents/Files";
 
 const Router = createBrowserRouter([
   {
