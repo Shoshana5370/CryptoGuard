@@ -17,7 +17,6 @@ const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProp
   const [expiration, setExpiration] = useState<Date | null>(null);
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
   const handleShare = async () => {
     if (!email || !file?.id) return;
     const payload: SharePostModel = {

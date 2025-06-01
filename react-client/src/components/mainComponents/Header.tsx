@@ -16,7 +16,7 @@ const Header = () => {
         { name: 'Home', href: '/' },
         { name: 'Files', href: '/files' },
         { name: 'Shares', href: '/shares' },
-        { name: 'Pricing', href: '#pricing' },
+        { name: 'Pricing', href: '/pricing' },
     ];
     const handleLogout = () => {
         dispatch(logout());

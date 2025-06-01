@@ -6,12 +6,9 @@ import { useState } from "react";
 import ShareQuickActions from "./ShareQuickActions";
 import ExpirationEditor from "./ExpirationEditor";
 import { extendShareExpiration } from "@/features/shares/shareSlice";
-import { Button } from "@/styles/ui/button";
-
 type SharedSentItemCardProps = {
   share: ShareDto;
 };
-
 const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
   const dispatch = useAppDispatch();
   const [editing, setEditing] = useState(false);
@@ -39,7 +36,7 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
               <div className="p-3 rounded-xl bg-orange-100 flex-shrink-0">
                 <Mail className="w-5 h-5 text-orange-600" />
               </div>
-              
+
               <div className="space-y-3 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-gray-600 text-sm">Shared with:</span>
@@ -47,7 +44,7 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
                     {share.recipientEmail}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <FileText className="w-4 h-4 text-gray-400" />
                   <span className="text-sm text-gray-600">File:</span>
@@ -103,36 +100,22 @@ const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
               onCopyLink={handleCopyLink}
               onExtend={handleExtend}
             />
-
-            {!share.used && !share.fileIsDeleted && (
-              <div className="flex-shrink-0">
-                {editing ? (
-                  <ExpirationEditor
-                    currentDate={share.expiresAt}
-                    onSave={(newDate) => {
-                      dispatch(
-                        extendShareExpiration({
-                          id: share.id,
-                          newDate: newDate.toISOString(),
-                        })
-                      );
-                      setEditing(false);
-                    }}
-                    onCancel={() => setEditing(false)}
-                  />
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setEditing(true)}
-                    className="bg-white hover:bg-orange-50 border-orange-200 text-orange-700 hover:text-orange-800 rounded-xl transition-all duration-200"
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Extend Access
-                  </Button>
-                )}
-              </div>
+            {editing && (
+              <ExpirationEditor
+                currentDate={share.expiresAt}
+                onSave={(newDate) => {
+                  dispatch(
+                    extendShareExpiration({
+                      id: share.id,
+                      newDate: newDate.toISOString(),
+                    })
+                  );
+                  setEditing(false);
+                }}
+                onCancel={() => setEditing(false)}
+              />
             )}
+
           </div>
         </div>
       </div>
