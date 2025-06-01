@@ -13,11 +13,11 @@ import SearchAndFilter from "../shareComponents/SearchAndFilter";
 import ViewToggle from "../mainComponents/ViewToggle";
 import UploadFileDialog from "./UploadFile";
 import FileStats from "./FileStas";
-import { shareFile } from "../../features/shares/shareSlice";
+import { fetchSharesToOthers, shareFile } from "../../features/shares/shareSlice";
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
-  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress,hasFetched } = useAppSelector(state => state.files);
+  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress, hasFetched } = useAppSelector(state => state.files);
   const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
   const [view, setView] = useState<'table' | 'grid' | 'compact'>('table');
   const {
@@ -41,6 +41,7 @@ const Files = () => {
   const handleDelete = async (fileId: number) => {
     try {
       await dispatch(deleteFile(fileId)).unwrap();
+      await dispatch(fetchSharesToOthers()).unwrap();
     } catch {
     }
   };
@@ -57,7 +58,17 @@ const Files = () => {
   };
   const handleShare = async (updatedFile: SharePostModel) => {
     await dispatch(shareFile(updatedFile)).unwrap();
+    await dispatch(fetchSharesToOthers()).unwrap();
   };
+/*************  ✨ Windsurf Command ⭐  *************/
+  /**
+   * Uploads a file and its content to the server.
+   * If the server responds with an error, it logs the error to the console.
+   * @param file The file to be uploaded.
+   * @param customFileName The custom filename to be used when uploading the file.
+   * If this is not provided, the original filename is used.
+   */
+/*******  73773b0a-bcb5-4c6c-a9ac-5cf1d4029c34  *******/
   const handleUpload = async (file: File, customFileName: string) => {
     try {
       await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
@@ -81,8 +92,8 @@ const Files = () => {
           <div className="flex items-center gap-3">
             <ViewToggle view={view} onViewChange={setView} />
             {user && (
-              <Button 
-                onClick={() => setUploadFileIsOpen(true)} 
+              <Button
+                onClick={() => setUploadFileIsOpen(true)}
                 className="h-12 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <Upload className="w-5 h-5 mr-2" />
@@ -121,7 +132,7 @@ const Files = () => {
           </div>
         ) : (
           <>
-            <FileStats files={activeFiles} />          
+            <FileStats files={activeFiles} />
             <SearchAndFilter
               searchTerm={searchTerm}
               onSearchChange={setSearchTerm}

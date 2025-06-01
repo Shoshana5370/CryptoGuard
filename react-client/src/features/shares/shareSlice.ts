@@ -162,7 +162,7 @@ const shareSlice = createSlice({
       .addCase(shareFile.fulfilled, (state, action: PayloadAction<ShareDto>) => {
         state.status.share = 'succeeded';
         state.createdShare = action.payload;
-        state.sharesToOthers.push(action.payload);
+    
       })
       .addCase(shareFile.rejected, (state, action) => {
         state.status.share = 'failed';

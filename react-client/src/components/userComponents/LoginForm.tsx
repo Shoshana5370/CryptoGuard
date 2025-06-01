@@ -61,7 +61,6 @@ import { useToast } from "@/styles/hooks/use-toast";
 
 //   return (
 //     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-//       <div className="hidden md:block bg-[url('/illustration.svg')] bg-cover bg-center" />
 //       <div className="flex items-center justify-center p-4">
 //         <motion.div
 //           initial={{ opacity: 0, y: 20 }}
