@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/styles/ui/dropdown-menu";
 import { Button } from "@/styles/ui/button";
 import { logout } from "@/features/auth/authSlice";
+import { openUploadDialog } from "@/features/files/uiSlice";
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
@@ -65,7 +66,7 @@ const Header = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Button 
-                  onClick={() => navigate('/files/upload')} 
+                  onClick={() => dispatch(openUploadDialog())} 
                   className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition-all duration-200"
                 >
                   Upload File

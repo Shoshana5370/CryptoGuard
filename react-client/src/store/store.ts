@@ -11,6 +11,7 @@ const rootReducer = (state:any, action: any) => {
     auth: authReducer(state?.auth, action),
     files: filesReducer(state?.files, action),
     share: sharesReducer(state?.share, action),
+    ui: state?.ui
   };
 };
 

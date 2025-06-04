@@ -14,11 +14,12 @@ import ViewToggle from "../mainComponents/ViewToggle";
 import UploadFileDialog from "./UploadFile";
 import FileStats from "./FileStas";
 import { fetchSharesToOthers, shareFile } from "../../features/shares/shareSlice";
+import { closeUploadDialog, openUploadDialog } from "@/features/files/uiSlice";
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
+  const isOpen = useAppSelector(state => state.ui.isUploadDialogOpen);
   const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress, hasFetched } = useAppSelector(state => state.files);
-  const [isUploadFileOpen, setUploadFileIsOpen] = useState(false);
   const [view, setView] = useState<'table' | 'grid' | 'compact'>('table');
   const {
     searchTerm,
@@ -83,7 +84,7 @@ const Files = () => {
             <ViewToggle view={view} onViewChange={setView} />
             {user && (
               <Button
-                onClick={() => setUploadFileIsOpen(true)}
+                onClick={() => dispatch(openUploadDialog())}
                 className="h-12 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <Upload className="w-5 h-5 mr-2" />
@@ -92,8 +93,8 @@ const Files = () => {
             )}
           </div>
           <UploadFileDialog
-            isOpen={isUploadFileOpen}
-            onClose={() => setUploadFileIsOpen(false)}
+            isOpen={isOpen}
+            onClose={() => dispatch(closeUploadDialog())}
             onUpload={handleUpload}
             uploading={uploading}
             uploadError={uploadError}
