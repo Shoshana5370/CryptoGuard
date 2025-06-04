@@ -8,37 +8,36 @@ import { Button } from "@/styles/ui/button";
 import { logout } from "@/features/auth/authSlice";
 import { openUploadDialog } from "@/features/files/uiSlice";
 const Header = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const location = useLocation();
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const { user } = useAppSelector(state => state.auth);
-    const navigation = [
-        { name: 'Home', href: '/' },
-        { name: 'Files', href: '/files' },
-        { name: 'Shares', href: '/shares' },
-        { name: 'Pricing', href: '/pricing' },
-    ];
-    const handleLogout = () => {
-        dispatch(logout());
-        navigate('/');
-    };
-     return (
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(state => state.auth);
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Files', href: '/files' },
+    { name: 'Shares', href: '/shares' },
+    { name: 'Pricing', href: '/pricing' },
+  ];
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
+  return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
             <Logo />
           </Link>
-          
+
           <nav className="hidden md:flex items-center gap-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-gray-700 hover:text-emerald-600 transition-all duration-200 font-medium relative group ${
-                  location.pathname === item.href ? 'text-emerald-600' : ''
-                }`}
+                className={`text-gray-700 hover:text-emerald-600 transition-all duration-200 font-medium relative group ${location.pathname === item.href ? 'text-emerald-600' : ''
+                  }`}
               >
                 {item.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-emerald-600 transition-all duration-200 group-hover:w-full"></span>
@@ -65,8 +64,8 @@ const Header = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button 
-                  onClick={() => dispatch(openUploadDialog())} 
+                <Button
+                  onClick={() => dispatch(openUploadDialog())}
                   className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition-all duration-200"
                 >
                   Upload File
@@ -74,15 +73,15 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Button 
-                  onClick={() => navigate('/auth/login')} 
+                <Button
+                  onClick={() => navigate('/auth/login')}
                   variant="ghost"
                   className="text-emerald-700 hover:bg-emerald-50"
                 >
                   Sign In
                 </Button>
-                <Button 
-                  onClick={() => navigate('/auth/register')} 
+                <Button
+                  onClick={() => navigate('/auth/register')}
                   className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition-all duration-200"
                 >
                   Sign Up
@@ -97,7 +96,7 @@ const Header = () => {
           >
             {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-          
+
           {isMenuOpen && (
             <div className="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-100 px-4 py-4 z-50">
               <nav className="flex flex-col gap-4">
@@ -105,9 +104,8 @@ const Header = () => {
                   <Link
                     key={item.name}
                     to={item.href}
-                    className={`text-gray-600 hover:text-emerald-600 transition-colors py-2 ${
-                      location.pathname === item.href ? 'text-emerald-600 font-medium' : ''
-                    }`}
+                    className={`text-gray-600 hover:text-emerald-600 transition-colors py-2 ${location.pathname === item.href ? 'text-emerald-600 font-medium' : ''
+                      }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {item.name}
@@ -118,7 +116,7 @@ const Header = () => {
                   <>
                     <Button
                       onClick={() => {
-                        navigate('/files/upload');
+                        dispatch(openUploadDialog())
                         setIsMenuOpen(false);
                       }}
                       className="bg-emerald-600 hover:bg-emerald-700 mt-2"

@@ -1,4 +1,4 @@
-import { deleteFile, fetchFilesByUserId, updateFile, uploadFileContent } from "@/features/files/filesSlice";
+import { deleteFile, fetchFilesByUserId, updateFile } from "@/features/files/filesSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { Alert, AlertDescription } from "@/styles/ui/alert";
 import { Button } from "@/styles/ui/button";
@@ -11,15 +11,15 @@ import { useFileFilters } from "@/features/useFileFilters";
 import FileGridView from "./FileGridWiew";
 import SearchAndFilter from "../shareComponents/SearchAndFilter";
 import ViewToggle from "../mainComponents/ViewToggle";
-import UploadFileDialog from "./UploadFile";
+// import UploadFileDialog from "./UploadFile";
 import FileStats from "./FileStas";
 import { fetchSharesToOthers, shareFile } from "../../features/shares/shareSlice";
-import { closeUploadDialog, openUploadDialog } from "@/features/files/uiSlice";
+import { openUploadDialog } from "@/features/files/uiSlice";
+// import { closeUploadDialog, openUploadDialog } from "@/features/files/uiSlice";
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
-  const isOpen = useAppSelector(state => state.ui.isUploadDialogOpen);
-  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, uploading, uploadError, progress, hasFetched } = useAppSelector(state => state.files);
+  const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, hasFetched } = useAppSelector(state => state.files);
   const [view, setView] = useState<'table' | 'grid' | 'compact'>('table');
   const {
     searchTerm,
@@ -60,13 +60,7 @@ const Files = () => {
     await dispatch(shareFile(updatedFile)).unwrap();
     await dispatch(fetchSharesToOthers()).unwrap();
   };
-  const handleUpload = async (file: File, customFileName: string) => {
-    try {
-      await dispatch(uploadFileContent({ file, fileName: customFileName.trim() || file.name })).unwrap();
-    } catch (err) {
-      console.error("Failed to upload file:", err);
-    }
-  };
+
   const activeFiles = files.filter(file => !file.isDelete);
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50">
@@ -92,14 +86,6 @@ const Files = () => {
               </Button>
             )}
           </div>
-          <UploadFileDialog
-            isOpen={isOpen}
-            onClose={() => dispatch(closeUploadDialog())}
-            onUpload={handleUpload}
-            uploading={uploading}
-            uploadError={uploadError}
-            progress={progress}
-          />
         </div>
 
         {fetchError && (
