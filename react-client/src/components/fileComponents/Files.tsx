@@ -11,14 +11,13 @@ import { useFileFilters } from "@/features/useFileFilters";
 import FileGridView from "./FileGridWiew";
 import SearchAndFilter from "../shareComponents/SearchAndFilter";
 import ViewToggle from "../mainComponents/ViewToggle";
-// import UploadFileDialog from "./UploadFile";
 import FileStats from "./FileStas";
 import { fetchSharesToOthers, shareFile } from "../../features/shares/shareSlice";
 import { openUploadDialog } from "@/features/files/uiSlice";
-// import { closeUploadDialog, openUploadDialog } from "@/features/files/uiSlice";
 const Files = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
+  
   const { items: files, isFetching, fetchError, isDeletingById, deleteErrorById, isUpdating, updateError, hasFetched } = useAppSelector(state => state.files);
   const [view, setView] = useState<'table' | 'grid' | 'compact'>('table');
   const {

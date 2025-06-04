@@ -66,8 +66,7 @@ const Header = () => {
                 </DropdownMenu>
                 <Button
                   onClick={() => dispatch(openUploadDialog())}
-                  className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition-all duration-200"
-                >
+                  className="bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition-all duration-200">
                   Upload File
                 </Button>
               </>
@@ -119,8 +118,7 @@ const Header = () => {
                         dispatch(openUploadDialog())
                         setIsMenuOpen(false);
                       }}
-                      className="bg-emerald-600 hover:bg-emerald-700 mt-2"
-                    >
+                      className="bg-emerald-600 hover:bg-emerald-700 mt-2">
                       Upload File
                     </Button>
                     <Button
