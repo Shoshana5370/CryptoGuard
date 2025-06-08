@@ -42,7 +42,6 @@ const initialState: ShareState = {
   error: {},
 };
 
-// Thunks
 export const accessSharedFile = createAsyncThunk(
   'share/accessSharedFile',
   async ({ shareId, code }: { shareId: number; code: string }, { rejectWithValue }) => {
@@ -116,7 +115,6 @@ export const extendShareExpiration = createAsyncThunk<
   }
 });
 
-// Slice
 const shareSlice = createSlice({
   name: 'share',
   initialState,
@@ -142,7 +140,6 @@ const shareSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Access shared file
       .addCase(accessSharedFile.pending, (state) => {
         state.status.access = 'loading';
       })
@@ -154,7 +151,6 @@ const shareSlice = createSlice({
         state.status.access = 'failed';
         state.error.access = action.payload as string;
       })
-      // Share file
       .addCase(shareFile.pending, (state) => {
         state.status.share = 'loading';
       })
@@ -168,7 +164,6 @@ const shareSlice = createSlice({
         state.error.share = action.payload as string;
       })
 
-      // Shares with me
       .addCase(fetchSharesWithMe.pending, (state) => {
         state.status.fetchWithMe = 'loading';
       })
@@ -181,7 +176,6 @@ const shareSlice = createSlice({
         state.error.fetchWithMe = action.payload ?? 'Failed to fetch shares with me';
       })
 
-      // Shares to others
       .addCase(fetchSharesToOthers.pending, (state) => {
         state.status.fetchToOthers = 'loading';
       })
@@ -194,7 +188,6 @@ const shareSlice = createSlice({
         state.error.fetchToOthers = action.payload ?? 'Failed to fetch shares to others';
       })
 
-      // Extend share expiration
       .addCase(extendShareExpiration.pending, (state) => {
         state.status.extend = 'loading';
       })

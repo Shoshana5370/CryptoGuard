@@ -2,8 +2,10 @@
 import { Button } from "@/styles/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/styles/ui/card";
 import { CheckCircle, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
+  const navigate=useNavigate();
   const plans = [
     {
       name: "Starter",
@@ -111,6 +113,7 @@ const Pricing = () => {
                       ? 'bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600' 
                       : 'bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800'
                     } text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}
+                    onClick={()=>navigate('/auth/login')}
                   >
                     {plan.name === "Enterprise" ? "Contact Sales" : "Start Free Trial"}
                   </Button>

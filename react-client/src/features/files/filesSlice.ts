@@ -34,8 +34,6 @@ const initialState: FilesState = {
     uploadedFile: undefined,
 
 };
-
-// --- FETCH FILES ---
 export const fetchFilesByUserId = createAsyncThunk<FileDto[]>(
     'files/fetchFilesByUserId',
     async (_, { rejectWithValue }) => {
@@ -48,8 +46,6 @@ export const fetchFilesByUserId = createAsyncThunk<FileDto[]>(
         }
     }
 );
-
-// --- DELETE FILE ---
 export const deleteFile = createAsyncThunk<number, number>(
     'files/deleteFile',
     async (fileId, { rejectWithValue }) => {
@@ -63,7 +59,6 @@ export const deleteFile = createAsyncThunk<number, number>(
     }
 );
 
-// --- UPDATE FILE ---
 export const updateFile = createAsyncThunk<FileDto, FileDto>(
     'files/updateFile',
     async (file, { rejectWithValue }) => {
@@ -76,8 +71,6 @@ export const updateFile = createAsyncThunk<FileDto, FileDto>(
         }
     }
 );
-
-// --- UPLOAD FILE ---
 export const uploadFileContent = createAsyncThunk<
     FileDto,
     { file: File; fileName?: string },
@@ -134,7 +127,7 @@ const filesSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // --- Fetch files ---
+           
             .addCase(fetchFilesByUserId.pending, (state) => {
                 state.isFetching = true;
                 state.fetchError = null;
@@ -149,7 +142,6 @@ const filesSlice = createSlice({
                 state.fetchError = action.payload as string;
                 state.hasFetched = false;
             })
-            // --- Delete file ---
             .addCase(deleteFile.pending, (state, action) => {
                 const id = action.meta.arg;
                 state.isDeletingById[id] = true;
@@ -185,7 +177,6 @@ const filesSlice = createSlice({
             })
 
 
-            // --- Upload file ---
             .addCase(uploadFileContent.pending, (state) => {
                 state.uploading = true;
                 state.uploadError = null;
