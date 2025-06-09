@@ -11,20 +11,22 @@ export interface AuthState {
   registerError: string | null;
 }
 
-const initialState: AuthState = {
+const loadInitialState = (): AuthState => ({
   user: JSON.parse(sessionStorage.getItem('user') || 'null'),
   token: sessionStorage.getItem('token'),
   loginLoading: false,
   registerLoading: false,
   loginError: null,
   registerError: null,
-};
+});
+
+const initialState: AuthState = loadInitialState();
 
 const url = import.meta.env.VITE_API_BASE_URL;
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (
-    credentials: { email: string; password: string },
+    credentials: { email: string; password: string , captchaToken: string},
     { rejectWithValue }
   ) => {
     try {

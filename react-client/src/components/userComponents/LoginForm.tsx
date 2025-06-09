@@ -17,6 +17,7 @@ import { Input } from "@/styles/ui/input";
 import { Button } from "@/styles/ui/button";
 import LoginInfoPanel from "./LoginInfoPanel";
 import { useToast } from "@/styles/hooks/use-toast";
+import ReCaptcha from "./ReCaptcha";
 
 //   const [email, setEmail] = useState('');
 //   const [password, setPassword] = useState('');
@@ -174,8 +175,9 @@ const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string, captcha?: string }>({});
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   const validate = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -196,14 +198,20 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors = validate();
+
+    if (!captchaToken) {
+      setErrors((prev) => ({ ...prev, captcha: 'Captcha is required' }));
+      return;
+    }
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    dispatch(loginUser({ email, password }));
+    setErrors({});
+    dispatch(loginUser({ email, password , captchaToken}));
   };
 
- useEffect(() => {
+  useEffect(() => {
     if (!loginLoading && user) {
       toast({
         title: "Login Successful",
@@ -318,7 +326,10 @@ const LoginForm = () => {
                   </motion.p>
                 )}
               </motion.div>
-
+              <ReCaptcha onVerify={(token) => setCaptchaToken(token)} />
+              {errors.captcha && (
+                <p className="text-sm text-red-500">{errors.captcha}</p>
+              )}
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.5 }}>
                 <Button type="submit" disabled={loginLoading} className="w-full h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all">
                   {loginLoading ? (
