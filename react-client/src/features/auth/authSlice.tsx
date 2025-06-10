@@ -52,7 +52,7 @@ export const loginUser = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (
-    userData: { email: string; password: string; name: string },
+    userData: { email: string; password: string; name: string, captchaToken: string ,isAdmin: boolean},
     { rejectWithValue }
   ) => {
     try {

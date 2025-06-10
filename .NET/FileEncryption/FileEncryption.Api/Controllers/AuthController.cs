@@ -25,8 +25,12 @@ namespace FileEncryption.Api.Controllers
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserPostModel user)
-        {   
-
+        {
+            var isCaptchaValid = await VerifyCaptchaAsync(user.CaptchaToken);
+            if (!isCaptchaValid)
+            {
+                return BadRequest("Invalid reCAPTCHA");
+            }
             var result = await _authService.Register(_mapper.Map<UserDto>(user));
             if (result == null)
             {
