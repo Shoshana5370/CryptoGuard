@@ -20,6 +20,7 @@ import RegisterForm from "./components/userComponents/RegisterForm";
 import Setting from "./components/userComponents/Setting";
 import Contact from "./components/footerComponents.tsx/Contact";
 import Files from "./components/fileComponents/Files";
+import ActivityLogs from "./components/activity/ActivityLogs";
 
 const Router = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ const Router = createBrowserRouter([
         ],
       },
       { path: "shares", element: <Shares />, errorElement: <NotFound /> },
+      { path:'activity', element: <ActivityLogs/>, errorElement: <NotFound />}, // Redirect activity to files
       { path: "home", element: <HomePage />, errorElement: <NotFound /> },
       { path: "settings", element: <Setting />, errorElement: <NotFound /> },
       { path: "profile", element: <Profile />, errorElement: <NotFound /> },
