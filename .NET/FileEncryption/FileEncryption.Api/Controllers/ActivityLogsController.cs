@@ -20,14 +20,20 @@ namespace FileEncryption.Api.Controllers
 
         [HttpGet]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> GetAllLogs() => Ok(await _service.GetLogsAsync());
-        [Authorize(Policy = "AdminOnly")]
+        public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetAllLogs() => Ok(await _service.GetLogsAsync());
+        [Authorize(Policy = "UserOrAdmin")]
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetLogsByUser(int userId) => Ok(await _service.GetLogsByUserAsync(userId));
+        public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetLogsByUser(int userId) {
+            var logs = await _service.GetLogsByUserAsync(userId);
+            if(logs!=null)
+              return Ok(logs);
+            return NotFound();
+        
+        }
 
         [HttpGet("{id}")]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> GetLog(int id)
+        public async Task<ActionResult<ActivityLogDto>> GetLog(int id)
         {
             var log = await _service.GetLogAsync(id);
             return log == null ? NotFound() : Ok(log);
