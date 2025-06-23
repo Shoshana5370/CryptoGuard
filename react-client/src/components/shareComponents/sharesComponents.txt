@@ -1,0 +1,1458 @@
+AccessSharedFile
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { accessSharedFile, clearAccess } from "@/features/shares/shareSlice";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/styles/ui/card";
+import { Input } from "@/styles/ui/input";
+import { Alert, AlertDescription } from "@/styles/ui/alert";
+import { Button } from "@/styles/ui/button";
+import { AlertTriangle, Download, Link, ExternalLink, FileText, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+
+type AccessSharedFileProps = {
+  code: string;
+  fileName: string;
+};
+const AccessSharedFile = ({ code, fileName }: AccessSharedFileProps) => {
+  const [shareCode, setShareCode] = useState("");
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [fileType, setFileType] = useState<string | null>(null);
+
+  const dispatch = useAppDispatch();
+  const { currentFile, status, error } = useAppSelector((state) => state.share);
+  useEffect(() => {
+    return () => {
+      dispatch(clearAccess());
+    };
+  }, []);
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    dispatch(accessSharedFile({ shareId: parseInt(code), code: shareCode.trim() }));
+  };
+
+  const handleDownload = () => {
+    if (currentFile?.blob && fileUrl) {
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+  };
+  useEffect(() => {
+    if (currentFile?.blob) {
+      const url = window.URL.createObjectURL(currentFile?.blob);
+      setFileUrl(url);
+      const inferredType = currentFile?.blob.type;
+      setFileType(inferredType);
+    }
+  }, [currentFile?.blob]);
+
+  const isPreviewable = (type: string | null) => {
+    if (!type) return false;
+    return type.startsWith("image/") || type === "application/pdf";
+  };
+  
+  return fileUrl && fileType ? (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-md mx-auto p-8"
+    >
+      <div className="text-center space-y-6">
+        <div className="p-4 rounded-full bg-emerald-100 w-fit mx-auto">
+          <FileText className="w-8 h-8 text-emerald-600" />
+        </div>
+        
+        <div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">File Ready!</h3>
+          <p className="text-gray-600">Your file is now available for download</p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {isPreviewable(fileType) && (
+            <Button
+              variant="outline"
+              asChild
+              className="flex-1 h-12 rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all"
+            >
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Preview File
+              </a>
+            </Button>
+          )}
+
+          <Button
+            onClick={handleDownload}
+            className="flex-1 h-12 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download File
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  ) : (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="max-w-md mx-auto p-4"
+    >
+      <Card className="border-0 shadow-lg bg-white/95 backdrop-blur-sm">
+        <CardHeader className="text-center pb-6">
+          <div className="p-4 rounded-full bg-gradient-to-br from-emerald-100 to-emerald-200 w-fit mx-auto mb-4">
+            <Link className="w-8 h-8 text-emerald-600" />
+          </div>
+          <CardTitle className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+            Enter Access Code
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="relative">
+              <Sparkles className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Enter your share code"
+                value={shareCode}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShareCode(e.target.value)}
+                className="pl-12 h-12 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                disabled={status.access === "loading"}
+              />
+            </div>
+
+            {status.access === "failed" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Alert variant="destructive" className="border-red-200 bg-red-50">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    {typeof error === "string" ? error : "Invalid or expired code"}
+                  </AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+              disabled={status.access === "loading" || !shareCode.trim()}
+            >
+              {status.access === "loading" ? (
+                <motion.div className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                  </motion.div>
+                  Accessing File...
+                </motion.div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link className="w-4 h-4" />
+                  Access File
+                </div>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+
+        <CardFooter>
+          <p className="text-sm text-gray-500 w-full text-center leading-relaxed">
+            Files are accessible for a limited time only and may expire after download
+          </p>
+        </CardFooter>
+      </Card>
+    </motion.div>
+  );
+};
+
+export default AccessSharedFile;
+
+ExpirationEditor
+
+
+import { useState } from "react";
+import { Button } from "@/styles/ui/button";
+import { Calendar, Check, X } from "lucide-react";
+import { Input } from "@/styles/ui/input";
+interface ExpirationEditorProps {
+  currentDate: string;
+  onSave: (newDate: Date) => void;
+  onCancel: () => void;
+}
+
+const ExpirationEditor = ({ currentDate, onSave, onCancel }: ExpirationEditorProps) => {
+  const [newDate, setNewDate] = useState(
+    new Date(currentDate).toISOString().split('T')[0]
+  );
+
+  const handleSave = () => {
+    if (newDate) {
+      onSave(new Date(newDate));
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
+      <Calendar className="w-4 h-4 text-gray-400" />
+      <Input
+        type="date"
+        value={newDate}
+        onChange={(e) => setNewDate(e.target.value)}
+        className="h-8 text-sm border-none focus:ring-0 p-1"
+        min={new Date().toISOString().split('T')[0]}
+      />
+      <Button
+        size="sm"
+        onClick={handleSave}
+        className="h-8 w-8 p-0 bg-green-500 hover:bg-green-600"
+      >
+        <Check className="w-3 h-3" />
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onCancel}
+        className="h-8 w-8 p-0"
+      >
+        <X className="w-3 h-3" />
+      </Button>
+    </div>
+  );
+};
+
+export default ExpirationEditor;
+ReceivedShareItem
+import { ShareDto } from "@/types/ShareDto";
+import { User, FileText, CheckCircle, AlertCircle, ChevronRight, Clock, Calendar } from "lucide-react";
+import { motion } from "framer-motion";
+import ShareQuickActions from "./ShareQuickActions";
+interface Props {
+  share: ShareDto;
+  onSelect: (shareId: string, fileName: string) => void;
+}
+const ReceivedShareItem: React.FC<Props> = ({ share, onSelect }) => {
+  const isInactive = share.used || share.fileIsDeleted;
+  const isExpired = new Date(share.expiresAt) <= new Date();
+  
+  const handlePreview = () => {
+    onSelect(share.id.toString(), share.fileName ?? "");
+  };
+
+  const handleDownload = () => {
+    onSelect(share.id.toString(), share.fileName ?? "");
+  };
+  
+  return (
+    <motion.li
+      whileHover={{ scale: isInactive ? 1 : 1.01 }}
+      whileTap={{ scale: isInactive ? 1 : 0.99 }}
+      onClick={() => {
+        if (!isInactive) onSelect(share.id.toString(), share.fileName ?? "");
+      }}
+      className={`group bg-white border border-gray-100 rounded-2xl p-6 transition-all duration-300 overflow-hidden ${
+        isInactive 
+          ? "opacity-75 cursor-not-allowed" 
+          : "cursor-pointer hover:shadow-lg hover:border-emerald-200 hover:bg-emerald-50/30"
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-start gap-4 flex-1">
+          <div className={`p-3 rounded-xl flex-shrink-0 ${
+            isInactive ? "bg-gray-100" : "bg-emerald-100 group-hover:bg-emerald-200"
+          }`}>
+            <User className={`w-5 h-5 ${
+              isInactive ? "text-gray-400" : "text-emerald-600"
+            }`} />
+          </div>
+          
+          <div className="space-y-3 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-gray-600 text-sm">From:</span>
+              <span className={`font-semibold px-3 py-1 rounded-full text-sm ${
+                isInactive 
+                  ? "bg-gray-100 text-gray-600" 
+                  : "bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100"
+              }`}>
+                {share.sharedByUserName}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-gray-600">File:</span>
+              <span className="font-medium text-gray-900">{share.fileName}</span>
+            </div>
+            {!isInactive && !isExpired && (
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <Calendar className="w-4 h-4" />
+                <span> Expires: {new Date(share.expiresAt).toLocaleDateString()}</span>
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
+              {share.used && (
+                <motion.span
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-full font-medium border border-emerald-200"
+                >
+                  <CheckCircle className="w-3 h-3" />
+                  Downloaded
+                </motion.span>
+              )}
+              {share.fileIsDeleted && (
+                <motion.span
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-pink-100 text-pink-700 rounded-full font-medium border border-pink-200"
+                >
+                  <AlertCircle className="w-3 h-3" />
+                  Unavailable
+                </motion.span>
+              )}
+              {isExpired && !share.used && !share.fileIsDeleted && (
+                <motion.span
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full font-medium border border-amber-200"
+                >
+                  <Clock className="w-3 h-3" />
+                  Expired
+                </motion.span>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <ShareQuickActions
+            share={share}
+            shareType="received"
+            onPreview={handlePreview}
+            onDownload={handleDownload}
+          />
+          
+          {!isInactive && (
+            <motion.div
+              initial={{ opacity: 0.5 }}
+              whileHover={{ opacity: 1, x: 5 }}
+              className="flex-shrink-0"
+            >
+              <ChevronRight className="w-5 h-5 text-emerald-400 group-hover:text-emerald-600" />
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </motion.li>
+  );
+};
+
+export default ReceivedShareItem;
+
+ReceivedShares
+
+
+import { Alert, AlertDescription } from "@/styles/ui/alert";
+import { Loader2, Users, AlertTriangle } from "lucide-react";
+import { useAppSelector } from "@/hooks";
+import { TabsContent } from "@/styles/ui/tabs";
+import ReceivedShareItem from "./ReceivedShareItem";
+import { motion } from "framer-motion";
+import { useShareFilters } from "@/features/useShareFilters";
+import ShareStats from "./ShareStats";
+import ShareSearchAndFilter from "./ShareSearchAndFilter";
+interface Props {
+  onSelect: (shareId: string, fileName: string) => void;
+}
+const ReceivedShares = ({ onSelect }: Props) => {
+  const { sharesWithMe, status, error } = useAppSelector((state) => state.share);
+
+  const {
+    searchTerm,
+    setSearchTerm,
+    sortBy,
+    setSortBy,
+    sortOrder,
+    toggleSortOrder,
+    filterStatus,
+    setFilterStatus,
+    filteredAndSortedShares,
+    resetFilters,
+  } = useShareFilters(sharesWithMe, 'received');
+
+  return (
+    <TabsContent value="received" className="mt-0">
+      {error.fetchToOthers && (
+        <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {error.fetchToOthers}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {status.fetchWithMe === "loading" ? (
+        <div className="flex flex-col justify-center items-center py-16">
+          <div className="p-4 rounded-full bg-emerald-100 mb-4">
+            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+          </div>
+          <span className="text-lg font-medium text-gray-700">Loading shared files...</span>
+          <span className="text-sm text-gray-500 mt-1">Please wait a moment</span>
+        </div>
+      ) : sharesWithMe.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ShareStats shares={sharesWithMe} type="received" />
+          <ShareSearchAndFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            sortOrder={sortOrder}
+            onSortOrderToggle={toggleSortOrder}
+            filterStatus={filterStatus}
+            onFilterStatusChange={setFilterStatus}
+            onReset={resetFilters}
+            totalShares={sharesWithMe.length}
+            filteredShares={filteredAndSortedShares.length}
+            shareType="received"
+          />
+
+          {filteredAndSortedShares.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-gray-500 text-lg">No shares match your search criteria</p>
+            </div>
+          ) : (
+            <ul className="space-y-4">
+              {filteredAndSortedShares.map((share, index) => (
+                <motion.div
+                  key={share.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <ReceivedShareItem share={share} onSelect={onSelect} />
+                </motion.div>
+              ))}
+            </ul>
+          )}
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-center py-16"
+        >
+          <div className="p-6 rounded-full bg-emerald-100 w-fit mx-auto mb-6">
+            <Users className="h-12 w-12 text-emerald-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">No shared files yet</h3>
+          <p className="text-gray-500 max-w-md mx-auto">
+            Files shared with you by others will appear here. Check back later or ask colleagues to share files with you.
+          </p>
+        </motion.div>
+      )}
+    </TabsContent>
+  );
+};
+
+export default ReceivedShares;
+
+SearchAndFilter
+import { Input } from "@/styles/ui/input";
+import { Button } from "@/styles/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/styles/ui/select";
+import { Search, Filter, SortAsc, SortDesc, Calendar, RotateCcw } from "lucide-react";
+import { motion } from "framer-motion";
+
+interface SearchAndFilterProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  sortBy: string;
+  onSortChange: (value: string) => void;
+  sortOrder: 'asc' | 'desc';
+  onSortOrderToggle: () => void;
+  filterType: string;
+  onFilterTypeChange: (value: string) => void;
+  onReset: () => void;
+  totalFiles: number;
+  filteredFiles: number;
+}
+
+const SearchAndFilter = ({
+  searchTerm,
+  onSearchChange,
+  sortBy,
+  onSortChange,
+  sortOrder,
+  onSortOrderToggle,
+  filterType,
+  onFilterTypeChange,
+  onReset,
+  totalFiles,
+  filteredFiles
+}: SearchAndFilterProps) => {
+  const hasActiveFilters = searchTerm || filterType !== 'all' || sortBy !== 'name';
+
+  return (
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-6 mb-6">
+      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
+          {/* Search Input */}
+          <div className="relative flex-1 min-w-[250px]">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              placeholder="Search files by name..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="h-11 pl-10 pr-4 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+            />
+          </div>
+
+          {/* File Type Filter */}
+          <div className="flex items-center gap-2 min-w-[180px]">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <Select value={filterType} onValueChange={onFilterTypeChange}>
+              <SelectTrigger className="h-11 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectItem value="all">All Files</SelectItem>
+                <SelectItem value="image">Images</SelectItem>
+                <SelectItem value="document">Documents</SelectItem>
+                <SelectItem value="audio">Audio</SelectItem>
+                <SelectItem value="video">Video</SelectItem>
+                <SelectItem value="archive">Archives</SelectItem>
+                <SelectItem value="code">Code Files</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          {/* Sort Controls */}
+          <div className="flex items-center gap-2 min-w-[160px]">
+            <Calendar className="w-4 h-4 text-gray-500" />
+            <Select value={sortBy} onValueChange={onSortChange}>
+              <SelectTrigger className="h-11 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="date">Date Modified</SelectItem>
+                <SelectItem value="type">File Type</SelectItem>
+                <SelectItem value="size">File Size</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Sort Order Toggle */}
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onSortOrderToggle}
+              className="h-11 w-11 rounded-lg border-gray-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all"
+              title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
+            >
+              {sortOrder === 'asc' ? 
+                <SortAsc className="w-4 h-4" /> : 
+                <SortDesc className="w-4 h-4" />
+              }
+            </Button>
+          </motion.div>
+
+          {/* Reset Filters */}
+          {hasActiveFilters && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                variant="outline"
+                onClick={onReset}
+                className="h-11 px-4 rounded-lg border-gray-200 hover:bg-orange-50 hover:border-orange-300 transition-all text-gray-600 hover:text-orange-600"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      {/* Results Summary */}
+      {(searchTerm || filterType !== 'all') && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 pt-4 border-t border-gray-100"
+        >
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">
+              Showing <span className="font-semibold text-emerald-600">{filteredFiles}</span> of{' '}
+              <span className="font-semibold">{totalFiles}</span> files
+            </span>
+            {searchTerm && (
+              <span className="text-gray-500">
+                Search: "<span className="text-emerald-600 font-medium">{searchTerm}</span>"
+              </span>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export default SearchAndFilter;
+
+SentShares
+import { Alert, AlertDescription } from "@/styles/ui/alert";
+import { Send, Loader2, AlertTriangle } from "lucide-react";
+import { TabsContent } from "@/styles/ui/tabs";
+import SharedSentItemCard from "./SharedSentItemCard";
+import { useAppSelector } from "@/hooks";
+import { motion } from "framer-motion";
+import { useShareFilters } from "@/features/useShareFilters";
+import ShareStats from "./ShareStats";
+import ShareSearchAndFilter from "./ShareSearchAndFilter";
+const SentShares = () => {
+  const { sharesToOthers, status, error } = useAppSelector((state) => state.share);
+  
+  const {
+    searchTerm,
+    setSearchTerm,
+    sortBy,
+    setSortBy,
+    sortOrder,
+    toggleSortOrder,
+    filterStatus,
+    setFilterStatus,
+    filteredAndSortedShares,
+    resetFilters,
+  } = useShareFilters(sharesToOthers, 'sent');
+  
+  return (
+    <TabsContent value="sent" className="mt-0">
+      {error.fetchToOthers && (
+        <Alert variant="destructive" className="mb-6 border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {typeof error.fetchToOthers === "string" ? error.fetchToOthers : "Failed to load shared files."}
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {status.fetchToOthers=== "loading" ? (
+        <div className="flex flex-col justify-center items-center py-16">
+          <div className="p-4 rounded-full bg-orange-100 mb-4">
+            <Loader2 className="w-8 h-8 animate-spin text-orange-600" />
+          </div>
+          <span className="text-lg font-medium text-gray-700">Loading your shared files...</span>
+          <span className="text-sm text-gray-500 mt-1">Please wait a moment</span>
+        </div>
+      ) : sharesToOthers.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ShareStats shares={sharesToOthers} type="sent" />
+          
+          <ShareSearchAndFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            sortOrder={sortOrder}
+            onSortOrderToggle={toggleSortOrder}
+            filterStatus={filterStatus}
+            onFilterStatusChange={setFilterStatus}
+            onReset={resetFilters}
+            totalShares={sharesToOthers.length}
+            filteredShares={filteredAndSortedShares.length}
+            shareType="sent"
+          />
+
+          {filteredAndSortedShares.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-gray-500 text-lg">No shares match your search criteria</p>
+            </div>
+          ) : (
+            <ul className="space-y-4">
+              {filteredAndSortedShares.map((share: any, index: number) => (
+                <motion.div
+                  key={share.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <SharedSentItemCard share={share} />
+                </motion.div>
+              ))}
+            </ul>
+          )}
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="text-center py-16"
+        >
+          <div className="p-6 rounded-full bg-orange-100 w-fit mx-auto mb-6">
+            <Send className="h-12 w-12 text-orange-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">No files shared yet</h3>
+          <p className="text-gray-500 max-w-md mx-auto">
+            Files you share with others will appear here. Start sharing to collaborate with your team!
+          </p>
+        </motion.div>
+      )}
+    </TabsContent>
+  );
+};
+
+export default SentShares;
+
+
+
+
+
+SharedSentItemCard
+import { useAppDispatch } from "@/hooks";
+import { ShareDto } from "@/types/ShareDto";
+import { motion } from "framer-motion";
+import { Calendar, CheckCircle, Clock, FileText, Mail, XCircle } from "lucide-react";
+import { useState } from "react";
+import ShareQuickActions from "./ShareQuickActions";
+import ExpirationEditor from "./ExpirationEditor";
+import { extendShareExpiration } from "@/features/shares/shareSlice";
+type SharedSentItemCardProps = {
+  share: ShareDto;
+};
+const SharedSentItemCard = ({ share }: SharedSentItemCardProps) => {
+  const dispatch = useAppDispatch();
+  const [editing, setEditing] = useState(false);
+  const isExpired = new Date(share.expiresAt) <= new Date();
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/share/${share.id}`);
+  };
+
+  const handleExtend = () => {
+    setEditing(true);
+  };
+
+  return (
+    <motion.li
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-orange-200 transition-all duration-300 overflow-hidden"
+    >
+      <div className="p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-orange-100 flex-shrink-0">
+                <Mail className="w-5 h-5 text-orange-600" />
+              </div>
+
+              <div className="space-y-3 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-gray-600 text-sm">Shared with:</span>
+                  <span className="font-semibold text-gray-900 bg-orange-50 px-3 py-1 rounded-full text-sm">
+                    {share.recipientEmail}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">File:</span>
+                  <span className="font-medium text-gray-900">{share.fileName}</span>
+                </div>
+                {!share.used && !share.fileIsDeleted && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span className={`${isExpired ? 'text-red-600' : 'text-gray-500'}`}>
+                      {isExpired ? 'Expired:' : 'Expires:'} {new Date(share.expiresAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2">
+                  {share.fileIsDeleted && (
+                    <motion.span
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-red-100 text-red-700 rounded-full font-medium border border-red-200"
+                    >
+                      <XCircle className="w-3 h-3" />
+                      File Removed
+                    </motion.span>
+                  )}
+                  {share.used && (
+                    <motion.span
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-full font-medium border border-emerald-200"
+                    >
+                      <CheckCircle className="w-3 h-3" />
+                      Downloaded
+                    </motion.span>
+                  )}
+                  {isExpired && !share.used && !share.fileIsDeleted && (
+                    <motion.span
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 bg-amber-100 text-amber-700 rounded-full font-medium border border-amber-200"
+                    >
+                      <Clock className="w-3 h-3" />
+                      Expired
+                    </motion.span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <ShareQuickActions
+              share={share}
+              shareType="sent"
+              onCopyLink={handleCopyLink}
+              onExtend={handleExtend}
+            />
+            {editing && (
+              <ExpirationEditor
+                currentDate={share.expiresAt}
+                onSave={(newDate) => {
+                  dispatch(
+                    extendShareExpiration({
+                      id: share.id,
+                      newDate: newDate.toISOString(),
+                    })
+                  );
+                  setEditing(false);
+                }}
+                onCancel={() => setEditing(false)}
+              />
+            )}
+
+          </div>
+        </div>
+      </div>
+    </motion.li>
+  );
+};
+export default SharedSentItemCard;
+
+ShareFileDialog
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader } from "@/styles/ui/dialog";
+import { Input } from "@/styles/ui/input";
+import { Button } from "@/styles/ui/button";
+import { Label } from "@/styles/ui/label";
+import { Calendar as CalendarIcon, Mail } from "lucide-react";
+import { FileDto } from "@/types/FileDto";
+import { SharePostModel } from "@/types/SharePostModel";
+type ShareFileDialogProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  file: FileDto;
+  onShare: (updatedFile: SharePostModel) => void;
+};
+const ShareFileDialog = ({ isOpen, onClose, file, onShare }: ShareFileDialogProps) => {
+  const [email, setEmail] = useState("");
+  const [expiration, setExpiration] = useState<Date | null>(null);
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const handleShare = async () => {
+    if (!email || !file?.id) return;
+    const payload: SharePostModel = {
+      fileKey: file.id,
+      recipientEmail: email,
+      expiresAt: expiration ? expiration.toISOString() : undefined,
+    };
+    onShare(payload);
+  };
+
+  const resetState = () => {
+    setEmail("");
+    setExpiration(null);
+    onClose();
+  };
+
+  const handleClose = () => {
+    resetState();
+    onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => open ? null : handleClose()}>
+      <DialogContent className="sm:max-w-[500px] border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+        <div className="bg-gradient-to-r from-emerald-500 to-pink-500 h-1 -mt-6 mx-6 rounded-t-lg"></div>
+        <DialogHeader className="text-center pb-6">
+          <h2 className="text-xl font-bold">Share File</h2>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="recipient-email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              Recipient Email
+            </Label>
+            <Input
+              id="recipient-email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Enter recipient's email"
+              className="w-full rounded-lg h-12 border-gray-200"
+              required
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <CalendarIcon className="w-4 h-4" />
+              Expiration Date (Optional)
+            </Label>
+            <Input
+              type="date"
+              value={expiration ? expiration.toISOString().split('T')[0] : ""}
+              onChange={e => setExpiration(e.target.value ? new Date(e.target.value) : null)}
+              className="w-full rounded-lg h-12 border-gray-200"
+              min={new Date().toISOString().split('T')[0]}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-6">
+          <Button variant="ghost" onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={handleShare}
+            disabled={!isValidEmail(email)}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            Share
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default ShareFileDialog;
+SharePreviewDialog
+  import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/styles/ui/dialog";
+import AccessSharedFile from "./AccessSharedFile";
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  shareCode: string;
+  fileName: string;
+}
+
+const SharePreviewDialog = ({ open, onClose, shareCode, fileName }: Props) => {
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-2xl border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+        <div className="bg-gradient-to-r from-emerald-500 to-orange-500 h-1 -mt-6 mx-6 rounded-t-lg"></div>
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+            Access Shared File
+          </DialogTitle>
+        </DialogHeader>
+        {shareCode && <AccessSharedFile code={shareCode} fileName={fileName} />}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default SharePreviewDialog;
+
+ShareQuickActions
+import { Button } from "@/styles/ui/button";
+import { ShareDto } from "@/types/ShareDto";
+import { motion } from "framer-motion";
+import { Clock, Copy, Download, Eye } from "lucide-react";
+
+interface ShareQuickActionsProps {
+  share: ShareDto;
+  shareType: 'received' | 'sent';
+  onPreview?: (e?: React.MouseEvent) => void;
+  onDownload?: (e?: React.MouseEvent) => void;
+  onExtend?: () => void;
+  onCopyLink?: () => void;
+}
+
+const ShareQuickActions = ({ 
+  share, 
+  shareType, 
+  onPreview, 
+  onDownload, 
+  onExtend, 
+  onCopyLink 
+}: ShareQuickActionsProps) => {
+  const isInactive = share.used || share.fileIsDeleted;
+  const isExpired = new Date(share.expiresAt) <= new Date();
+
+  return (
+    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      {shareType === 'received' && !isInactive && (
+        <>
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onPreview}
+              className="h-8 w-8 p-0 rounded-lg hover:bg-emerald-100 hover:text-emerald-600"
+              title="Preview File"
+            >
+              <Eye className="w-4 h-4" />
+            </Button>
+          </motion.div>
+          
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDownload}
+              className="h-8 w-8 p-0 rounded-lg hover:bg-blue-100 hover:text-blue-600"
+              title="Download File"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+          </motion.div>
+        </>
+      )}
+
+      {shareType === 'sent' && !isInactive && (
+        <>
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onCopyLink}
+              className="h-8 w-8 p-0 rounded-lg hover:bg-purple-100 hover:text-purple-600"
+              title="Copy Share Link"
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
+          </motion.div>
+
+          {!isExpired && (
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onExtend}
+                className="h-8 w-8 p-0 rounded-lg hover:bg-orange-100 hover:text-orange-600"
+                title="Extend Expiration"
+              >
+                <Clock className="w-4 h-4" />
+              </Button>
+            </motion.div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default ShareQuickActions;
+
+Shares
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/styles/ui/tabs";
+import { fetchSharesWithMe, fetchSharesToOthers } from "@/features/shares/shareSlice";
+import ReceivedShares from "./ReceivedShares";
+import SentShares from "./SentShares";
+import SharePreviewDialog from "./SharePreviewDialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/styles/ui/card";
+import { Share2, Users, Send } from "lucide-react";
+
+const Shares = () => {
+  const dispatch = useAppDispatch();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedShareCode, setSelectedShareCode] = useState("");
+  const [selectedShareName, setSelectedShareName] = useState("");
+  const { user } = useAppSelector((state) => state.auth);
+  const { sharesWithMe, sharesToOthers, status } = useAppSelector((state) => state.share);
+
+  useEffect(() => {
+    if (user && status.fetchWithMe === 'idle' && status.fetchToOthers === 'idle') {
+      dispatch(fetchSharesWithMe());
+      dispatch(fetchSharesToOthers());
+    }
+  }, [dispatch, user, status.fetchWithMe, status.fetchToOthers]);
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-orange-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg">
+              <Share2 className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-700 bg-clip-text text-transparent">
+                File Sharing Center
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Manage and access your shared files seamlessly
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Files Received</p>
+                  <p className="text-2xl font-bold text-emerald-600">{sharesWithMe.length}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-emerald-100">
+                  <Users className="w-5 h-5 text-emerald-600" />
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-orange-100 hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Files Sent</p>
+                  <p className="text-2xl font-bold text-orange-600">{sharesToOthers.length}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-orange-100">
+                  <Send className="w-5 h-5 text-orange-600" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-3">
+            <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-500 via-emerald-600 to-orange-500 h-1"></div>
+              <CardHeader className="pb-6">
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="p-2 rounded-lg bg-emerald-100">
+                    <Share2 className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  Shared Files Management
+                </CardTitle>
+                <CardDescription className="text-gray-600">
+                  View and manage files shared with you and files you've shared with others
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="received" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100 p-1 rounded-xl">
+                    <TabsTrigger 
+                      value="received" 
+                      className="rounded-lg font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm transition-all"
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Received Files
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="sent"
+                      className="rounded-lg font-medium data-[state=active]:bg-white data-[state=active]:text-orange-600 data-[state=active]:shadow-sm transition-all"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Sent Files
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="received" className="mt-0">
+                    <ReceivedShares
+                      onSelect={(id, name) => {
+                        setSelectedShareCode(id);
+                        setSelectedShareName(name);
+                        setDialogOpen(true);
+                      }}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="sent" className="mt-0">
+                    <SentShares />
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        
+        <SharePreviewDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          shareCode={selectedShareCode}
+          fileName={selectedShareName}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Shares;
+
+ShareSearchAndFilter
+
+import { Input } from "@/styles/ui/input";
+import { Button } from "@/styles/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/styles/ui/select";
+import { Search, Filter, SortAsc, SortDesc, Calendar, RotateCcw, } from "lucide-react";
+import { motion } from "framer-motion";
+
+interface ShareSearchAndFilterProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  sortBy: string;
+  onSortChange: (value: string) => void;
+  sortOrder: 'asc' | 'desc';
+  onSortOrderToggle: () => void;
+  filterStatus: string;
+  onFilterStatusChange: (value: string) => void;
+  onReset: () => void;
+  totalShares: number;
+  filteredShares: number;
+  shareType: 'received' | 'sent';
+}
+
+const ShareSearchAndFilter = ({
+  searchTerm,
+  onSearchChange,
+  sortBy,
+  onSortChange,
+  sortOrder,
+  onSortOrderToggle,
+  filterStatus,
+  onFilterStatusChange,
+  onReset,
+  totalShares,
+  filteredShares,
+  shareType
+}: ShareSearchAndFilterProps) => {
+  const hasActiveFilters = searchTerm || filterStatus !== 'all' || sortBy !== 'date';
+
+  return (
+    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-6 mb-6">
+      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
+          <div className="relative flex-1 min-w-[250px]">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Input
+              placeholder={shareType === 'received' ? "Search by sender or file name..." : "Search by recipient or file name..."}
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="h-11 pl-10 pr-4 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+            />
+          </div>
+          <div className="flex items-center gap-2 min-w-[180px]">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <Select value={filterStatus} onValueChange={onFilterStatusChange}>
+              <SelectTrigger className="h-11 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectItem value="all">All Shares</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="used">Downloaded</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+                <SelectItem value="deleted">File Deleted</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          <div className="flex items-center gap-2 min-w-[160px]">
+            <Calendar className="w-4 h-4 text-gray-500" />
+            <Select value={sortBy} onValueChange={onSortChange}>
+              <SelectTrigger className="h-11 rounded-lg border-gray-200 focus:ring-2 focus:ring-emerald-500">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectItem value="date">Date Shared</SelectItem>
+                <SelectItem value="fileName">File Name</SelectItem>
+                <SelectItem value={shareType === 'received' ? 'sender' : 'recipient'}>
+                  {shareType === 'received' ? 'Sender' : 'Recipient'}
+                </SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onSortOrderToggle}
+              className="h-11 w-11 rounded-lg border-gray-200 hover:bg-emerald-50 hover:border-emerald-300 transition-all"
+              title={`Sort ${sortOrder === 'asc' ? 'Descending' : 'Ascending'}`}
+            >
+              {sortOrder === 'asc' ? 
+                <SortAsc className="w-4 h-4" /> : 
+                <SortDesc className="w-4 h-4" />
+              }
+            </Button>
+          </motion.div>
+          {hasActiveFilters && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                variant="outline"
+                onClick={onReset}
+                className="h-11 px-4 rounded-lg border-gray-200 hover:bg-orange-50 hover:border-orange-300 transition-all text-gray-600 hover:text-orange-600"
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </div>
+      {(searchTerm || filterStatus !== 'all') && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 pt-4 border-t border-gray-100"
+        >
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">
+              Showing <span className="font-semibold text-emerald-600">{filteredShares}</span> of{' '}
+              <span className="font-semibold">{totalShares}</span> shares
+            </span>
+            {searchTerm && (
+              <span className="text-gray-500">
+                Search: "<span className="text-emerald-600 font-medium">{searchTerm}</span>"
+              </span>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+export default ShareSearchAndFilter;
+ShareStats
+import { Users, Send, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
+import { motion } from "framer-motion";
+import { ShareDto } from "@/types/ShareDto";
+interface ShareStatsProps {
+  shares: ShareDto[];
+  type: 'received' | 'sent';
+}
+const ShareStats = ({ shares, type }: ShareStatsProps) => {
+  const activeShares = shares.filter(share => !share.used && !share.fileIsDeleted);
+  const usedShares = shares.filter(share => share.used);
+  const deletedShares = shares.filter(share => share.fileIsDeleted);
+  const expiredShares = shares.filter(share => {
+    const now = new Date();
+    const expiryDate = new Date(share.expiresAt);
+    return expiryDate < now && !share.used && !share.fileIsDeleted;
+  });
+  const statItems = [
+    { 
+      key: 'total', 
+      label: 'Total Shares', 
+      icon: type === 'received' ? Users : Send, 
+      color: type === 'received' ? 'text-emerald-500' : 'text-orange-500', 
+      bg: type === 'received' ? 'bg-emerald-50' : 'bg-orange-50',
+      count: shares.length
+    },
+    { 
+      key: 'active', 
+      label: 'Active', 
+      icon: Clock, 
+      color: 'text-blue-500', 
+      bg: 'bg-blue-50',
+      count: activeShares.length
+    },
+    { 
+      key: 'used', 
+      label: 'Downloaded', 
+      icon: CheckCircle, 
+      color: 'text-green-500', 
+      bg: 'bg-green-50',
+      count: usedShares.length
+    },
+    { 
+      key: 'expired', 
+      label: 'Expired', 
+      icon: AlertTriangle, 
+      color: 'text-amber-500', 
+      bg: 'bg-amber-50',
+      count: expiredShares.length
+    },
+    { 
+      key: 'deleted', 
+      label: 'File Deleted', 
+      icon: XCircle, 
+      color: 'text-red-500', 
+      bg: 'bg-red-50',
+      count: deletedShares.length
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+      {statItems.map((item, index) => {
+        const Icon = item.icon;      
+        return (
+          <motion.div
+            key={item.key}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className={`${item.bg} rounded-xl p-4 border border-gray-100 hover:shadow-md transition-all duration-200`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-gray-800">{item.count}</p>
+                <p className="text-sm text-gray-600 font-medium">{item.label}</p>
+              </div>
+              <Icon className={`w-6 h-6 ${item.color}`} />
+            </div>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default ShareStats;
+

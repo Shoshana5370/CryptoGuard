@@ -4,6 +4,7 @@ import filesReducer from '../features/files/filesSlice';
 import sharesReducer from '../features/shares/shareSlice';
 import authReducer from '../features/auth/authSlice';
 import uiReducer from '../features/files/uiSlice';
+import activityReducer from '../features/activityLogs/activitySlice';
 const rootReducer = (state:any, action: any) => {
   if (action.type === 'auth/logout') {
     state = undefined; 
@@ -13,6 +14,7 @@ const rootReducer = (state:any, action: any) => {
     files: filesReducer(state?.files, action),
     share: sharesReducer(state?.share, action),
     ui: uiReducer(state?.ui, action),
+    logs:activityReducer(state?.activityLogs, action), 
   };
 };
 

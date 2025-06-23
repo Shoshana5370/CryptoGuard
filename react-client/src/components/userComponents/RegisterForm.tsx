@@ -11,7 +11,6 @@ import { registerUser } from "../../features/auth/authSlice";
 import Logo from "../mainComponents/Logo";
 import { useToast } from "@/styles/hooks/use-toast";
 import ReCAPTCHA from "react-google-recaptcha";
-
 const RegisterForm = () => {
   const dispatch = useAppDispatch();
   const { toast } = useToast();
@@ -60,11 +59,9 @@ const RegisterForm = () => {
       setErrors(fieldErrors);
       return;
     }
-
     setErrors({});
     dispatch(registerUser({ email, password, name: fullName ,captchaToken: captchaToken ?? '',isAdmin: false}));
   };
-
   const fields = [
     {
       type: "text",
@@ -190,8 +187,6 @@ const RegisterForm = () => {
                   {errors.agreed}
                 </motion.p>
               )}
-
-              {/* reCAPTCHA */}
               <div>
                 <ReCAPTCHA
                   sitekey="6LcgyEUrAAAAADxgSkVEaz6qKKSFlrzryeQkL6dj"
@@ -204,8 +199,6 @@ const RegisterForm = () => {
                   </motion.p>
                 )}
               </div>
-
-              {/* Submit */}
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.5 }}>
                 <Button type="submit" disabled={registerLoading} className="w-full h-12 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all">
                   {registerLoading ? (
