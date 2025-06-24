@@ -36,7 +36,7 @@ const Router = createBrowserRouter([
         ],
       },
       { path: "shares", element: <Shares />, errorElement: <NotFound /> },
-      { path:'activity', element: <ActivityLogs/>, errorElement: <NotFound />}, // Redirect activity to files
+      { path:"activity", element: <ActivityLogs/>, errorElement: <NotFound />},
       { path: "home", element: <HomePage />, errorElement: <NotFound /> },
       { path: "settings", element: <Setting />, errorElement: <NotFound /> },
       { path: "profile", element: <Profile />, errorElement: <NotFound /> },
