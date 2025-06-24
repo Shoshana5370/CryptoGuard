@@ -13,7 +13,6 @@ const ActivityLogs = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth.user);
   const { logs, loading, error } = useAppSelector(state => state.logs);
-  
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
