@@ -9,14 +9,9 @@ namespace FileEncryption.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ActivityLogsController : ControllerBase
+    public class ActivityLogsController(IServiceActivityLogs service) : ControllerBase
     {
-        private readonly IServiceActivityLogs _service;
-
-        public ActivityLogsController(IServiceActivityLogs service)
-        {
-            _service = service;
-        }
+        private readonly IServiceActivityLogs _service = service;
 
         [HttpGet]
         [Authorize(Policy = "AdminOnly")]
@@ -25,10 +20,10 @@ namespace FileEncryption.Api.Controllers
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetLogsByUser(int userId) {
             var logs = await _service.GetLogsByUserAsync(userId);
-            if(logs!=null)
-              return Ok(logs);
-            return NotFound();
-        
+            if (logs == null || !logs.Any())
+                return Ok(new List<ActivityLogDto>());
+            return Ok(logs);
+
         }
 
         [HttpGet("{id}")]

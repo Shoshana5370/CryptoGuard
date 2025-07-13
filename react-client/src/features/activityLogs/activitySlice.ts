@@ -1,6 +1,5 @@
 // src/redux/slices/activitySlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import { Log } from "../../types/Log";
 import axiosInstance from "@/axiosInstance";
 
