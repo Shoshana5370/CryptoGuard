@@ -14,7 +14,7 @@ using System.Text;
 
 namespace FileEncryption.Service.Services
 {
-    public class ServiceAuth(IConfiguration configuration, IRepositoryManager repository, IServiceUser userService, IMapper mapper,IServiceActivityLogs serviceActivityLogs) : IServiceAuth
+    public class ServiceAuth(IConfiguration configuration, IRepositoryManager repository, IServiceUser userService, IMapper mapper,IServiceActivityLogs serviceActivityLogs,IServiceSendMessage serviceSend) : IServiceAuth
     {
         private readonly IConfiguration _configuration = configuration;
         private readonly IRepositoryManager _repositoryManager = repository;
@@ -22,6 +22,7 @@ namespace FileEncryption.Service.Services
         private readonly IMapper _mapper = mapper;
         private readonly IServiceActivityLogs _activityLogService=serviceActivityLogs;
         private readonly IPasswordHasher<User> _hasher = new PasswordHasher<User>();
+        private readonly IServiceSendMessage _emailService=serviceSend;
         public async Task<AuthResponse> Login(UserDto user)
         {
             var userExiting = await _repositoryManager.Users.FindByEmailAsync(user.Email);
@@ -42,6 +43,7 @@ namespace FileEncryption.Service.Services
                 Action = "Login",
                 Description = "User logged in"
             });
+
             return new AuthResponse
             {
                 Token = token,
@@ -74,7 +76,13 @@ namespace FileEncryption.Service.Services
                 Action = "Register",
                 Description = "New user registered"
             });
-
+            await _emailService.SendAsync(
+                to: newUser.Email,
+                toUser: newUser.Name,
+                fromUser: "System",
+                subject: "Welcome to our platform!",
+                isWelcomeEmail: true
+             );
             return new AuthResponse
             {
                 Token = token,
