@@ -43,7 +43,7 @@ namespace FileEncryption.Api.Controllers
             var share = await _shareService.ShareFileAsync(_mapper.Map<Share>(req),userId);
             if (share != null)
             {
-               bool success= await _emailService.SendAsync(
+               bool success= await _emailService.SendSystemMessageToUserAsync(
                 share.RecipientEmail, share.RecipientUser?.Name, share.SharedByUser.Name, share.AccessCode, share.File.Name);
                 if (!success)
                 {

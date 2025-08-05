@@ -76,7 +76,7 @@ namespace FileEncryption.Service.Services
                 Action = "Register",
                 Description = "New user registered"
             });
-            await _emailService.SendAsync(
+            await _emailService.SendSystemMessageToUserAsync(
                 to: newUser.Email,
                 toUser: newUser.Name,
                 fromUser: "System",
