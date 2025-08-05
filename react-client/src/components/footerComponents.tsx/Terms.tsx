@@ -1,7 +1,14 @@
 
 import { FileText, Shield, Users, AlertTriangle } from "lucide-react";
+import { useAppDispatch } from "@/hooks";
+import { openMailDialog } from "@/features/mail/mail";
 
 const Terms = () => {
+  const dispatch = useAppDispatch();
+
+  const handleContactClick = () => {
+    dispatch(openMailDialog());
+  };
   const sections = [
     {
       icon: <FileText className="h-8 w-8 text-emerald-600" />,
@@ -75,7 +82,9 @@ const Terms = () => {
             <p className="text-xl text-gray-600 mb-8">
               Contact our legal team if you have questions about these terms of service.
             </p>
-            <button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <button 
+              onClick={handleContactClick}
+              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               Contact Legal Team
             </button>
           </div>

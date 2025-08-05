@@ -1,6 +1,8 @@
 import { Award, Globe, Shield, Users } from "lucide-react";
 import { Card, CardContent } from "@/styles/ui/card";
+
 const About = () => {
+
   const stats = [
     { icon: <Users className="h-8 w-8 text-emerald-600" />, number: "10,000+", label: "Organizations Protected" },
     { icon: <Globe className="h-8 w-8 text-orange-500" />, number: "50+", label: "Countries Served" },
@@ -25,7 +27,6 @@ const About = () => {
       bio: "Compliance specialist with expertise in international security standards."
     }
   ];
-
   return (
     <div className="min-h-screen bg-white">      
       {/* Hero Section */}
@@ -120,6 +121,7 @@ const About = () => {
           </div>
         </div>
       </section>
+
     </div>
   );
 };

@@ -1,6 +1,13 @@
 import { Shield, Eye, Lock, Database } from "lucide-react";
+import { useAppDispatch } from "@/hooks";
+import { openMailDialog } from "@/features/mail/mail";
 
 const Privacy = () => {
+  const dispatch = useAppDispatch();
+
+  const handleContactClick = () => {
+    dispatch(openMailDialog());
+  };
   const sections = [
     {
       icon: <Shield className="h-8 w-8 text-emerald-600" />,
@@ -101,7 +108,9 @@ const Privacy = () => {
             <p className="text-xl text-gray-600 mb-8">
               Contact our privacy team if you have any questions about how we handle your data.
             </p>
-            <button className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <button 
+              onClick={handleContactClick}
+              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               Contact Privacy Team
             </button>
           </div>

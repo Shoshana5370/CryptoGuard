@@ -7,8 +7,7 @@ import UploadFileDialog from "../fileComponents/UploadFile";
 import { closeUploadDialog } from "@/features/files/uiSlice";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { uploadFileContent } from "@/features/files/filesSlice";
-
-
+import SendEmail from "./SendEmail";
 const AppLayout = () => {
   const dispatch = useAppDispatch();
   const handleUpload = async (file: File, customFileName: string) => {
@@ -18,7 +17,6 @@ const AppLayout = () => {
       console.error("Failed to upload file:", err);
     }
   };
-
   const { uploading, uploadError, progress } = useAppSelector(state => state.files);
   const isOpen = useAppSelector(state => state.ui.isUploadDialogOpen);
   return (
@@ -42,6 +40,7 @@ const AppLayout = () => {
         progress={progress}
       />
       }
+      <SendEmail />
     </div>
   );
 }

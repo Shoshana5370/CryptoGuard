@@ -2,8 +2,15 @@
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/styles/ui/card";
 import { Button } from "@/styles/ui/button";
+import { useAppDispatch } from "@/hooks";
+import { openMailDialog } from "@/features/mail/mail";
 
 const Contact = () => {
+  const dispatch = useAppDispatch();
+
+  const handleOpenMailDialog = () => {
+    dispatch(openMailDialog());
+  };
   const contactMethods = [
     {
       icon: <Mail className="h-8 w-8 text-emerald-600" />,
@@ -77,97 +84,24 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Contact Form */}
+      
+
+    {/* Contact Form Replacement */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Send Us a Message
-              </h2>
-              <p className="text-xl text-gray-600">
-                Fill out the form below and we'll get back to you within 24 hours.
-              </p>
-            </div>
-
-            <Card className="border-0 shadow-xl">
-              <CardContent className="p-12">
-                <form className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-                        placeholder="Enter your first name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-                        placeholder="Enter your last name"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-                      placeholder="Enter your email address"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-                      placeholder="Enter your company name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Subject
-                    </label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300">
-                      <option>General Inquiry</option>
-                      <option>Sales Question</option>
-                      <option>Technical Support</option>
-                      <option>Partnership</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Message
-                    </label>
-                    <textarea
-                      rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300"
-                      placeholder="Tell us how we can help you..."
-                    ></textarea>
-                  </div>
-
-                  <Button className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                    Send Message
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              Have a Question?
+            </h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Click the button below to send us a message directly.
+            </p>
+            <Button
+              onClick={handleOpenMailDialog}
+              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white py-4 px-8 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Send Us an Email
+            </Button>
           </div>
         </div>
       </section>
