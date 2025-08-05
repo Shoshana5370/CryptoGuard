@@ -31,7 +31,7 @@ export const loginUser = createAsyncThunk(
   ) => {
     try {
       console.log(url);    
-      const response = await axios.post(`${url}/api/Auth/login`, credentials);
+      const response = await axios.post(`${url}/api/auth/login`, credentials);
       sessionStorage.setItem('token', response.data.token);
       sessionStorage.setItem('user', JSON.stringify(response.data.user));
       sessionStorage.setItem('userId', response.data.user.id.toString());
@@ -56,7 +56,7 @@ export const registerUser = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(`${url}/api/Auth/register`, userData);
+      const response = await axios.post(`${url}/api/auth/register`, userData);
       sessionStorage.setItem('token', response.data.token);
       sessionStorage.setItem('user', JSON.stringify(response.data.user));
       sessionStorage.setItem('userId', response.data.user.id.toString());

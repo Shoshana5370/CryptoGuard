@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FileEncryption.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/logs")]
     public class ActivityLogsController(IServiceActivityLogs service) : ControllerBase
     {
         private readonly IServiceActivityLogs _service = service;
@@ -16,16 +16,6 @@ namespace FileEncryption.Api.Controllers
         [HttpGet]
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetAllLogs() => Ok(await _service.GetLogsAsync());
-        [Authorize(Policy = "UserOrAdmin")]
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<ActivityLogDto>>> GetLogsByUser(int userId) {
-            var logs = await _service.GetLogsByUserAsync(userId);
-            if (logs == null || !logs.Any())
-                return Ok(new List<ActivityLogDto>());
-            return Ok(logs);
-
-        }
-
         [HttpGet("{id}")]
         [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<ActivityLogDto>> GetLog(int id)

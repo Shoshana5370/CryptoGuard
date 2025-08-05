@@ -19,7 +19,7 @@ const ActivityLogs = () => {
 
   useEffect(() => {
     if (user?.id) {
-      dispatch(fetchLogsByUser(user.id));
+      dispatch(fetchLogsByUser());
     }
   }, [dispatch, user]);
 

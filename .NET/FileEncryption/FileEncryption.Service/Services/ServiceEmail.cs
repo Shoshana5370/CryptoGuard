@@ -22,7 +22,7 @@ namespace FileEncryption.Service.Services
 )
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_config["EmailSettings:SenderEmail"]));
+            email.From.Add(new MailboxAddress("Crypto Guard", _config["EmailSettings:SenderEmail"]));
             email.To.Add(MailboxAddress.Parse(to));
             email.Subject = subject;
 
