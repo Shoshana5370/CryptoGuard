@@ -10,7 +10,37 @@ namespace FileEncryption.Service.Services
     {
 
         private readonly IConfiguration _config = config;
-        public async Task<bool> SendAsync(
+        public async Task<bool> SendUserMessageToSystemAsync(
+        string fromUserEmail,
+        string fromUserName,
+        string subject,
+        string messageBody)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse(_config["EmailSettings:SenderEmail"]));
+            email.To.Add(MailboxAddress.Parse(_config["EmailSettings:SupportEmail"]));
+            email.ReplyTo.Add(new MailboxAddress(fromUserName, fromUserEmail));
+
+            email.Subject = subject;
+            email.Body = new TextPart("html") { Text = messageBody };
+
+            try
+            {
+                using var smtp = new SmtpClient();
+                await smtp.ConnectAsync(_config["EmailSettings:SmtpHost"], int.Parse(_config["EmailSettings:SmtpPort"]), true);
+                await smtp.AuthenticateAsync(_config["EmailSettings:SenderEmail"], _config["EmailSettings:SenderPassword"]);
+                await smtp.SendAsync(email);
+                await smtp.DisconnectAsync(true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                
+                return false;
+            }
+        }
+
+        public async Task<bool> SendSystemMessageToUserAsync(
     string to,
     string toUser,
     string fromUser,
@@ -101,23 +131,23 @@ namespace FileEncryption.Service.Services
         //            }
 
         //        //}
-        private async Task<bool> IsEmailValid(string email)
-        {
-            var apiKey = _config["MailboxLayer:ApiKey"]; // ודאי שיש מפתח בקובץ appsettings
-            var url = $"http://apilayer.net/api/check?access_key={apiKey}&email={email}&smtp=1&format=1";
+        //private async Task<bool> IsEmailValid(string email)
+        //{
+        //    var apiKey = _config["MailboxLayer:ApiKey"]; // ודאי שיש מפתח בקובץ appsettings
+        //    var url = $"http://apilayer.net/api/check?access_key={apiKey}&email={email}&smtp=1&format=1";
 
-            using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(url);
+        //    using var httpClient = new HttpClient();
+        //    var response = await httpClient.GetAsync(url);
 
-            if (!response.IsSuccessStatusCode)
-                return false;
+        //    if (!response.IsSuccessStatusCode)
+        //        return false;
 
-            var content = await response.Content.ReadAsStringAsync();
-            var json = JsonDocument.Parse(content);
+        //    var content = await response.Content.ReadAsStringAsync();
+        //    var json = JsonDocument.Parse(content);
 
-            // בדיקת השדה smtp_check
-            return json.RootElement.TryGetProperty("smtp_check", out var smtpCheck) && smtpCheck.GetBoolean();
-        }
+        //    // בדיקת השדה smtp_check
+        //    return json.RootElement.TryGetProperty("smtp_check", out var smtpCheck) && smtpCheck.GetBoolean();
+        //}
         
     }
 }

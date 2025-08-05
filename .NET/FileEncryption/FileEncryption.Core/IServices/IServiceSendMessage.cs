@@ -8,7 +8,7 @@ namespace FileEncryption.Core.IServices
 {
     public interface IServiceSendMessage
     {
-        Task<bool> SendAsync(
+        Task<bool> SendSystemMessageToUserAsync(
          string to,
          string toUser,
          string fromUser,
@@ -18,5 +18,10 @@ namespace FileEncryption.Core.IServices
          string? fileName = null,
          bool isWelcomeEmail = false
      );
+        Task<bool> SendUserMessageToSystemAsync(
+        string fromUserEmail,
+        string fromUserName,
+        string subject,
+        string messageBody);
     }
 }

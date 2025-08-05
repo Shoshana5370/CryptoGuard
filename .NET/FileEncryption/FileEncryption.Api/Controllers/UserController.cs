@@ -13,10 +13,11 @@ namespace FileEncryption.Api.Controllers
     [Route("api/users")]
     [Authorize]
     [ApiController]
-    public class UserController(IServiceUser userService, IMapper mapper,IServiceActivityLogs logsService) : ControllerBase
+    public class UserController(IServiceUser userService, IMapper mapper,IServiceActivityLogs logsService,IServiceSendMessage sendMessage) : ControllerBase
     {
         private readonly IServiceUser _userService = userService;
         private readonly IServiceActivityLogs _logsService = logsService;
+        private readonly IServiceSendMessage _mailService = sendMessage;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet("files")]
@@ -163,9 +164,40 @@ namespace FileEncryption.Api.Controllers
             return NoContent(); 
         }
 
-        //[HttpPost("mail")]
-        //[Authorize(Policy = "UserOrAdmin")]
-        //public async Task<ActionResult>SendEmail()
+        public class EmailRequest
+        {
+            public required string Subject { get; set; }
+            public required string  MessageBody { get; set; }
+        }
+
+        [HttpPost("mail")]
+        [Authorize(Policy = "UserOrAdmin")]
+        public async Task<ActionResult>SendEmail([FromBody] EmailRequest request)
+        {
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return Unauthorized("Invalid or missing user ID in token.");
+            }
+            var user = await _userService.FindUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            var success = await _mailService.SendUserMessageToSystemAsync(
+                fromUserEmail: user.Email,
+                fromUserName: user.Name,
+                subject: request.Subject,
+                messageBody: request.MessageBody
+   );
+
+            if (success)
+                return Ok("Email sent.");
+            else
+                return StatusCode(500, "Failed to send email.");
+        }
 
 
 
