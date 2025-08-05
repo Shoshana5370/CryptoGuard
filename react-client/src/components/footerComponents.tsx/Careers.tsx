@@ -1,8 +1,15 @@
 import { Button } from "@/styles/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/styles/ui/card";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { useAppDispatch } from "@/hooks";
+import { openMailDialog } from "@/features/mail/mail";
 
 const Careers = () => {
+  const dispatch = useAppDispatch();
+
+  const handleContactClick = () => {
+    dispatch(openMailDialog());
+  };
   const jobs = [
     {
       title: "Senior Security Engineer",
@@ -151,7 +158,10 @@ const Careers = () => {
           <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
             We're always looking for talented individuals. Send us your resume and let us know how you'd like to contribute.
           </p>
-          <Button className="bg-white text-emerald-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <Button
+            onClick={handleContactClick}
+            className="bg-white text-emerald-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          >
             Get in Touch
           </Button>
         </div>

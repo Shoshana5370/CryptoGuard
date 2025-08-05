@@ -15,6 +15,7 @@ type SendMailDialogProps = {
   onSend: (subject: string, content: string) => Promise<void>;
   sending: boolean;
   sendError: string | null;
+  success: boolean;
 };
 
 const SendMailDialog = ({
@@ -23,11 +24,11 @@ const SendMailDialog = ({
   onSend,
   sending,
   sendError,
+  success,
 }: SendMailDialogProps) => {
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const { toast } = useToast();
 
   const handleSend = async (e: FormEvent) => {
@@ -56,41 +57,47 @@ const SendMailDialog = ({
     }
 
     setLocalError(null);
-    try {
-      await onSend(subject, content);
-      toast({
-        title: "המייל נשלח בהצלחה",
-        description: `המייל עם הנושא "${subject}" נשלח בהצלחה`,
-      });
-      setSuccess(true);
-      setTimeout(() => {
-        handleClose();
-      }, 1000);
-    } catch {
-      const errorMessage = "שליחת המייל נכשלה. אנא נסה שוב.";
-      setLocalError(errorMessage);
-      toast({
-        title: "שגיאה בשליחה",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
+    onSend(subject, content);
   };
 
   const handleClose = () => {
     setSubject("");
     setContent("");
     setLocalError(null);
-    setSuccess(false);
     onClose();
   };
 
   useEffect(() => {
-    if (!isOpen) {
+    if (success) {
+      toast({
+        title: "המייל נשלח בהצלחה",
+        description: `המייל עם הנושא "${subject}" נשלח בהצלחה`,
+      });
+      setTimeout(() => {
+        onClose();
+      }, 1000);
+    }
+  }, [success, subject, onClose, toast]);
+
+  useEffect(() => {
+    if (sendError) {
+      toast({
+        title: "שגיאה בשליחה",
+        description: sendError,
+        variant: "destructive",
+      });
+    }
+  }, [sendError, toast]);
+
+  useEffect(() => {
+    if (isOpen) { // When dialog opens
       setSubject("");
       setContent("");
       setLocalError(null);
-      setSuccess(false);
+    } else { // When dialog closes
+      setSubject("");
+      setContent("");
+      setLocalError(null);
     }
   }, [isOpen]);
 

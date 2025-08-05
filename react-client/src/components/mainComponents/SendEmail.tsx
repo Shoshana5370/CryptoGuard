@@ -1,31 +1,31 @@
-// import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { sendEmail } from "@/features/mail/mailSlice";
+import SendMailDialog from "./SendMailDialog";
+import { closeMailDialog } from "@/features/mail/mail";
 
-//  const [isMailDialogOpen, setIsMailDialogOpen] = useState(false);
-//   const [sending, setSending] = useState(false);
-//   const [sendError, setSendError] = useState<string | null>(null);
+const SendEmail = () => {
+  const dispatch = useAppDispatch();
+  const { isOpen } = useAppSelector((state) => state.mailState);
+  const { sending, error: sendError, success } = useAppSelector((state) => state.mailDialog);
 
-//   const handleSendMail = async (subject: string, content: string) => {
-//     setSending(true);
-//     setSendError(null);
-    
-//     // Simulate sending email
-//     try {
-//       await new Promise((resolve, reject) => {
-//         setTimeout(() => {
-//           // Simulate random success/failure for demo
-//           if (Math.random() > 0.2) {
-//             resolve("success");
-//           } else {
-//             reject(new Error("Network error"));
-//           }
-//         }, 2000);
-//       });
-      
-//       console.log("Email sent:", { subject, content });
-//     } catch (error) {
-//       setSendError("שגיאה בשליחת המייל");
-//       throw error;
-//     } finally {
-//       setSending(false);
-//     }
-//   };
+  const handleSendMail = async (subject: string, messageBody: string) => {
+    try {
+      await dispatch(sendEmail({ subject, messageBody })).unwrap();
+    } catch (err) {
+      console.error("Failed to send email:", err);
+    }
+  };
+
+  return (
+    <SendMailDialog
+      isOpen={isOpen}
+      onClose={() => dispatch(closeMailDialog())}
+      onSend={handleSendMail}
+      sending={sending}
+      sendError={sendError}
+      success={success}
+    />
+  );
+};
+
+export default SendEmail;
