@@ -38,7 +38,7 @@ export const fetchFilesByUserId = createAsyncThunk<FileDto[]>(
     'files/fetchFilesByUserId',
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.get<FileDto[]>('/api/User/GetFiles');
+            const response = await axiosInstance.get<FileDto[]>('/api/users/files');
             return response.data;
         } catch (err: any) {
             const errorMsg = err.response?.data?.toString() || err.message || 'Failed to fetch files';
@@ -50,7 +50,7 @@ export const deleteFile = createAsyncThunk<number, number>(
     'files/deleteFile',
     async (fileId, { rejectWithValue }) => {
         try {
-            await axiosInstance.delete(`/api/Files/${fileId}`);
+            await axiosInstance.delete(`/api/files/${fileId}`);
             return fileId;
         } catch (err: any) {
             const errorMsg = err.response?.data?.toString() || err.message || 'Failed to delete file';
@@ -63,7 +63,7 @@ export const updateFile = createAsyncThunk<FileDto, FileDto>(
     'files/updateFile',
     async (file, { rejectWithValue }) => {
         try {
-            const response = await axiosInstance.put<FileDto>(`/api/Files/${file.id}`, file);
+            const response = await axiosInstance.put<FileDto>(`/api/files/${file.id}`, file);
             return response.data;
         } catch (err: any) {
             const errorMsg = err.response?.data?.toString() || err.message || 'Failed to update file';
@@ -88,7 +88,7 @@ export const uploadFileContent = createAsyncThunk<
             }
 
             const response = await axiosInstance.post<FileDto>(
-                `/api/Files/upload`,
+                `/api/files`,
                 formData,
                 {
                     headers: { 'Content-Type': 'multipart/form-data' },

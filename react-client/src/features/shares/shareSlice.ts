@@ -46,7 +46,7 @@ export const accessSharedFile = createAsyncThunk(
   'share/accessSharedFile',
   async ({ shareId, code }: { shareId: number; code: string }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(`/api/Share/access`, { code, id: shareId });
+      const response = await axiosInstance.post(`/api/shares/access`, { code, id: shareId });
       const { file, fileName, contentType, originalHash } = response.data;
       const binary = atob(file);
       const byteArray = new Uint8Array(binary.length);
@@ -71,7 +71,7 @@ export const shareFile = createAsyncThunk(
   'share/shareFile',
   async (shareData: SharePostModel, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post<ShareDto>(`/api/Share`, shareData);
+      const response = await axiosInstance.post<ShareDto>(`/api/shares`, shareData);
       return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Error sharing file');
@@ -83,7 +83,7 @@ export const fetchSharesWithMe = createAsyncThunk<ShareDto[], void, { state: Roo
   'share/fetchSharesWithMe',
   async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.get<ShareDto[]>(`/api/User/GetSharesWithMe`);
+      const response = await axiosInstance.get<ShareDto[]>(`/api/users/shared-with-me`);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message || 'Failed to fetch shares with me');
@@ -95,7 +95,7 @@ export const fetchSharesToOthers = createAsyncThunk<ShareDto[], void, { state: R
   'share/fetchSharesToOthers',
   async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.get<ShareDto[]>(`/api/User/GetSharesToOthers`);
+      const response = await axiosInstance.get<ShareDto[]>(`/api/users/shared-to-others`);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || err.message || 'Failed to fetch shares to others');
@@ -109,7 +109,7 @@ export const extendShareExpiration = createAsyncThunk<
   { state: RootState; rejectValue: string }
 >('share/extendExpiration', async ({ id, newDate }, thunkAPI) => {
   try {
-    await axiosInstance.post(`/api/Share/${id}`, { newDate });
+    await axiosInstance.put(`/api/shares/${id}`, { newDate });
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.response?.data || err.message.toString() || 'Failed to extend expiration');
   }

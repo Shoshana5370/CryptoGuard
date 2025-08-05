@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 namespace FileEncryption.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/files")]
     [Authorize]
     [ApiController]
     public class FilesController(IServiceFile fileService, IMapper mapper) : ControllerBase
@@ -40,23 +40,23 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(_mapper.Map<FileDto>(file)); 
         }
-        [HttpPost]
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
-        {
-            if (file == null)
-            {
-                return BadRequest(); 
-            }
+        //[HttpPost]
+        //[Authorize(Policy = "AdminOnly")]
+        //public async Task<ActionResult<FileDto>> Post([FromBody] FilePostModel file)
+        //{
+        //    if (file == null)
+        //    {
+        //        return BadRequest(); 
+        //    }
 
-            var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
+        //    var result = await _fileService.InsertFileAsync(_mapper.Map<FileDto>(file));
 
-            if (result != null)
-            {
-                return Ok(_mapper.Map<FileDto>(result));
-            }
-            return BadRequest();
-        }
+        //    if (result != null)
+        //    {
+        //        return Ok(_mapper.Map<FileDto>(result));
+        //    }
+        //    return BadRequest();
+        //}
         [HttpPut("{id}")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> Put(int id, [FromBody] FileDto file)
@@ -89,7 +89,7 @@ namespace FileEncryption.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("upload")]
+        [HttpPost]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<FileDto>> UploadEncryptedFile(
         [FromForm] IFormFile file,

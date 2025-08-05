@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 namespace FileEncryption.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/shares")]
     [ApiController]
     public class ShareController(IServiceSendMessage emailService, IServiceShare shareService, IMapper mapper, IServiceFile fileService) : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace FileEncryption.Api.Controllers
         {
             public string NewDate { get; set; } = null!;
         }
-        [HttpPost("{id}")]
+        [HttpPut("{id}")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<IActionResult> ExtendExpiration(int id, [FromBody] ExtendShareExpirationDto dto)
         {

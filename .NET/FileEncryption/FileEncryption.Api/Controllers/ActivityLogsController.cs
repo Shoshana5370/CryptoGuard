@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FileEncryption.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/logs")]
     public class ActivityLogsController(IServiceActivityLogs service) : ControllerBase
     {
         private readonly IServiceActivityLogs _service = service;

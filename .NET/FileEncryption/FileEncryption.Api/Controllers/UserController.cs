@@ -8,7 +8,7 @@ using System.Security.Claims;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 namespace FileEncryption.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [Authorize]
     [ApiController]
     public class UserController(IServiceUser userService, IMapper mapper) : ControllerBase
@@ -16,7 +16,7 @@ namespace FileEncryption.Api.Controllers
         private readonly IServiceUser _userService = userService;
         private readonly IMapper _mapper = mapper;
 
-        [HttpGet("GetFiles")]
+        [HttpGet("files")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<IEnumerable<FileDto>>>GetFilesByUserIdAsync()
         {
@@ -34,7 +34,7 @@ namespace FileEncryption.Api.Controllers
             }
             return Ok(files);
         }
-        [HttpGet("GetSharesWithMe")]
+        [HttpGet("shared-with-me")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<IEnumerable<ShareDto>>> GetSharesWithMeAsync()
         {
@@ -49,7 +49,7 @@ namespace FileEncryption.Api.Controllers
 
             return Ok(shares ?? []);
         }
-        [HttpGet("GetSharesToOthers")]
+        [HttpGet("shared-to-others")]
         [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<IEnumerable<ShareDto>>> GetSharesToOthersAsync()
         {
@@ -76,10 +76,7 @@ namespace FileEncryption.Api.Controllers
             }
 
             return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
-        }
-
-
- 
+        } 
         [HttpGet("{id}")]
         [Authorize(Policy = "AdminOnly")]
 
@@ -146,7 +143,9 @@ namespace FileEncryption.Api.Controllers
             return NoContent(); 
         }
 
-
+        //[HttpPost("mail")]
+        //[Authorize(Policy = "UserOrAdmin")]
+        //public async Task<ActionResult>SendEmail()
 
 
 
