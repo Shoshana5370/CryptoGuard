@@ -16,17 +16,18 @@ const initialState: ActivityState = {
 };
 
 // Thunk to fetch logs by userId
-export const fetchLogsByUser = createAsyncThunk<Log[], number>(
+export const fetchLogsByUser = createAsyncThunk<Log[], void, { rejectValue: string }>(
   "activity/fetchLogsByUser",
-  async (userId, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.get(`/api/logs/user/${userId}`);
+      const response = await axiosInstance.get(`/api/users/logs`);
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data || "Failed to fetch logs");
     }
   }
 );
+
 
 const activitySlice = createSlice({
   name: "activity",
